@@ -2,6 +2,7 @@
   "name": "salesforce-soql-editor",
   "displayName": "Salesforce SOQL Editor",
   "publisher": "allanoricil",
+  "preview": true,
   "author": {
     "name": "Allan Oricil",
     "email": "allanoricilcos@outlook.com"
