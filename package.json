@@ -1,19 +1,19 @@
 {
-  "name": "salesforce-schema-builder",
-  "displayName": "Salesforce Schema Builder",
+  "name": "salesforce-soql-editor",
+  "displayName": "Salesforce SOQL Editor",
   "publisher": "allanoricil",
   "author": {
     "name": "Allan Oricil",
     "email": "allanoricilcos@outlook.com"
   },
-  "homepage": "https://github.com/AllanOricil/salesforce-schema-builder/blob/master/README.md",
+  "homepage": "https://https://github.com/AllanOricil/salesforce-soql-editor/blob/master/README.md",
   "description": "Allow developers to manage Salesforce Objects from Visual Studio Code",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AllanOricil/salesforce-schema-builder.git"
+    "url": "https://github.com/AllanOricil/salesforce-soql-editor.git"
   },
   "icon": ".images/icon2.png",
-  "version": "0.2.10",
+  "version": "0.0.1",
   "engines": {
     "vscode": "^1.32.0"
   },
@@ -21,14 +21,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:SFDX.schemaBuilder"
+    "onCommand:SFDX.soqlEditor"
   ],
   "main": "./src/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "SFDX.schemaBuilder",
-        "title": "SFDX: Schema Builder",
+        "command": "SFDX.soqlEditor",
+        "title": "SFDX: SOQL Editor",
         "icon": {
           "light": "/.images/icon_light.png",
           "dark": "/.images/icon_dark.png"
@@ -38,7 +38,7 @@
     "menus": {
       "editor/title": [
         {
-          "command": "SFDX.schemaBuilder",
+          "command": "SFDX.soqlEditor",
           "alt": "markdown.showPreviewToSide",
           "group": "navigation",
           "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
@@ -46,19 +46,19 @@
       ],
       "explorer/context": [
         {
-          "command": "SFDX.schemaBuilder",
+          "command": "SFDX.soqlEditor",
           "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
         }
       ],
       "editor/context": [
         {
-          "command": "SFDX.schemaBuilder",
+          "command": "SFDX.soqlEditor",
           "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
         }
       ]
     },
     "configuration": {
-      "title": "Salesforce Schema Builder",
+      "title": "Salesforce SOQL Editor",
       "properties": {
         "salesforceSchemaBuilder.formatType": {
           "type": "string",
