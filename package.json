@@ -1,0 +1,118 @@
+{
+  "name": "salesforce-schema-builder",
+  "displayName": "Salesforce Schema Builder",
+  "publisher": "allanoricil",
+  "author": {
+    "name": "Allan Oricil",
+    "email": "allanoricilcos@outlook.com"
+  },
+  "homepage": "https://github.com/AllanOricil/salesforce-schema-builder/blob/master/README.md",
+  "description": "Allow developers to manage Salesforce Objects from Visual Studio Code",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AllanOricil/salesforce-schema-builder.git"
+  },
+  "icon": ".images/icon2.png",
+  "version": "0.2.10",
+  "engines": {
+    "vscode": "^1.32.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:SFDX.schemaBuilder"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "SFDX.schemaBuilder",
+        "title": "SFDX: Schema Builder",
+        "icon": {
+          "light": "/.images/icon_light.png",
+          "dark": "/.images/icon_dark.png"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "SFDX.schemaBuilder",
+          "alt": "markdown.showPreviewToSide",
+          "group": "navigation",
+          "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "SFDX.schemaBuilder",
+          "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "SFDX.schemaBuilder",
+          "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Salesforce Schema Builder",
+      "properties": {
+        "salesforceSchemaBuilder.formatType": {
+          "type": "string",
+          "enum": [
+            "Metadata",
+            "Source"
+          ],
+          "enumDescriptions": [
+            "The resulted file is saved using the SFDX project Source format.",
+            "The resulted file is saved as plain Metadata."
+          ],
+          "default": "Metadata",
+          "description": "It defines the ouput type format. If you are working with a sfdx package, choose Source."
+        },
+        "salesforceSchemaBuilder.autoUpdateAvailableObjects": {
+          "type": "boolean",
+          "default": "true",
+          "description": "Schema Builder will retrieve the Schema Information from your Default Org automatically."
+        },
+        "salesforceSchemaBuilder.saveToWorkingDirectory": {
+          "type": "boolean",
+          "default": "false",
+          "markdownDescription": "If true, the Metadata file will be saved in the Working Directory on the destination specified by `#salesforceSchemaBuilder.workingDirectoryFolder#`"
+        },
+        "salesforceSchemaBuilder.workingDirectoryFolder": {
+          "type": "string",
+          "default": "./schema",
+          "markdownDescription": "It is the folder path, `relative to the Working Directory`. If you choose to save in the force-app folder, change the `#salesforceSchemaBuilder.formatType#` to `Source`"
+        },
+        "salesforceSchemaBuilder.globalWorkingDirectory": {
+          "type": "string",
+          "default": "${env:USERNAME}",
+          "markdownDescription": "It is the folder where all the necessary Metadata for the Forms is saved, like Global Value Sets or Labels. It defaults to `.vscode/extensions/.schema`. If you want to overwrite it, use a `full path` and make sure you have the right to write to this folder."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test",
+    "build": "npm run buildweb && vsce package",
+    "buildext": "vsce package",
+    "buildweb": "pushd ./web &> /dev/null && { npm run build;popd &> /dev/null;}",
+    "startweb": "pushd ./web &> /dev/null && { npm run dev;popd &> /dev/null;}"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.28",
+    "eslint": "^5.13.0",
+    "@types/node": "^10.12.21",
+    "@types/mocha": "^2.2.42"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "fs-extra": "^9.0.1"
+  }
+}
