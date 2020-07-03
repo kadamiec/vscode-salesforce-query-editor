@@ -1,34 +1,30 @@
 // @ts-nocheck
-const vscode = require("vscode");
-const fs = require("fs-extra");
-const path = require("path");
+const vscode = require('vscode');
+const fs = require('fs-extra');
+const path = require('path');
 const {
   execSync,
   exec
-} = require("child_process");
-const axios = require("axios");
-const HOME_DIR = require("os").homedir();
-const GLOBAL_STORAGE_DIR = path.resolve(
-  path.join(HOME_DIR, ".vscode", "extensions", ".schema")
-);
+} = require('child_process');
+const axios = require('axios');
+const HOME_DIR = require('os').homedir();
+const GLOBAL_STORAGE_DIR = path.resolve(path.join(HOME_DIR, '.schemabuilder'));
 const ORG_LIST_PATH = path.resolve(
-  path.join(GLOBAL_STORAGE_DIR, "orgList.json")
+  path.join(GLOBAL_STORAGE_DIR, 'orgList.json')
 );
-
 const TIME_TO_REQUEST_NEW_AUTH_TOKEN = 1;
-
 
 const setupSchemaGlobalDirectory = () => {
   try {
     const stdout = JSON.parse(
-      execSync("sfdx force:org:list --all --json", {
-        encoding: "utf-8",
+      execSync('sfdx force:org:list --all --json', {
+        encoding: 'utf-8',
         cwd: vscode.workspace.rootPath,
       })
     );
 
     fs.writeFile(ORG_LIST_PATH, JSON.stringify(stdout), {
-      encoding: "utf-8",
+      encoding: 'utf-8',
     });
     let orgs = undefined;
     if (
@@ -41,14 +37,11 @@ const setupSchemaGlobalDirectory = () => {
           path.join(GLOBAL_STORAGE_DIR, org.username)
         );
         fs.ensureDir(orgDir);
-        fs.ensureDir(path.resolve(path.join(orgDir, "customObjects")));
+        fs.ensureDir(path.resolve(path.join(orgDir, 'customObjects')));
       });
     }
-  } catch (error) {
-    vscode.window.showErrorMessage(
-      "Could not get Org List. Ensure you can run 'sfdx force:org:list --all --json' before opening the extension."
-    );
-    return;
+  } catch (e) {
+    throw e;
   }
 };
 
@@ -57,12 +50,12 @@ const getSObjectsNames = (defaultOrg) => {
     let sObjectsFile = undefined;
 
     const sObjectsFilePath = path.resolve(
-      path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, "sobjects.json")
+      path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, 'sobjects.json')
     );
     //check if the files is already retrieved for the default org
     try {
       sObjectsFile = fs.readFileSync(sObjectsFilePath, {
-        encoding: "utf-8",
+        encoding: 'utf-8',
       });
     } catch (e) {}
 
@@ -78,19 +71,17 @@ const getSObjectsNames = (defaultOrg) => {
   }
 };
 
-const refreshSObjects = (defaultOrg, panel) => {
+const refreshSObjects = (defaultOrg, callback) => {
   return new Promise((resolve) => {
-    getGlobalDescribe(defaultOrg).then(response => {
-      const sObjectsFilePath = path.resolve(path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, "sobjects.json"));
+    getGlobalDescribe(defaultOrg).then((response) => {
+      const sObjectsFilePath = path.resolve(
+        path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, 'sobjects.json')
+      );
       fs.writeFile(sObjectsFilePath, JSON.stringify(response.data.sobjects), {
-        encoding: 'utf-8'
+        encoding: 'utf-8',
       });
 
-      if (panel)
-        panel.webview.postMessage({
-          cmd: "objects",
-          data: response.data.sobjects,
-        });
+      if (callback) callback(response);
       resolve(response);
     });
   });
@@ -100,12 +91,12 @@ const getGlobalValueSets = (defaultOrg) => {
   try {
     let globalValuesetsFile = undefined;
     const globalValuesetsPath = path.resolve(
-      path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, "globalvalueset.json")
+      path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, 'globalvalueset.json')
     );
 
     try {
       globalValuesetsFile = fs.readFileSync(globalValuesetsPath, {
-        encoding: "utf-8",
+        encoding: 'utf-8',
       });
     } catch (e) {}
 
@@ -120,20 +111,49 @@ const getGlobalValueSets = (defaultOrg) => {
         globalValuesets.result.length
       )
     ) {
-      globalValuesets = listMetadata('GlobalValueSet');
+      return listMetadata('GlobalValueSet', defaultOrg);
     }
 
-    return globalValuesets;
+    return new Promise((resolve) => resolve(globalValuesets));
   } catch (e) {
     throw e;
   }
 };
 
-const refreshGlobalValueSets = (defaultOrg, panel) => {
-  return listMetadata('GlobalValueSet', defaultOrg, panel);
+const refreshGlobalValueSets = (defaultOrg, callback) => {
+  return listMetadata('GlobalValueSet', defaultOrg, callback);
 };
 
-const listMetadata = (metadataName, defaultOrg, panel) => {
+const getLabels = (defaultOrg) => {
+  try {
+    let labelsFile = undefined;
+    const labelsFilePath = path.resolve(
+      path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, 'customlabels.json')
+    );
+
+    try {
+      labelsFile = fs.readFileSync(labelsFilePath, {
+        encoding: 'utf-8',
+      });
+    } catch (e) {}
+
+    //if there is no file or the file is emtpy call sfdx and save the result in the default org directory
+    let labels = labelsFile ? JSON.parse(labelsFile) : undefined;
+    if (!(labels && labels.result && labels.result.length)) {
+      return listMetadata('CustomLabel', defaultOrg);
+    }
+
+    return labels;
+  } catch (e) {
+    throw e;
+  }
+};
+
+const refreshLabels = (defaultOrg, callback) => {
+  return listMetadata('CustomLabel', defaultOrg, callback);
+};
+
+const listMetadata = (metadataName, defaultOrg, callback) => {
   return new Promise((resolve, reject) => {
     const metadataFileName = `${metadataName.toLowerCase()}.json`;
     const metadataFilePath = path.resolve(
@@ -141,25 +161,23 @@ const listMetadata = (metadataName, defaultOrg, panel) => {
     );
     exec(
       `sfdx force:mdapi:listmetadata -m ${metadataName} --json`, {
-        encoding: "utf-8",
+        encoding: 'utf-8',
         cwd: vscode.workspace.rootPath,
-      }, (error, stdout, stderr) => {
+      },
+      (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
           return;
         }
 
         fs.writeFile(metadataFilePath, stdout, {
-          encoding: 'utf-8'
+          encoding: 'utf-8',
         });
 
         if (stdout) {
-          if (panel)
-            panel.webview.postMessage({
-              cmd: "globalValueSets",
-              data: JSON.parse(stdout),
-            });
-          resolve(JSON.parse(stdout));
+          const response = JSON.parse(stdout);
+          if (callback) callback(response);
+          resolve(response);
         }
 
         if (stderr) {
@@ -172,32 +190,45 @@ const listMetadata = (metadataName, defaultOrg, panel) => {
 
 const getOrgDisplay = () => {
   try {
-    const configList = JSON.parse(execSync(`sfdx force:config:list --json`, {
-      encoding: "utf-8",
-      cwd: vscode.workspace.rootPath,
-    }));
+    const configList = JSON.parse(
+      execSync(`sfdx force:config:list --json`, {
+        encoding: 'utf-8',
+        cwd: vscode.workspace.rootPath,
+      })
+    );
 
     let defaultUsername = undefined;
     if (configList.result && configList.result.length) {
-      defaultUsername = configList.result.filter(config => config.key === 'defaultusername');
+      defaultUsername = configList.result.filter(
+        (config) => config.key === 'defaultusername'
+      );
     } else {
       throw e;
     }
 
     if (!defaultUsername) throw e;
 
-    const orgDisplayFilePath = path.resolve(path.join(GLOBAL_STORAGE_DIR, 'orgdisplay.json'));
+    const orgDisplayFilePath = path.resolve(
+      path.join(GLOBAL_STORAGE_DIR, 'orgdisplay.json')
+    );
     fs.ensureFileSync(orgDisplayFilePath);
     let orgDisplay = undefined;
     try {
-      orgDisplay = JSON.parse(fs.readFileSync(orgDisplayFilePath, {
-        encoding: 'utf-8'
-      }));
+      orgDisplay = JSON.parse(
+        fs.readFileSync(orgDisplayFilePath, {
+          encoding: 'utf-8',
+        })
+      );
     } catch (e) {}
 
     if (orgDisplay && orgDisplay.updatedTime) {
-      const elapsedTimeInHours = Math.abs(new Date(orgDisplay.updatedTime) - new Date()) / (1000 * 60 * 60);
-      if (elapsedTimeInHours > TIME_TO_REQUEST_NEW_AUTH_TOKEN || orgDisplay.result.alias !== defaultUsername[0].value) {
+      const elapsedTimeInHours =
+        Math.abs(new Date(orgDisplay.updatedTime) - new Date()) /
+        (1000 * 60 * 60);
+      if (
+        elapsedTimeInHours > TIME_TO_REQUEST_NEW_AUTH_TOKEN ||
+        orgDisplay.result.username !== defaultUsername[0].value
+      ) {
         return refreshOrgDisplay();
       } else {
         return orgDisplay.result;
@@ -211,36 +242,75 @@ const getOrgDisplay = () => {
 };
 
 const refreshOrgDisplay = () => {
-  const stdout = JSON.parse(execSync(`sfdx force:org:display --json`, {
-    encoding: "utf-8",
-    cwd: vscode.workspace.rootPath,
-  }));
+  const stdout = JSON.parse(
+    execSync(`sfdx force:org:display --json`, {
+      encoding: 'utf-8',
+      cwd: vscode.workspace.rootPath,
+    })
+  );
 
   stdout.updatedTime = new Date();
 
-  fs.writeFile(path.resolve(path.join(GLOBAL_STORAGE_DIR, 'orgdisplay.json')), JSON.stringify(stdout), {
-    encoding: 'utf-8'
-  });
+  fs.writeFile(
+    path.resolve(path.join(GLOBAL_STORAGE_DIR, 'orgdisplay.json')),
+    JSON.stringify(stdout), {
+      encoding: 'utf-8',
+    }
+  );
 
   return stdout.result;
 };
 
 const getGlobalDescribe = (defaultOrg) => {
-  return axios
-    .get(`${defaultOrg.instanceUrl}/services/data/v48.0/sobjects/`, {
+  return axios.get(`${defaultOrg.instanceUrl}/services/data/v48.0/sobjects/`, {
+    headers: {
+      Authorization: `Bearer ${defaultOrg.accessToken}`,
+    },
+  });
+};
+
+const getOrgInfo = () => {
+  const stdout = JSON.parse(
+    execSync(
+      `sfdx force:data:soql:query -q "SELECT LanguageLocaleKey FROM Organization" --json`, {
+        encoding: 'utf-8',
+        cwd: vscode.workspace.rootPath,
+      }
+    )
+  );
+
+  return stdout.result.records[0];
+};
+
+const refreshOrgInfo = (defaultOrg, callback) => {
+  return new Promise((resolve) => {
+    const orgInfo = getOrgInfo();
+    if (callback) callback(orgInfo);
+    resolve(orgInfo);
+  });
+};
+
+const executeSOQL = (soql, defaultOrg) => {
+  return axios.get(
+    `${defaultOrg.instanceUrl}/services/data/v48.0/query/?q=${soql.replace(
+      /\s/g,
+      '+'
+    )}`, {
       headers: {
         Authorization: `Bearer ${defaultOrg.accessToken}`,
       },
-    });
+    }
+  );
 };
 
 const callSObjectDescribe = (defaultOrg, sObjectName) => {
-  return axios
-    .get(`${defaultOrg.instanceUrl}/services/data/v48.0/sobjects/${sObjectName}/describe/`, {
+  return axios.get(
+    `${defaultOrg.instanceUrl}/services/data/v48.0/sobjects/${sObjectName}/describe/`, {
       headers: {
         Authorization: `Bearer ${defaultOrg.accessToken}`,
       },
-    });
+    }
+  );
 };
 
 const joinOrgLists = (orgResponse) => {
@@ -260,6 +330,11 @@ module.exports = {
   getOrgDisplay,
   getGlobalDescribe,
   callSObjectDescribe,
+  getOrgInfo,
+  refreshOrgInfo,
+  getLabels,
+  refreshLabels,
+  executeSOQL,
   HOME_DIR,
   GLOBAL_STORAGE_DIR,
   ORG_LIST_PATH,

@@ -1,28 +1,22 @@
 // @ts-nocheck
-const vscode = require("vscode");
-const fs = require("fs-extra");
-const path = require("path");
-const EGWebView = require("./e.g.webview");
+const vscode = require('vscode');
+const fs = require('fs-extra');
+const path = require('path');
+const EGWebView = require('./e.g.webview');
 const {
   setupSchemaGlobalDirectory
-} = require("../lib/utils.js");
+} = require('../lib/utils.js');
 
-const name = "Schema Builder";
+const name = 'SOQL Editor';
 const webview = new EGWebView();
-
-const HOME_DIR = require("os").homedir();
-const SCHEMA_STORAGE_DIR = path.resolve(
-  path.join(HOME_DIR, ".vscode", "extensions", ".schema")
-);
 /**
  * @param {vscode.ExtensionContext} context
  */
 const activate = (context) => {
-  fs.ensureDir(SCHEMA_STORAGE_DIR);
-
-  setupSchemaGlobalDirectory();
-
-  webview.activate(context, name, "SFDX.schemaBuilder");
+  webview.activate(context, name, 'SFDX.soqlEditor');
+  vscode.window.showInformationMessage(
+    'Salesforce SOQL Editor is Activated'
+  );
 };
 
 const deactivate = () => {
