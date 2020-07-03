@@ -81,3 +81,5 @@ You can also write your query in the Query Editor and run it without using any o
 - Click anywhere in the Apex class to set the place where you want to place the query.
 
 - In the SOQL editor click on the button `Add to Apex`. The query will appear on the apex class, at the position you clicked before.
+
+<img src="https://drive.google.com/uc?id=1NwUzkAQ2x_LHk2ecIMlK9aNxz1bYAko-" width="1200px"></img>
