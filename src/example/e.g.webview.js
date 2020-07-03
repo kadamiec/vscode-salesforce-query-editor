@@ -28,9 +28,15 @@ class EGWebView extends WebView {
 
         this.defaultOrg = getOrgDisplay();
 
+        this.activeTextEditor = vscode.window.activeTextEditor;
+
         this.onDidPose = () => {
             this.defaultOrg = getOrgDisplay();
         };
+
+        this.didChangeViewState = ()=>{
+            this.activeTextEditor = vscode.window.activeTextEditor;
+        }; 
 
         this.handler.addApi({
             getAllObjectNames: () => {
@@ -69,8 +75,26 @@ class EGWebView extends WebView {
             executeSOQL: (soql) => {
                 executeSOQL(soql, this.defaultOrg).then((response) => {
                     this.postMessage('soqlResult', response.data.records);
+                }).catch((reason) =>{
+                    if(reason.response.status === 400)
+                        this.postMessage('soqlResult', reason.response.data[0]);
+                    else
+                        this.postMessage('soqlResult', []);
                 });
             },
+            addToApex: (soql) =>{
+                // current editor
+                const editor = this.activeTextEditor;
+
+                // check if there is no selection
+                if (editor.selection.isEmpty) {
+                    // the Position object gives you the line and character where the cursor is
+                    const position = editor.selection.active;
+                    editor.edit((editBuilder)=>{
+                        editBuilder.insert(position, `[${soql}]`);
+                    });
+                }
+            }
         });
     }
 

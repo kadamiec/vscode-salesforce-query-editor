@@ -176,6 +176,19 @@
                 </div>
             </div>
         </div>
+        <div v-if="soqlResult && soqlResult.length === 0" class="row">
+            <div class="col-12">
+                <label class="m-auto">0 Results</label>
+            </div>
+        </div>
+        <div v-if="error" class="row">
+            <div class="col-12">
+                <label class="m-auto">{{error.errorCode}}</label>
+            </div>
+            <div class="col-12">
+                <label class="m-auto">{{error.message}}</label>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -210,11 +223,11 @@ export default {
             }
         });
         window.vscode.onReceiveSOQLResult((message) => {
-            if (message.data) {
-                this.soqlResult = message.data;
-                window.vscode.showMessage({
-                    txt: 'SOQL Executed with Success',
-                });
+            let response = message.data;
+            if(response.errorCode){
+                this.error = response;
+            }else{
+                this.soqlResult = response;
             }
         });
     },
@@ -233,6 +246,7 @@ export default {
             },
             soql: '',
             soqlResult: undefined,
+            error: undefined,
             object: undefined,
             selectedFields: [],
             filters: [
@@ -313,9 +327,11 @@ export default {
             if (sObjectFields.length === 0) {
                 this.$store.dispatch('sobjects/getSObjectDescribe', newValue);
             } else {
-                this.setSelectedSObjectFields();
+                this.setSObjectFieldsToQuery();
             }
             this.soql = '';
+            this.soqlResult = undefined;
+            this.error = undefined;
             this.filters = [
                 {
                     field: undefined,
@@ -373,20 +389,24 @@ export default {
             });
         },
         executeQuery() {
+            this.soqlResult = undefined;
+            this.error = undefined;
             window.vscode.post({
                 cmd: 'executeSOQL',
                 args: this.soql,
             });
         },
-        addToApex() {},
+        addToApex() {
+            window.vscode.post({
+                cmd:'addToApex',
+                args: this.soql
+            });
+        },
         setSObjectFieldsToQuery() {
             const sobjectFields = this.$store.getters[
                 'sobjects/getSObjectFields'
             ](this.object);
-            sobjectFields.unshift({
-                name: 'count()',
-            });
-            this.sObjectFieldsToQuery = sobjectFields;
+            this.sObjectFieldsToQuery = [{name: 'count()'}, ...sobjectFields];
         },
         setSObjectFieldsToSort() {
             this.sObjectFieldsToSort = this.$store.getters[

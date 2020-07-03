@@ -292,10 +292,10 @@ const refreshOrgInfo = (defaultOrg, callback) => {
 
 const executeSOQL = (soql, defaultOrg) => {
   return axios.get(
-    `${defaultOrg.instanceUrl}/services/data/v48.0/query/?q=${soql.replace(
+    encodeURI(`${defaultOrg.instanceUrl}/services/data/v48.0/query/?q=${soql.replace(/\s\s+/g, ' ').replace(
       /\s/g,
       '+'
-    )}`, {
+    )}`), {
       headers: {
         Authorization: `Bearer ${defaultOrg.accessToken}`,
       },
