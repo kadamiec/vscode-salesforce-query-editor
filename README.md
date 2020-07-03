@@ -28,9 +28,11 @@ Open VS Code, click on the Extension button in the side bar menu, search for `Sa
 
 <img src="https://drive.google.com/uc?id=1Rvs9f6quK06iQnIo5fqr7iiQfJXbQQkB" width="800px"></img>
 
-Then wait for the Activation Message to appear.
+Then open a SFDX project and wait for the Activation Message to appear. It will only be activated in projects that contain a `sfdx-project.json`.
 
 <img src="https://drive.google.com/uc?id=1Hdr8xEuQ6ct_g37SLG29fFGk6G-BBExK" width="600px"></img>
+
+Now you can use it following the instructions below.
 
 # How to use the SOQL Editor
 
