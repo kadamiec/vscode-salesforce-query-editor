@@ -8,7 +8,7 @@
     "email": "allanoricilcos@outlook.com"
   },
   "homepage": "https://https://github.com/AllanOricil/salesforce-soql-editor/blob/master/README.md",
-  "description": "Allow developers to manage Salesforce Objects from Visual Studio Code",
+  "description": "Run SOQL without leaving VSCode",
   "repository": {
     "type": "git",
     "url": "https://github.com/AllanOricil/salesforce-soql-editor.git"
@@ -21,7 +21,14 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "keywords": [
+    "salesforce",
+    "soql",
+    "editor"
+  ],
+  "activationEvents": [
+    "workspaceContains:sfdx-project.json"
+  ],
   "main": "./src/extension.js",
   "contributes": {
     "commands": [
@@ -38,61 +45,26 @@
       "editor/title": [
         {
           "command": "SFDX.soqlEditor",
-          "alt": "markdown.showPreviewToSide",
           "group": "navigation",
-          "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
+          "when": "resourceFilename =~ /.cls/"
         }
       ],
       "explorer/context": [
         {
           "command": "SFDX.soqlEditor",
-          "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
+          "when": "resourceFilename =~ /.cls/"
         }
       ],
       "editor/context": [
         {
           "command": "SFDX.soqlEditor",
-          "when": "resourceExtname == .object || resourceFilename =~ /.object-meta.xml/"
+          "when": "resourceFilename =~ /.cls/"
         }
       ]
     },
     "configuration": {
       "title": "Salesforce SOQL Editor",
-      "properties": {
-        "salesforceSchemaBuilder.formatType": {
-          "type": "string",
-          "enum": [
-            "Metadata",
-            "Source"
-          ],
-          "enumDescriptions": [
-            "The resulted file is saved using the SFDX project Source format.",
-            "The resulted file is saved as plain Metadata."
-          ],
-          "default": "Metadata",
-          "description": "It defines the ouput type format. If you are working with a sfdx package, choose Source."
-        },
-        "salesforceSchemaBuilder.autoUpdateAvailableObjects": {
-          "type": "boolean",
-          "default": "true",
-          "description": "Schema Builder will retrieve the Schema Information from your Default Org automatically."
-        },
-        "salesforceSchemaBuilder.saveToWorkingDirectory": {
-          "type": "boolean",
-          "default": "false",
-          "markdownDescription": "If true, the Metadata file will be saved in the Working Directory on the destination specified by `#salesforceSchemaBuilder.workingDirectoryFolder#`"
-        },
-        "salesforceSchemaBuilder.workingDirectoryFolder": {
-          "type": "string",
-          "default": "./schema",
-          "markdownDescription": "It is the folder path, `relative to the Working Directory`. If you choose to save in the force-app folder, change the `#salesforceSchemaBuilder.formatType#` to `Source`"
-        },
-        "salesforceSchemaBuilder.globalWorkingDirectory": {
-          "type": "string",
-          "default": "${env:USERNAME}",
-          "markdownDescription": "It is the folder where all the necessary Metadata for the Forms is saved, like Global Value Sets or Labels. It defaults to `.vscode/extensions/.schema`. If you want to overwrite it, use a `full path` and make sure you have the right to write to this folder."
-        }
-      }
+      "properties": {}
     }
   },
   "scripts": {
