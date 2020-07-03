@@ -18,6 +18,12 @@ This extension enable developers to create, run and add to Apex SOQL queries whi
 
 # Instalation
 
+Before installing the extension, configure a Default Username in the SFDX using the Global flag.
+
+```
+sfdx force:config:set defaultusername=me@myhub.org -g
+```
+
 Open VS Code, click on the Extension button in the side bar menu, search for `Salesforce SOQL Editor` and click `Install`.
 
 <img src="https://drive.google.com/uc?id=1Rvs9f6quK06iQnIo5fqr7iiQfJXbQQkB" width="800px"></img>
@@ -28,7 +34,7 @@ Then wait for the Activation Message to appear.
 
 # How to use the SOQL Editor
 
-## Configure a Default Username
+## Choose a Default Username / Environment
 
 Configure a Default Username in the SFDX using the Global flag. The UI will this user to query the data.
 
