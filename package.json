@@ -7,7 +7,7 @@
     "name": "Allan Oricil",
     "email": "allanoricilcos@outlook.com"
   },
-  "homepage": "https://https://github.com/AllanOricil/salesforce-soql-editor/blob/master/README.md",
+  "homepage": "https://github.com/AllanOricil/SOQL-Editor-Issues/blob/master/README.md",
   "description": "Run SOQL without leaving VSCode",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
     "color": "#292929",
     "theme": "dark"
   },
-  "version": "0.2.0",
+  "version": "0.2.1",
   "engines": {
     "vscode": "^1.32.0"
   },
