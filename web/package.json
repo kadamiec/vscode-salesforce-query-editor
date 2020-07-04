@@ -21,6 +21,7 @@
         "he": "^1.2.0",
         "jquery": "^3.5.1",
         "popper.js": "^1.16.1",
+        "sql-formatter": "^2.3.3",
         "v-clipboard": "^2.2.3",
         "vue": "^2.6.11",
         "vue-codemirror": "^4.0.6",

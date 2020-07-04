@@ -1,15 +1,14 @@
 <template>
-    <div class="container h-100 px-2 px-xl-5 py-4">
+    <div class="container h-100 px-xl-5 py-2">
         <div class="row">
             <div class="col-4">
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col">
                         <label for="fieldRelatedTo">Object</label>
                         <select
                             id="fieldRelatedTo"
                             v-model="object"
                             class="form-control"
-                            required
                         >
                             <option
                                 v-for="(object, index) in objects"
@@ -20,7 +19,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row mt-2">
+                <div class="row">
                     <div class="col">
                         <select
                             size="16"
@@ -42,7 +41,7 @@
             <div class="col-8">
                 <div class="row">
                     <div class="col-12 form-row align-items-center">
-                        <div class="form-group col-md-5 pr-2">
+                        <div class="form-group col-md-5 mr-2">
                             <label for="sortBy">Order by:</label>
                             <select
                                 id="sortBy"
@@ -59,7 +58,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group col-md-2 pr-2">
+                        <div class="form-group col-md-2 mr-2">
                             <label for="orderBy" style="opacity: 0;">-</label>
                             <select
                                 id="orderBy"
@@ -70,7 +69,7 @@
                                 <option value="DESC">Z to A</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-2 pr-2">
+                        <div class="form-group col-md-2 mr-2">
                             <label for="nullsOrder" style="opacity: 0;"
                                 >-</label
                             >
@@ -83,7 +82,7 @@
                                 <option value="NULLS LAST">Null Last</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-3">
+                        <div class="form-group col">
                             <label for="limitBy">Max Records:</label>
                             <input
                                 id="limitBy"
@@ -101,23 +100,61 @@
                             Filter Results By:
                         </label>
                         <button class="btn btn-primary" @click="addFilter()">
-                            <span class="fa fa-plus"></span>
+                            Add Filter
                         </button>
                     </div>
-                    <filter-entry
-                        v-for="(filter, index) in filters"
-                        :key="index"
-                        :showLogic="index !== filters.length - 1"
-                        :sObjectFieldsToFilter="sObjectFieldsToSort"
-                        :object="object"
-                        v-model="filters[index]"
-                    ></filter-entry>
+                    <div
+                        class="col-12 px-0 overflow-auto"
+                        style="max-height: 310px;"
+                    >
+                        <filter-entry
+                            v-for="(filter, index) in filters"
+                            :key="index"
+                            :index="index"
+                            :showLogic="index !== filters.length - 1"
+                            :sObjectFieldsToFilter="sObjectFieldsToSort"
+                            :object="object"
+                            v-model="filters[index]"
+                            @deleteEntry="onDelete"
+                        ></filter-entry>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row my-2">
+        <div class="row my-2 mb-3">
             <div class="col-12">
-                <label>Enter or modify a SOQL query below: </label>
+                <div class="row mb-2">
+                    <div class="col my-auto">
+                        <label>Enter or modify a SOQL query below: </label>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto my-auto">
+                                <label
+                                    class="form-check-label custom-checkbox-container"
+                                    for="autoFormatButton"
+                                >
+                                    Autoformat
+                                    <input
+                                        id="autoFormatButton"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        v-model="autoFormat"
+                                    />
+                                    <span class="checkmark" />
+                                </label>
+                            </div>
+                            <div class="col-auto pl-0">
+                                <button
+                                    class="btn btn-primary"
+                                    @click="formatSOQL()"
+                                >
+                                    Click to Format
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-12">
                         <codemirror
@@ -144,7 +181,7 @@
         <div v-if="soqlResult && soqlResult.length > 0" class="row">
             <div class="col">
                 <div class="table-responsive">
-                    <table class="table table-dark">
+                    <table class="table table-dark table-sm table-bordered">
                         <thead>
                             <tr>
                                 <th
@@ -183,10 +220,10 @@
         </div>
         <div v-if="error" class="row">
             <div class="col-12">
-                <label class="m-auto">{{error.errorCode}}</label>
+                <label class="m-auto">{{ error.errorCode }}</label>
             </div>
             <div class="col-12">
-                <label class="m-auto">{{error.message}}</label>
+                <label class="m-auto">{{ error.message }}</label>
             </div>
         </div>
     </div>
@@ -198,6 +235,7 @@ import 'codemirror/mode/sql/sql.js';
 import 'codemirror/lib/codemirror.css';
 import '../../static/css/vscode-dark.css';
 import FilterEntry from './FilterEntry.vue';
+import sqlFormatter from 'sql-formatter';
 
 export default {
     name: 'Index',
@@ -224,9 +262,9 @@ export default {
         });
         window.vscode.onReceiveSOQLResult((message) => {
             let response = message.data;
-            if(response.errorCode){
+            if (response.errorCode) {
                 this.error = response;
-            }else{
+            } else {
                 this.soqlResult = response;
             }
         });
@@ -244,6 +282,7 @@ export default {
                 lineWrapping: true,
                 line: true,
             },
+            autoFormat: false,
             soql: '',
             soqlResult: undefined,
             error: undefined,
@@ -256,7 +295,6 @@ export default {
                     logic: 'AND',
                     value: undefined,
                     filter: undefined,
-                    showLogic: false,
                 },
             ],
             isRefreshingMetadata: false,
@@ -336,10 +374,9 @@ export default {
                 {
                     field: undefined,
                     operator: undefined,
-                    logic: 'AND',
+                    logic: undefined,
                     value: undefined,
                     filter: undefined,
-                    showLogic: false,
                 },
             ];
             this.selectedFields = [];
@@ -371,6 +408,9 @@ export default {
         limitBy(newValue) {
             this.createSOQL();
         },
+        autoFormat(newValue) {
+            if (newValue) this.formatSOQL();
+        },
     },
     methods: {
         refreshSObjects() {
@@ -398,15 +438,15 @@ export default {
         },
         addToApex() {
             window.vscode.post({
-                cmd:'addToApex',
-                args: this.soql
+                cmd: 'addToApex',
+                args: this.soql,
             });
         },
         setSObjectFieldsToQuery() {
             const sobjectFields = this.$store.getters[
                 'sobjects/getSObjectFields'
             ](this.object);
-            this.sObjectFieldsToQuery = [{name: 'count()'}, ...sobjectFields];
+            this.sObjectFieldsToQuery = [{ name: 'count()' }, ...sobjectFields];
         },
         setSObjectFieldsToSort() {
             this.sObjectFieldsToSort = this.$store.getters[
@@ -414,14 +454,21 @@ export default {
             ](this.object);
         },
         createSOQL() {
-            this.soql =
+            const soql =
                 this.computedFields +
                 this.computedFilters +
                 this.computedSortBy +
                 this.computedLimitBy;
+            this.soql = this.autoFormat ? sqlFormatter.format(soql) : soql;
+        },
+        formatSOQL() {
+            this.soql = sqlFormatter.format(this.soql);
         },
         onCmReady(cm) {
             cm.setSize(null, 200);
+        },
+        onDelete(index) {
+            this.filters.splice(index, 1);
         },
     },
 };

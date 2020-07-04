@@ -1,10 +1,10 @@
 <template>
     <div class="col-12 form-row align-items-center">
-        <div class="form-group col-md-6 pr-2">
+        <div class="form-group col-md-5 mr-2">
             <select
                 ref="fieldname"
                 class="form-control"
-                v-model="filter.field"
+                v-model="value.field"
                 @input="changed"
             >
                 <option
@@ -16,11 +16,11 @@
                 </option>
             </select>
         </div>
-        <div class="form-group col-md-2 pr-2">
+        <div class="form-group col mr-2">
             <select
                 ref="operator"
                 class="form-control"
-                v-model="filter.operator"
+                v-model="value.operator"
                 @input="changed"
             >
                 <option value="=">=</option>
@@ -38,25 +38,32 @@
                 <option value="excludes">Excludes</option>
             </select>
         </div>
-        <div class="form-group col-md-2 pr-2">
+        <div class="form-group col mr-2">
             <input
                 ref="value"
                 type="text"
                 class="form-control"
-                v-model="filter.value"
+                v-model="value.value"
                 @input="changed"
             />
         </div>
-        <div v-if="showLogic" class="form-group col-md-2">
+        <div v-if="showLogic" class="form-group col mr-2">
             <select
                 ref="logic"
                 class="form-control"
-                v-model="filter.logic"
+                v-model="value.logic"
                 @input="changed"
             >
                 <option value="AND">AND</option>
                 <option value="OR">OR</option>
             </select>
+        </div>
+        <div class="form-group col-md-auto">
+            <div class="d-flex">
+                <button class="ml-auto btn btn-primary" @click="deleteFilter()">
+                    <span class="fa fa-trash"></span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -64,6 +71,7 @@
 <script>
 export default {
     props: {
+        index: Number,
         value: Object,
         object: String,
         sObjectFieldsToFilter: {
@@ -136,6 +144,9 @@ export default {
         },
     },
     watch: {
+        value(newValue) {
+            this.filter = newValue;
+        },
         'filter.value'() {
             this.computeFilter();
         },
@@ -160,6 +171,9 @@ export default {
             } else {
                 this.filter.filter = '';
             }
+        },
+        deleteFilter() {
+            this.$emit('deleteEntry', this.index);
         },
     },
 };
