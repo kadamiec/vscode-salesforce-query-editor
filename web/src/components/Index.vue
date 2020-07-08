@@ -336,6 +336,7 @@ export default {
                 this.$store.dispatch('sobjects/getSObjectDescribe', newValue);
             } else {
                 this.setSObjectFieldsToQuery();
+                this.setSObjectFieldsToSort();
             }
         },
         selectedFields(newValue) {

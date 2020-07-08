@@ -18,7 +18,7 @@
     "color": "#292929",
     "theme": "dark"
   },
-  "version": "0.2.2",
+  "version": "0.2.3",
   "engines": {
     "vscode": "^1.32.0"
   },
@@ -35,28 +35,36 @@
   ],
   "main": "./src/extension.js",
   "contributes": {
-    "commands": [{
-      "command": "SFDX.soqlEditor",
-      "title": "SFDX: SOQL Editor",
-      "icon": {
-        "light": "/.images/icon_light.png",
-        "dark": "/.images/icon_dark.png"
+    "commands": [
+      {
+        "command": "SFDX.soqlEditor",
+        "title": "SFDX: SOQL Editor",
+        "icon": {
+          "light": "/.images/icon_light.png",
+          "dark": "/.images/icon_dark.png"
+        }
       }
-    }],
+    ],
     "menus": {
-      "editor/title": [{
-        "command": "SFDX.soqlEditor",
-        "group": "navigation",
-        "when": "resourceFilename =~ /.cls/"
-      }],
-      "explorer/context": [{
-        "command": "SFDX.soqlEditor",
-        "when": "resourceFilename =~ /.cls/"
-      }],
-      "editor/context": [{
-        "command": "SFDX.soqlEditor",
-        "when": "resourceFilename =~ /.cls/"
-      }]
+      "editor/title": [
+        {
+          "command": "SFDX.soqlEditor",
+          "group": "navigation",
+          "when": "resourceFilename =~ /.cls/"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "SFDX.soqlEditor",
+          "when": "resourceFilename =~ /.cls/"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "SFDX.soqlEditor",
+          "when": "resourceFilename =~ /.cls/"
+        }
+      ]
     },
     "configuration": {
       "title": "Salesforce SOQL Editor",

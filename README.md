@@ -11,6 +11,8 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 - [x] Create SOQL Queries
 - [x] Run SOQL Queries.
 - [x] Add SOQL Queries to Apex.
+- [ ] Inner Queries.
+- [ ] Reference Relationship Fields.
 
 ## Requirements
 
