@@ -18,7 +18,7 @@
     "color": "#292929",
     "theme": "dark"
   },
-  "version": "0.2.3",
+  "version": "0.2.4",
   "engines": {
     "vscode": "^1.32.0"
   },
@@ -26,9 +26,9 @@
     "Other"
   ],
   "keywords": [
+    "soql editor",
     "salesforce",
-    "soql",
-    "editor"
+    "sfdx"
   ],
   "activationEvents": [
     "workspaceContains:sfdx-project.json"
