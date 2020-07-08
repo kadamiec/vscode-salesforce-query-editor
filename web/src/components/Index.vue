@@ -1,232 +1,181 @@
 <template>
-    <div class="container h-100 px-xl-5 py-2">
+  <div class="container h-100 px-xl-5 py-2">
+    <div class="row">
+      <div class="ml-auto pr-3">
+        <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/allanoricil">
+          <img
+            src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+            alt="Buy me a coffee"
+          >
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="row mb-3">
+          <div class="col">
+            <label for="fieldRelatedTo">Object</label>
+            <select id="fieldRelatedTo" v-model="object" class="form-control">
+              <option
+                v-for="(object, index) in objects"
+                :key="index"
+                :value="object.name"
+              >{{ object.name }}</option>
+            </select>
+          </div>
+        </div>
         <div class="row">
-            <div class="col-4">
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="fieldRelatedTo">Object</label>
-                        <select
-                            id="fieldRelatedTo"
-                            v-model="object"
-                            class="form-control"
-                        >
-                            <option
-                                v-for="(object, index) in objects"
-                                :key="index"
-                                :value="object.name"
-                                >{{ object.name }}</option
-                            >
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <select
-                            size="16"
-                            class="mr-2 w-100"
-                            multiple
-                            v-model="selectedFields"
-                        >
-                            <option
-                                v-for="(field, index) in sObjectFieldsToQuery"
-                                :key="index"
-                                :value="field.name"
-                            >
-                                {{ field.name }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-8">
-                <div class="row">
-                    <div class="col-12 form-row align-items-center">
-                        <div class="form-group col-md-5 mr-2">
-                            <label for="sortBy">Order by:</label>
-                            <select
-                                id="sortBy"
-                                class="form-control"
-                                v-model="sortBy"
-                            >
-                                <option
-                                    v-for="(field,
+          <div class="col">
+            <select size="16" class="mr-2 w-100" multiple v-model="selectedFields">
+              <option
+                v-for="(field, index) in sObjectFieldsToQuery"
+                :key="index"
+                :value="field.name"
+              >{{ field.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="row">
+          <div class="col-12 form-row align-items-center">
+            <div class="form-group col-md-5 mr-2">
+              <label for="sortBy">Order by:</label>
+              <select id="sortBy" class="form-control" v-model="sortBy">
+                <option
+                  v-for="(field,
                                     index) in sObjectFieldsToSort"
-                                    :key="index"
-                                    :value="field.name"
-                                >
-                                    {{ field.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-2 mr-2">
-                            <label for="orderBy" style="opacity: 0;">-</label>
-                            <select
-                                id="orderBy"
-                                class="form-control"
-                                v-model="orderBy"
-                            >
-                                <option value="ASC">A to Z</option>
-                                <option value="DESC">Z to A</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-2 mr-2">
-                            <label for="nullsOrder" style="opacity: 0;"
-                                >-</label
-                            >
-                            <select
-                                id="nullsOrder"
-                                class="form-control"
-                                v-model="nullsOrder"
-                            >
-                                <option value="NULLS FIRST">Null First</option>
-                                <option value="NULLS LAST">Null Last</option>
-                            </select>
-                        </div>
-                        <div class="form-group col">
-                            <label for="limitBy">Max Records:</label>
-                            <input
-                                id="limitBy"
-                                type="number"
-                                class="form-control"
-                                min="0"
-                                v-model="limitBy"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 form-row justify-content-between mb-2">
-                        <label class="my-auto" for="inputCity">
-                            Filter Results By:
-                        </label>
-                        <button class="btn btn-primary" @click="addFilter()">
-                            Add Filter
-                        </button>
-                    </div>
-                    <div
-                        class="col-12 px-0 overflow-auto"
-                        style="max-height: 310px;"
-                    >
-                        <filter-entry
-                            v-for="(filter, index) in filters"
-                            :key="index"
-                            :index="index"
-                            :showLogic="index !== filters.length - 1"
-                            :sObjectFieldsToFilter="sObjectFieldsToSort"
-                            :object="object"
-                            v-model="filters[index]"
-                            @deleteEntry="onDelete"
-                        ></filter-entry>
-                    </div>
-                </div>
+                  :key="index"
+                  :value="field.name"
+                >{{ field.name }}</option>
+              </select>
             </div>
-        </div>
-        <div class="row my-2 mb-3">
-            <div class="col-12">
-                <div class="row mb-2">
-                    <div class="col my-auto">
-                        <label>Enter or modify a SOQL query below: </label>
-                    </div>
-                    <div class="col-auto">
-                        <div class="row">
-                            <div class="col-auto my-auto">
-                                <label
-                                    class="form-check-label custom-checkbox-container"
-                                    for="autoFormatButton"
-                                >
-                                    Autoformat
-                                    <input
-                                        id="autoFormatButton"
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        v-model="autoFormat"
-                                    />
-                                    <span class="checkmark" />
-                                </label>
-                            </div>
-                            <div class="col-auto pl-0">
-                                <button
-                                    class="btn btn-primary"
-                                    @click="formatSOQL()"
-                                >
-                                    Click to Format
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <codemirror
-                            ref="cmEditor"
-                            v-model="soql"
-                            :options="cmOptions"
-                            heigth="200px"
-                            @ready="onCmReady"
-                        />
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-12">
-                        <button class="btn btn-primary" @click="executeQuery()">
-                            Query
-                        </button>
-                        <button class="btn btn-primary" @click="addToApex()">
-                            Add to Apex
-                        </button>
-                    </div>
-                </div>
+            <div class="form-group col-md-2 mr-2">
+              <label for="orderBy" style="opacity: 0;">-</label>
+              <select id="orderBy" class="form-control" v-model="orderBy">
+                <option value="ASC">A to Z</option>
+                <option value="DESC">Z to A</option>
+              </select>
             </div>
+            <div class="form-group col-md-2 mr-2">
+              <label for="nullsOrder" style="opacity: 0;">-</label>
+              <select id="nullsOrder" class="form-control" v-model="nullsOrder">
+                <option value="NULLS FIRST">Null First</option>
+                <option value="NULLS LAST">Null Last</option>
+              </select>
+            </div>
+            <div class="form-group col">
+              <label for="limitBy">Max Records:</label>
+              <input id="limitBy" type="number" class="form-control" min="0" v-model="limitBy">
+            </div>
+          </div>
         </div>
-        <div v-if="soqlResult && soqlResult.length > 0" class="row">
-            <div class="col">
-                <div class="table-responsive">
-                    <table class="table table-dark table-sm table-bordered">
-                        <thead>
-                            <tr>
-                                <th
-                                    scope="col"
-                                    v-for="(field, index) in soqlResultKeys"
-                                    :key="index"
-                                >
-                                    {{ field }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(record,
+        <div class="row">
+          <div class="col-12 form-row justify-content-between mb-2">
+            <label class="my-auto" for="inputCity">Filter Results By:</label>
+            <button class="btn btn-primary" @click="addFilter()">Add Filter</button>
+          </div>
+          <div class="col-12 px-0 overflow-auto" style="max-height: 310px;">
+            <filter-entry
+              v-for="(filter, index) in filters"
+              :key="index"
+              :index="index"
+              :showLogic="index !== filters.length - 1"
+              :sObjectFieldsToFilter="sObjectFieldsToSort"
+              :object="object"
+              v-model="filters[index]"
+              @deleteEntry="onDelete"
+            ></filter-entry>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row my-2 mb-3">
+      <div class="col-12">
+        <div class="row mb-2">
+          <div class="col my-auto">
+            <label>Enter or modify a SOQL query below:</label>
+          </div>
+          <div class="col-auto">
+            <div class="row">
+              <div class="col-auto my-auto">
+                <label class="form-check-label custom-checkbox-container" for="autoFormatButton">
+                  Autoformat
+                  <input
+                    id="autoFormatButton"
+                    class="form-check-input"
+                    type="checkbox"
+                    v-model="autoFormat"
+                  >
+                  <span class="checkmark"/>
+                </label>
+              </div>
+              <div class="col-auto pl-0">
+                <button class="btn btn-primary" @click="formatSOQL()">Click to Format</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <codemirror
+              ref="cmEditor"
+              v-model="soql"
+              :options="cmOptions"
+              heigth="200px"
+              @ready="onCmReady"
+            />
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-12">
+            <button class="btn btn-primary" @click="executeQuery()">Query</button>
+            <button class="btn btn-primary" @click="addToApex()">Add to Apex</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="soqlResult && soqlResult.length > 0" class="row">
+      <div class="col">
+        <div class="table-responsive">
+          <table class="table table-dark table-sm table-bordered">
+            <thead>
+              <tr>
+                <th scope="col" v-for="(field, index) in soqlResultKeys" :key="index">{{ field }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(record,
                                 indexRecord) in soqlResultValues"
-                                :key="indexRecord"
-                            >
-                                <td
-                                    v-for="(value, indexValue) in Object.values(
+                :key="indexRecord"
+              >
+                <td
+                  v-for="(value, indexValue) in Object.values(
                                         record
                                     )"
-                                    :key="indexValue"
-                                >
-                                    {{ value }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                  :key="indexValue"
+                >{{ value }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div v-if="soqlResult && soqlResult.length === 0" class="row">
-            <div class="col-12">
-                <label class="m-auto">0 Results</label>
-            </div>
-        </div>
-        <div v-if="error" class="row">
-            <div class="col-12">
-                <label class="m-auto">{{ error.errorCode }}</label>
-            </div>
-            <div class="col-12">
-                <label class="m-auto">{{ error.message }}</label>
-            </div>
-        </div>
+      </div>
     </div>
+    <div v-if="soqlResult && soqlResult.length === 0" class="row">
+      <div class="col-12">
+        <label class="m-auto">0 Results</label>
+      </div>
+    </div>
+    <div v-if="error" class="row">
+      <div class="col-12">
+        <label class="m-auto">{{ error.errorCode }}</label>
+      </div>
+      <div class="col-12">
+        <label class="m-auto">{{ error.message }}</label>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -359,14 +308,6 @@ export default {
     },
     watch: {
         object(newValue) {
-            const sObjectFields = this.$store.getters[
-                'sobjects/getSObjectFields'
-            ](this.object);
-            if (sObjectFields.length === 0) {
-                this.$store.dispatch('sobjects/getSObjectDescribe', newValue);
-            } else {
-                this.setSObjectFieldsToQuery();
-            }
             this.soql = '';
             this.soqlResult = undefined;
             this.error = undefined;
@@ -382,10 +323,20 @@ export default {
             this.selectedFields = [];
             this.isRefreshingMetadata = false;
             this.sObjectFieldsToQuery = [];
-            (this.sObjectFieldsToSort = []), (this.sortBy = undefined);
+            this.sObjectFieldsToSort = [];
+            this.sortBy = undefined;
             this.orderBy = 'ASC';
             this.nullsOrder = 'NULLS FIRST';
             this.limitBy = undefined;
+
+            const sObjectFields = this.$store.getters[
+                'sobjects/getSObjectFields'
+            ](this.object);
+            if (sObjectFields.length === 0) {
+                this.$store.dispatch('sobjects/getSObjectDescribe', newValue);
+            } else {
+                this.setSObjectFieldsToQuery();
+            }
         },
         selectedFields(newValue) {
             this.createSOQL();

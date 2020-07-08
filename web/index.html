@@ -1,243 +1,270 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <title>web</title>
-        <link rel="stylesheet" href="./static/css/vscode.css" />
-        <script
-            src="https://kit.fontawesome.com/cd477b85e2.js"
-            crossorigin="anonymous"
-        ></script>
-        <link
-            rel="stylesheet"
-            href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css"
-        />
-    </head>
-    <style>
-        html,
-        body,
-        #app {
-            padding: 0;
-            margin: 0;
-            background-color: var(--vscode-editor-background) !important;
-            position: relative;
-            float: left;
-            width: 100%;
-        }
 
-        .op-1 {
-            opacity: 1 !important;
-        }
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>web</title>
+    <link rel="stylesheet" href="./static/css/vscode.css" />
+    <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/cd477b85e2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css" />
+</head>
+<style>
+    html,
+    body,
+    #app {
+        padding: 0;
+        margin: 0;
+        background-color: var(--vscode-editor-background) !important;
+        position: relative;
+        float: left;
+        width: 100%;
+    }
 
-        .op-0 {
-            opacity: 0 !important;
-        }
+    .op-1 {
+        opacity: 1 !important;
+    }
 
-        .invisible {
-            visibility: hidden;
-        }
+    .op-0 {
+        opacity: 0 !important;
+    }
 
-        .visible {
-            visibility: visible;
-        }
+    .invisible {
+        visibility: hidden;
+    }
 
-        .icon {
-            color: var(--vscode-menu-foreground) !important;
-            font-size: 35px !important;
-        }
+    .visible {
+        visibility: visible;
+    }
 
-        .icon:hover {
-            color: var(--vscode-menu-selectionForeground) !important;
-            cursor: pointer;
-        }
+    .icon {
+        color: var(--vscode-menu-foreground) !important;
+        font-size: 35px !important;
+    }
 
-        .container {
-            max-width: 100% !important;
-        }
+    .icon:hover {
+        color: var(--vscode-menu-selectionForeground) !important;
+        cursor: pointer;
+    }
 
-        .form-group {
-            padding: 0 !important;
-        }
+    .container {
+        max-width: 100% !important;
+    }
 
-        input,
-        textarea,
-        select {
-            border: 1px solid var(--vscode-inputOption-activeBackground) !important;
-            border-radius: 0 !important;
-            background-color: var(--vscode-input-background) !important;
-            color: var(--vscode-input-foreground) !important;
-        }
+    .form-group {
+        padding: 0 !important;
+    }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border: 1px solid var(--vscode-focusBorder) !important;
-            background-color: var(--vscode-input-background) !important;
-            color: var(--vscode-input-foreground) !important;
-            box-shadow: none !important;
-        }
+    input,
+    textarea,
+    select {
+        border: 1px solid var(--vscode-inputOption-activeBackground) !important;
+        border-radius: 0 !important;
+        background-color: var(--vscode-input-background) !important;
+        color: var(--vscode-input-foreground) !important;
+    }
 
-        input:invalid,
-        textarea:invalid,
-        select:invalid {
-            background-color: var(
-                --vscode-inputValidation-errorBackground
-            ) !important;
-            border-color: var(--vscode-inputValidation-errorBorder) !important;
-        }
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border: 1px solid var(--vscode-focusBorder) !important;
+        background-color: var(--vscode-input-background) !important;
+        color: var(--vscode-input-foreground) !important;
+        box-shadow: none !important;
+    }
 
-        ::placeholder {
-            /* Chrome, Firefox, Opera, Safari 10.1+ */
-            color: var(--vscode-input-placeholderForeground) !important;
-            opacity: 1 !important;
-            /* Firefox */
-        }
+    input:invalid,
+    textarea:invalid,
+    select:invalid {
+        background-color: var(--vscode-inputValidation-errorBackground) !important;
+        border-color: var(--vscode-inputValidation-errorBorder) !important;
+    }
 
-        label {
-            color: var(--vscode-menu-foreground) !important;
-            font-family: var(--vscode-font-family) !important;
-            font-weight: var(--vscode-font-weight) !important;
-            font-size: var(--vscode-font-size) !important;
-        }
+    ::placeholder {
+        /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: var(--vscode-input-placeholderForeground) !important;
+        opacity: 1 !important;
+        /* Firefox */
+    }
 
-        small {
-            color: var(--vscode-menu-foreground) !important;
-            font-family: var(--vscode-font-family) !important;
-            font-weight: var(--vscode-font-weight) !important;
-        }
+    label {
+        color: var(--vscode-menu-foreground) !important;
+        font-family: var(--vscode-font-family) !important;
+        font-weight: var(--vscode-font-weight) !important;
+        font-size: var(--vscode-font-size) !important;
+    }
 
-        h1,
-        h2 {
-            color: var(--vscode-menu-foreground) !important;
-            font-family: var(--vscode-font-family) !important;
-            font-weight: var(--vscode-font-weight) !important;
-            text-transform: uppercase !important;
-        }
+    small {
+        color: var(--vscode-menu-foreground) !important;
+        font-family: var(--vscode-font-family) !important;
+        font-weight: var(--vscode-font-weight) !important;
+    }
 
-        button,
-        button:disabled {
-            background-color: var(--vscode-button-background) !important;
-            color: var(--vscode-button-foreground) !important;
-            border: none !important;
-            border-radius: 0 !important;
-        }
+    h1,
+    h2 {
+        color: var(--vscode-menu-foreground) !important;
+        font-family: var(--vscode-font-family) !important;
+        font-weight: var(--vscode-font-weight) !important;
+        text-transform: uppercase !important;
+    }
 
-        button:focus,
-        button:hover,
-        button:hover:disabled,
-        button:active {
-            border: none !important;
-            background-color: var(--vscode-button-hoverBackground) !important;
-            box-shadow: none !important;
-        }
+    button,
+    button:disabled {
+        background-color: var(--vscode-button-background) !important;
+        color: var(--vscode-button-foreground) !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
 
-        .custom-checkbox-container {
-            display: block !important;
-            position: relative !important;
-            padding-left: 35px !important;
-            cursor: pointer !important;
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-        }
+    button:focus,
+    button:hover,
+    button:hover:disabled,
+    button:active {
+        border: none !important;
+        background-color: var(--vscode-button-hoverBackground) !important;
+        box-shadow: none !important;
+    }
 
-        /* Hide the browser's default checkbox */
-        input[type='checkbox'] {
-            position: absolute !important;
-            opacity: 0 !important;
-            cursor: pointer !important;
-            height: 0 !important;
-            width: 0 !important;
-        }
+    .custom-checkbox-container {
+        display: block !important;
+        position: relative !important;
+        padding-left: 35px !important;
+        cursor: pointer !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+    }
 
-        /* Create a custom checkbox */
-        .checkmark {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            height: 20px !important;
-            width: 20px !important;
-            border: 1px solid var(--vscode-inputOption-activeBackground) !important;
-            background-color: var(--vscode-input-background) !important;
-        }
+    /* Hide the browser's default checkbox */
+    input[type='checkbox'] {
+        position: absolute !important;
+        opacity: 0 !important;
+        cursor: pointer !important;
+        height: 0 !important;
+        width: 0 !important;
+    }
 
-        /* On mouse-over, add a grey background color */
-        .custom-checkbox-container:hover input ~ .checkmark {
-            background-color: var(--vscode-button-background) !important;
-        }
+    /* Create a custom checkbox */
+    .checkmark {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 20px !important;
+        width: 20px !important;
+        border: 1px solid var(--vscode-inputOption-activeBackground) !important;
+        background-color: var(--vscode-input-background) !important;
+    }
 
-        /* When the checkbox is checked, add a blue background */
-        .custom-checkbox-container input:checked ~ .checkmark {
-            background-color: var(--vscode-button-background) !important;
-        }
+    /* On mouse-over, add a grey background color */
+    .custom-checkbox-container:hover input~.checkmark {
+        background-color: var(--vscode-button-background) !important;
+    }
 
-        /* Create the checkmark/indicator (hidden when not checked) */
-        .checkmark:after {
-            content: '' !important;
-            position: absolute !important;
-            display: none !important;
-        }
+    /* When the checkbox is checked, add a blue background */
+    .custom-checkbox-container input:checked~.checkmark {
+        background-color: var(--vscode-button-background) !important;
+    }
 
-        /* Show the checkmark when checked */
-        .custom-checkbox-container input:checked ~ .checkmark:after {
-            display: block !important;
-        }
+    /* Create the checkmark/indicator (hidden when not checked) */
+    .checkmark:after {
+        content: '' !important;
+        position: absolute !important;
+        display: none !important;
+    }
 
-        /* Style the checkmark/indicator */
-        .custom-checkbox-container .checkmark:after {
-            left: 7px !important;
-            top: 4px !important;
-            width: 5px !important;
-            height: 10px !important;
-            border: solid var(--vscode-button-foreground) !important;
-            border-width: 0 3px 3px 0 !important;
-            -webkit-transform: rotate(45deg) !important;
-            -ms-transform: rotate(45deg) !important;
-            transform: rotate(45deg) !important;
-        }
+    /* Show the checkmark when checked */
+    .custom-checkbox-container input:checked~.checkmark:after {
+        display: block !important;
+    }
 
-        .modal-content {
-            background-color: var(--vscode-editor-background) !important;
-            border-radius: 0 !important;
-        }
+    /* Style the checkmark/indicator */
+    .custom-checkbox-container .checkmark:after {
+        left: 7px !important;
+        top: 4px !important;
+        width: 5px !important;
+        height: 10px !important;
+        border: solid var(--vscode-button-foreground) !important;
+        border-width: 0 3px 3px 0 !important;
+        -webkit-transform: rotate(45deg) !important;
+        -ms-transform: rotate(45deg) !important;
+        transform: rotate(45deg) !important;
+    }
 
-        .modal-header {
-            border-bottom: none !important;
-            padding-bottom: 0 !important;
-        }
+    .modal-content {
+        background-color: var(--vscode-editor-background) !important;
+        border-radius: 0 !important;
+    }
 
-        .modal-body {
-            padding-bottom: 0 !important;
-        }
+    .modal-header {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
 
-        .modal-title {
-            color: var(--vscode-titleBar-activeForeground) !important;
-        }
+    .modal-body {
+        padding-bottom: 0 !important;
+    }
 
-        .modal-header > .close {
-            background-color: transparent !important;
-        }
+    .modal-title {
+        color: var(--vscode-titleBar-activeForeground) !important;
+    }
 
-        .modal-footer {
-            border-top: none !important;
-        }
+    .modal-header>.close {
+        background-color: transparent !important;
+    }
 
-        .table-dark th,
-        .table-dark td,
-        .table-dark thead th {
-            border-color: var(--vscode-badge-background) !important;
-        }
+    .modal-footer {
+        border-top: none !important;
+    }
 
-        .table-dark {
-            background-color: var(--vscode-input-background) !important;
-            color: var(--vscode-input-foreground) !important;
-        }
-    </style>
+    .table-dark th,
+    .table-dark td,
+    .table-dark thead th {
+        border-color: var(--vscode-badge-background) !important;
+    }
 
-    <body>
-        <div id="app"></div>
-    </body>
+    .table-dark {
+        background-color: var(--vscode-input-background) !important;
+        color: var(--vscode-input-foreground) !important;
+    }
+
+    .bmc-button img {
+        height: 34px !important;
+        width: 27px !important;
+        margin-bottom: 1px !important;
+        box-shadow: none !important;
+        border: none !important;
+        vertical-align: middle !important;
+    }
+
+    .bmc-button {
+        margin-left: 20px;
+        padding: 7px 10px 7px 10px !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        color: #ffffff !important;
+        background-color: #FF813F !important;
+        font-size: 28px !important;
+        letter-spacing: 0.6px !important;
+        margin: 0 auto !important;
+        font-family: 'Cookie', cursive !important;
+        box-sizing: border-box !important;
+    }
+
+    .bmc-button:hover,
+    .bmc-button:active,
+    .bmc-button:focus {
+        text-decoration: none !important;
+        opacity: 0.85 !important;
+        color: #ffffff !important;
+    }
+
+</style>
+
+<body>
+    <div id="app"></div>
+</body>
+
 </html>

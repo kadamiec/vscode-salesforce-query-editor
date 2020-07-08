@@ -11,7 +11,7 @@
   "description": "Run SOQL without leaving VSCode",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AllanOricil/salesforce-soql-editor.git"
+    "url": "https://github.com/AllanOricil/SOQL-Editor-Issues.git"
   },
   "icon": ".images/icon.png",
   "galleryBanner": {
@@ -35,36 +35,28 @@
   ],
   "main": "./src/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "SFDX.soqlEditor",
-        "title": "SFDX: SOQL Editor",
-        "icon": {
-          "light": "/.images/icon_light.png",
-          "dark": "/.images/icon_dark.png"
-        }
+    "commands": [{
+      "command": "SFDX.soqlEditor",
+      "title": "SFDX: SOQL Editor",
+      "icon": {
+        "light": "/.images/icon_light.png",
+        "dark": "/.images/icon_dark.png"
       }
-    ],
+    }],
     "menus": {
-      "editor/title": [
-        {
-          "command": "SFDX.soqlEditor",
-          "group": "navigation",
-          "when": "resourceFilename =~ /.cls/"
-        }
-      ],
-      "explorer/context": [
-        {
-          "command": "SFDX.soqlEditor",
-          "when": "resourceFilename =~ /.cls/"
-        }
-      ],
-      "editor/context": [
-        {
-          "command": "SFDX.soqlEditor",
-          "when": "resourceFilename =~ /.cls/"
-        }
-      ]
+      "editor/title": [{
+        "command": "SFDX.soqlEditor",
+        "group": "navigation",
+        "when": "resourceFilename =~ /.cls/"
+      }],
+      "explorer/context": [{
+        "command": "SFDX.soqlEditor",
+        "when": "resourceFilename =~ /.cls/"
+      }],
+      "editor/context": [{
+        "command": "SFDX.soqlEditor",
+        "when": "resourceFilename =~ /.cls/"
+      }]
     },
     "configuration": {
       "title": "Salesforce SOQL Editor",
