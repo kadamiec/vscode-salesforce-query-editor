@@ -87,7 +87,9 @@
   },
   "dependencies": {
     "@types/vscode": "^1.46.0",
+    "applicationinsights": "^1.8.2",
     "axios": "^0.19.2",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.0.1",
+    "vscode-extension-telemetry": "^0.1.6"
   }
 }
