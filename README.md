@@ -20,6 +20,10 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 - VS Code 1.32.0 or above
 - MUST BE USED FROM A SFDX PROJECT
 
+## Issues
+
+You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
+
 # Instalation
 
 Open VS Code, click on the Extension button in the side bar menu, search for `Salesforce SOQL Editor` and click `Install`.
