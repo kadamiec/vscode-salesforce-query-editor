@@ -2,11 +2,8 @@
   <div class="container h-100 px-xl-5 py-2">
     <div class="row">
       <div class="ml-auto pr-3">
-        <a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/allanoricil">
-          <img
-            src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
-            alt="Buy me a coffee"
-          >
+        <a target="_blank" href="https://www.buymeacoffee.com/allanoricil">
+          <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
         </a>
       </div>
     </div>
