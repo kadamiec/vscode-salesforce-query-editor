@@ -1,14 +1,10 @@
 /* eslint-disable no-unused-vars */
-const vscode = require("vscode");
-const path = require("path");
-const fs = require("fs-extra");
-const BridgeData = require("./vscode.bridge");
-const {
-  Message,
-  ReceivedMessage,
-  Handler
-} = require("./vscode.message");
-const WebviewApi = require("./vscode.webviewApi");
+const vscode = require('vscode');
+const path = require('path');
+const fs = require('fs-extra');
+const BridgeData = require('./vscode.bridge');
+const { Message, ReceivedMessage, Handler } = require('./vscode.message');
+const WebviewApi = require('./vscode.webviewApi');
 
 /**
  * WebView
@@ -89,7 +85,7 @@ class WebView {
       this.panel.reveal(viewColumn);
     } else {
       this.channel = vscode.window.createOutputChannel(
-        "Salesforce Schema Builder"
+        'Salesforce Schema Builder'
       );
       this._panel = vscode.window.createWebviewPanel(
         viewType,
@@ -98,26 +94,24 @@ class WebView {
         {
           enableScripts, // default disabled
           retainContextWhenHidden, // keep state and avoid being reset When hidden webview
-          localResourceRoots: [
-            vscode.Uri.file(path.dirname(htmlPath))
-          ],
+          localResourceRoots: [vscode.Uri.file(path.dirname(htmlPath))],
         }
       );
 
       const darkIcon = vscode.Uri.file(
-        path.join(context.extensionPath, ".images", "icon_dark.png")
+        path.join(context.extensionPath, '.images', 'icon_dark.png')
       );
 
       const lightIcon = vscode.Uri.file(
-        path.join(context.extensionPath, ".images", "icon_light.png")
+        path.join(context.extensionPath, '.images', 'icon_light.png')
       );
-      
+
       this.panel.iconPath = {
         light: lightIcon,
-        dark: darkIcon
+        dark: darkIcon,
       };
       // load html
-      this.panel.webview.html = WebView.getHtml4Path(htmlPath);
+      this.panel.webview.html = this.getHtml4Path(htmlPath);
       this.panel.onDidDispose(
         () => this.didDispose(),
         undefined,
@@ -186,15 +180,16 @@ class WebView {
     htmlPath ||
       (htmlPath = path.join(
         context.extensionPath,
-        "web",
-        "dist",
-        "index.html"
+        'web',
+        'dist',
+        'index.html'
       ));
     context.subscriptions.push(
       vscode.commands.registerCommand(cmdName, (uri) => {
         this._uri = uri;
         this.showPanel(context, htmlPath);
-        this.bridgeData.updateItems({
+        this.bridgeData.updateItems(
+          {
             extensionPath: context.extensionPath,
             rootPath: vscode.workspace.rootPath,
             startPath: uri ? uri.path : vscode.workspace.rootPath,
@@ -221,18 +216,18 @@ class WebView {
    * @returns
    * @memberof WebView
    */
-  static getHtml4Path(htmlPath) {
+  getHtml4Path(htmlPath) {
     const dirPath = path.dirname(htmlPath);
-    let html = fs.readFileSync(htmlPath, "utf-8");
+    let html = fs.readFileSync(htmlPath, 'utf-8');
     html = html.replace(/(href=|src=)(.+?)(\ |>)/g, (m, $1, $2, $3) => {
       let uri = $2;
-      uri = uri.replace('"', "").replace("'", "");
-      uri.indexOf("/static") === 0 && (uri = `.${uri}`);
-      if (uri.substring(0, 1) == ".") {
-        uri = `${$1}${vscode.Uri.file(path.resolve(dirPath, uri))
-          .with({ scheme: "vscode-resource" })
-          .toString()}${$3}`;
-        return uri.replace("%22", "");
+      uri = uri.replace('"', '').replace("'", '');
+      uri.indexOf('/static') === 0 && (uri = `.${uri}`);
+      if (uri.substring(0, 1) == '.') {
+        const resourceUriOnDisk = vscode.Uri.file(path.resolve(dirPath, uri));
+        const resourceUri = this.panel.webview.asWebviewUri(resourceUriOnDisk);
+        uri = `${$1}${resourceUri}${$3}`;
+        return uri.replace('%22', '');
       }
       return m;
     });

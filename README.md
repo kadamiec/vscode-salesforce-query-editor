@@ -22,27 +22,23 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 
 # Instalation
 
-Before installing the extension, configure a Default Username in the SFDX using the Global flag.
-
-```
-sfdx force:config:set defaultusername=me@myhub.org -g
-```
-
 Open VS Code, click on the Extension button in the side bar menu, search for `Salesforce SOQL Editor` and click `Install`.
 
 <img src="https://drive.google.com/uc?id=1Rvs9f6quK06iQnIo5fqr7iiQfJXbQQkB" width="800px"></img>
 
-Then open a SFDX project and wait for the Activation Message to appear. It will only be activated in projects that contain a `sfdx-project.json`.
+Then open a SFDX project and wait for the Activation Message to appear. The extension will be activated automatically in workspaces that have the file `sfdx-project.json`.
 
 <img src="https://drive.google.com/uc?id=1Hdr8xEuQ6ct_g37SLG29fFGk6G-BBExK" width="600px"></img>
 
-Now you can use it following the instructions below.
+In cases where the file `sfdx-project.json` is not in the root of the current workspace, you can manually activate the extension by pressing `Ctrl + Shift + P` and then selecting `SFDX: SOQL Editor`.
+
+<img src="https://drive.google.com/uc?id=1etE2ZuZBOn0bEvNyTTlLWvegzpwOAZnP" width="600px"></img>
 
 # How to use the SOQL Editor
 
 ## Choose a Default Username / Environment
 
-Configure a Default Username in the SFDX using the Global flag. The UI will this user to query the data.
+Configure a Default Username in the SFDX using the Global flag. The App will use this user to query the data.
 
 ```
 sfdx force:config:set defaultusername=me@myhub.org -g
@@ -73,7 +69,7 @@ Open an Apex class and click on the button shown in the image below. This button
 ## Run a SOQL query
 
 Wait a few seconds after the editor is opened to see the available SObjects.
-Once the data is loaded, choose an SObject and wait until the available fields are displayed right below the object name.
+Once the data is loaded, choose a SObject and wait until the available fields are displayed right below the object name.
 To select multiple fields press `CTRL` and click on a new field.
 To add multiple `WHERE` conditions, click on the `+` button to add a new Filter entry.
 To `ORDER BY` your results use the three Order by fields that are to the right of the Object selection.
