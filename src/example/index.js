@@ -1,13 +1,7 @@
 // @ts-nocheck
 const vscode = require('vscode');
-const fs = require('fs-extra');
-const path = require('path');
 const EGWebView = require('./e.g.webview');
 const TelemetryReporter = require('vscode-extension-telemetry');
-
-const {
-  setupSchemaGlobalDirectory
-} = require('../lib/utils.js');
 
 const name = 'SOQL Editor';
 const webview = new EGWebView();

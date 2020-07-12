@@ -124,15 +124,18 @@ class _WebviewApi {
      * Find file in current workspace
      * @type {({include, exclude}: {include: string, exclude?: string}) => Thenable<string[]>}
      */
-    this.findFileInWorkspace = ({ include, exclude = undefined }) => {
+    this.findFileInWorkspace = ({
+      include,
+      exclude = undefined
+    }) => {
       return ApiPromise((resolve) => {
         vscode.workspace.findFiles(include, exclude).then(
           (uris) => {
             resolve(
               uris.map((uri) => {
-                return isWin && uri.path.startsWith("/")
-                  ? uri.path.slice(1)
-                  : uri.path;
+                return isWin && uri.path.startsWith("/") ?
+                  uri.path.slice(1) :
+                  uri.path;
               })
             );
           },
@@ -155,7 +158,10 @@ class _WebviewApi {
      * Show message alert
      * @type {({txt, btns}: {txt: string, btns?: string[]}) => Thenable<string>}
      */
-    this.showMessage = ({ txt, btns = undefined }) => {
+    this.showMessage = ({
+      txt,
+      btns = undefined
+    }) => {
       txt = `[${this.name}] ${txt}`;
       return vscode.window.showInformationMessage(txt, ...(btns || []));
       // .then(btn => {})
@@ -164,7 +170,10 @@ class _WebviewApi {
      * Show error alert
      * @type {({txt, btns}: {txt: string, btns?: string[]}) => Thenable<string>}
      */
-    this.showError = ({ txt, btns = undefined }) => {
+    this.showError = ({
+      txt,
+      btns = undefined
+    }) => {
       txt = `[${this.name}] ${txt}`;
       return vscode.window.showErrorMessage(txt, ...(btns || []));
       // .then(btn => {})
@@ -173,7 +182,10 @@ class _WebviewApi {
      * Show warn alert
      * @type {({txt, btns}: {txt: string, btns?: string[]}) => Thenable<string>}
      */
-    this.showWarn = ({ txt, btns = undefined }) => {
+    this.showWarn = ({
+      txt,
+      btns = undefined
+    }) => {
       txt = `[${this.name}] ${txt}`;
       return vscode.window.showWarningMessage(txt, ...(btns || []));
       // .then(btn => {})
@@ -234,11 +246,11 @@ class _WebviewApi {
         vscode.window.showOpenDialog(options).then((uris) => {
           resolve(
             uris &&
-              uris.map((uri) => {
-                return isWin && uri.path.startsWith("/")
-                  ? uri.path.slice(1)
-                  : uri.path;
-              })
+            uris.map((uri) => {
+              return isWin && uri.path.startsWith("/") ?
+                uri.path.slice(1) :
+                uri.path;
+            })
           );
         });
       });
@@ -260,11 +272,11 @@ class _WebviewApi {
       return ApiPromise((resolve) => {
         vscode.window.showSaveDialog(options).then((uri) => {
           resolve(
-            uri
-              ? isWin && uri.path.startsWith("/")
-                ? uri.path.slice(1)
-                : uri.path
-              : undefined
+            uri ?
+            isWin && uri.path.startsWith("/") ?
+            uri.path.slice(1) :
+            uri.path :
+            undefined
           );
         });
       });
@@ -300,8 +312,8 @@ class _WebviewApi {
       preview = false,
     }) => {
       vscode.window.visibleTextEditors.find((te) => {
-        return te.document.uri.path === filePath;
-      }) ||
+          return te.document.uri.path === filePath;
+        }) ||
         vscode.window.showTextDocument(vscode.Uri.file(filePath), {
           viewColumn,
           preserveFocus,
@@ -313,7 +325,11 @@ class _WebviewApi {
      * @type {({txt, preserveFocus, line}: {txt: string, preserveFocus?: boolean, line?: boolean}) => void}
      */
     // @ts-ignore
-    this.showTxt2Output = ({ txt, preserveFocus = false, line = true }) => {
+    this.showTxt2Output = ({
+      txt,
+      preserveFocus = false,
+      line = true
+    }) => {
       if (line) {
         this.output.appendLine(txt);
       } else {
@@ -338,7 +354,9 @@ class _WebviewApi {
      * a File or folder if exists
      * @type {({path}: {path: string}) => Thenable<boolean>}
      */
-    this.exists4Path = ({ path }) => {
+    this.exists4Path = ({
+      path
+    }) => {
       return ApiPromise((resolve) => {
         fs.exists(path, resolve);
       });
@@ -347,22 +365,24 @@ class _WebviewApi {
      * Get stat for path
      * @type {({path}: {path: string}) => Thenable<{error?: string, data: undefined|{isFile: boolean, isDirectory: boolean, isSymbolicLink: boolean}}>}
      */
-    this.getStat4Path = ({ path }) => {
+    this.getStat4Path = ({
+      path
+    }) => {
       return ApiPromise((resolve) => {
         fs.stat(path, (err, stats) => {
           resolve({
             error: err.message,
-            data: stats
-              ? {
-                  isFile: stats.isFile(),
-                  isDirectory: stats.isDirectory(),
-                  // isBlockDevice: stats.isDirectory(),
-                  // isCharacterDevice: stats.isCharacterDevice(),
-                  isSymbolicLink: stats.isSymbolicLink(),
-                  // isFIFO: stats.isFIFO(),
-                  // isSocket: stats.isSocket(),
-                }
-              : undefined,
+            data: stats ?
+              {
+                isFile: stats.isFile(),
+                isDirectory: stats.isDirectory(),
+                // isBlockDevice: stats.isDirectory(),
+                // isCharacterDevice: stats.isCharacterDevice(),
+                isSymbolicLink: stats.isSymbolicLink(),
+                // isFIFO: stats.isFIFO(),
+                // isSocket: stats.isSocket(),
+              } :
+              undefined,
           });
         });
       });
@@ -371,7 +391,10 @@ class _WebviewApi {
      * Read file
      * @type {({path, options}: {path: string, options?: 'hex'|'json'|'string'}) => Thenable<{error?: string, data?: any}>}
      */
-    this.readFile = ({ path, options = undefined }) => {
+    this.readFile = ({
+      path,
+      options = undefined
+    }) => {
       return ApiPromise((resolve) => {
         fs.readFile(path, (err, data) => {
           let oerr = undefined;
@@ -396,7 +419,10 @@ class _WebviewApi {
           } else {
             oerr = err.message || `Failed to read file: ${path}`;
           }
-          resolve({ error: oerr, data: odata || data });
+          resolve({
+            error: oerr,
+            data: odata || data
+          });
         });
       });
     };
@@ -404,14 +430,18 @@ class _WebviewApi {
      * Write file
      * @type {({path, data, options}: {path: string, data: string|[]|{}, options?: {encoding?: string|undefined, mode?: number|string, flag?: string}|string|undefined}) => Thenable<{error?: string|undefined}>}
      */
-    this.writeFile = ({ path, data, options = undefined }) => {
+    this.writeFile = ({
+      path,
+      data,
+      options = undefined
+    }) => {
       return ApiPromise((resolve) => {
         // @ts-ignore
         fs.writeFile(path, data, options, (err) => {
           resolve({
-            error: err
-              ? err.message || `Failed to write file: ${path}`
-              : undefined,
+            error: err ?
+              err.message || `Failed to write file: ${path}` :
+              undefined,
           });
         });
       });
@@ -424,12 +454,18 @@ class _WebviewApi {
       url,
       method = "POST",
       data = undefined,
-      headers = { "content-type": "application/json" },
+      headers = {
+        "content-type": "application/json"
+      },
     }) => {
       return ApiPromise((resolve) => {
         const request = require("request");
-        request(
-          { url, method, headers, body: data },
+        request({
+            url,
+            method,
+            headers,
+            body: data
+          },
           (error, response, body) => {
             error &&
               typeof error !== "string" &&

@@ -410,9 +410,6 @@ export default {
         },
         autoFormat(newValue) {
             if (newValue) this.formatSOQL();
-        },
-        soql(newValue){
-            this.soql = this.soql.splite(newValue)[0];
         }
     },
     methods: {

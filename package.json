@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.2.12",
+  "version": "0.2.13",
   "engines": {
     "vscode": "^1.32.0"
   },
@@ -77,13 +77,16 @@
     "build": "npm run buildweb && vsce package",
     "buildext": "vsce package",
     "buildweb": "pushd ./web &> /dev/null && { npm run build;popd &> /dev/null;}",
-    "startweb": "pushd ./web &> /dev/null && { npm run dev;popd &> /dev/null;}"
+    "startweb": "pushd ./web &> /dev/null && { npm run dev;popd &> /dev/null;}",
+    "webpack": "webpack --mode development"
   },
   "devDependencies": {
-    "typescript": "^3.3.1",
-    "eslint": "^5.13.0",
+    "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
-    "@types/mocha": "^2.2.42"
+    "eslint": "^5.13.0",
+    "typescript": "^3.3.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "@types/vscode": "^1.46.0",

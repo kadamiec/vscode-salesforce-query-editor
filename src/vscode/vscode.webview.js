@@ -3,7 +3,11 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs-extra');
 const BridgeData = require('./vscode.bridge');
-const { Message, ReceivedMessage, Handler } = require('./vscode.message');
+const {
+  Message,
+  ReceivedMessage,
+  Handler
+} = require('./vscode.message');
 const WebviewApi = require('./vscode.webviewApi');
 
 /**
@@ -188,8 +192,7 @@ class WebView {
       vscode.commands.registerCommand(cmdName, (uri) => {
         this._uri = uri;
         this.showPanel(context, htmlPath);
-        this.bridgeData.updateItems(
-          {
+        this.bridgeData.updateItems({
             extensionPath: context.extensionPath,
             rootPath: vscode.workspace.rootPath,
             startPath: uri ? uri.path : vscode.workspace.rootPath,
