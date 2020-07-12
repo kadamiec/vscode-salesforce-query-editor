@@ -1,5 +1,9 @@
 # Salesforce SOQL Editor
 
+<p><a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/version/allanoricil.salesforce-soql-editor.svg" alt="Version"></a>
+<a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/downloads/allanoricil.salesforce-soql-editor.svg" alt="Downloads"></a>
+<a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/rating-star/allanoricil.salesforce-soql-editor.svg" alt="Ratings"></a></p>
+
 This extension enables developers to create, run and add to Apex SOQL queries without having to leave the IDE. If you want to contribute, please consider clicking on the button below. Thanks.
 
 <a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
@@ -12,7 +16,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 - [x] Run SOQL Queries.
 - [x] Add SOQL Queries to Apex.
 - [ ] Inner Queries.
-- [ ] Reference Relationship Fields.
+- [ ] Easy Access to Relationship Fields. --> Almost there <--
 
 ## Requirements
 

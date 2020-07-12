@@ -15,7 +15,8 @@ export const getters = {
     },
     getSObjectFields: (state) => (apiName) => {
         if (state.sobjectsWithDetails[apiName]) {
-            return state.sobjectsWithDetails[apiName].fields.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            return state.sobjectsWithDetails[apiName].fields
+                .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
         } else {
             return [];
         }

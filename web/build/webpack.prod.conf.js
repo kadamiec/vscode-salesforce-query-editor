@@ -34,7 +34,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         new webpack.DefinePlugin({
             'process.env': env
         }),
-        new UglifyJsPlugin({
+        /*new UglifyJsPlugin({
             uglifyOptions: {
                 compress: {
                     warnings: false
@@ -42,7 +42,7 @@ const webpackConfig = merge(baseWebpackConfig, {
             },
             sourceMap: config.build.productionSourceMap,
             parallel: true
-        }),
+        }),*/
         // extract css into its own file
         new ExtractTextPlugin({
             filename: utils.assetsPath('css/[name].[contenthash].css'),
