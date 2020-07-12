@@ -339,14 +339,12 @@ export default {
         computedFilters() {
             return this.filters.length !== 0 && this.filters[0].filter
                 ? this.filters.reduce((previous, current, index) => {
-                      return (
-                          previous +
-                          ' ' +
-                          (index > 0 && this.filters[index - 1].logic
+                      const previousLogic = 
+                            index > 0 && this.filters[index - 1].logic
                               ? this.filters[index - 1].logic + ' '
-                              : '') +
-                          (current.filter ? current.filter : '')
-                      );
+                              : '';
+
+                      return previous + ' ' + previousLogic + (current.filter || '');
                   }, ' WHERE')
                 : '';
         },
