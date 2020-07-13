@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.2.14",
+  "version": "0.2.15",
   "engines": {
     "vscode": "^1.32.0"
   },
@@ -31,7 +31,8 @@
     "sfdx"
   ],
   "activationEvents": [
-    "workspaceContains:sfdx-project.json"
+    "workspaceContains:sfdx-project.json",
+    "onCommand:SFDX.soqlEditor"
   ],
   "main": "./src/extension.js",
   "contributes": {
