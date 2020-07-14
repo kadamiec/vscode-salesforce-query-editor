@@ -15,3 +15,4 @@ src/**
 !.images/icon.png
 !.images/icon_dark.png
 !.images/icon_light.png
+node_modules/**
