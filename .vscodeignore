@@ -13,3 +13,5 @@ web/dist/**/*.map
 src/**
 .images/**
 !.images/icon.png
+!.images/icon_dark.png
+!.images/icon_light.png
