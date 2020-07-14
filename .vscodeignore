@@ -11,3 +11,4 @@ web/**
 !web/dist/**
 web/dist/**/*.map
 src/**
+.images/**
