@@ -12,3 +12,4 @@ web/**
 web/dist/**/*.map
 src/**
 .images/**
+!.images/icon.png
