@@ -104,7 +104,9 @@ class EGWebView extends WebView {
           // the Position object gives you the line and character where the cursor is
           const position = editor.selection.active;
           editor.edit((editBuilder) => {
-            editBuilder.insert(position, `[${soql.replace(/\s\s+/g, ' ')}]`);
+            soql = soql.replace(/\n/g, ' ');
+            soql = soql.replace(/ +(?= )/g, ' ');
+            editBuilder.insert(position, `[${soql}]`);
           });
 
           this.reporter.sendTelemetryEvent('add-to-apex', {
