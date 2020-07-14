@@ -17,3 +17,4 @@ src
 !.images/icon_light.png
 node_modules
 webpack.config.js
+.build

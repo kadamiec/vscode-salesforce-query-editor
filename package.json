@@ -74,12 +74,9 @@
   },
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
+    "prepublish": "npm run build",
     "test": "node ./node_modules/vscode/bin/test",
-    "build": "npm run buildweb && vsce package",
-    "buildext": "vsce package",
-    "buildweb": "pushd ./web &> /dev/null && { npm run build;popd &> /dev/null;}",
-    "startweb": "pushd ./web &> /dev/null && { npm run dev;popd &> /dev/null;}",
-    "webpack": "webpack --config webpack.config.js"
+    "build": "node .build/build.js"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",
