@@ -34,7 +34,7 @@
     "workspaceContains:sfdx-project.json",
     "onCommand:SFDX.soqlEditor"
   ],
-  "main": "./src/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -79,7 +79,7 @@
     "buildext": "vsce package",
     "buildweb": "pushd ./web &> /dev/null && { npm run build;popd &> /dev/null;}",
     "startweb": "pushd ./web &> /dev/null && { npm run dev;popd &> /dev/null;}",
-    "webpack": "webpack --mode development"
+    "webpack": "webpack --config webpack.config.js"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",

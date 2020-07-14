@@ -7,7 +7,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/.eslintrc.json
 *.vsix
-
 web/**
 !web/dist/**
 web/dist/**/*.map
+src/**
