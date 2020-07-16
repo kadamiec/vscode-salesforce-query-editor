@@ -9,7 +9,7 @@ const name = 'SOQL Editor';
 const extensionId = 'allanoricil.salesforce-soql-editor';
 
 // extension version will be reported as a property with each event
-const extensionVersion = '0.2.8';
+const extensionVersion = vscode.version;
 
 // the application insights key (also known as instrumentation key)
 const key = '4ea9b1db-69cd-4355-8a3e-eac076d7325c';
