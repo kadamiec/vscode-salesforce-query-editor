@@ -76,23 +76,18 @@ class EGWebView extends WebView {
         const start = new Date();
         executeSOQL(soql, this.defaultOrg)
           .then((response) => {
-            this.postMessage('soqlResult', response.data.records);
-
-            const elapsedTimeToQuery = new Date() - start;
-            this.reporter.sendTelemetryEvent(
-              'executed-soql',
-              {
-                soql: soql,
-              },
-              { elapsedTimeToQuery: elapsedTimeToQuery }
-            );
+              this.postMessage('soqlResult', response.data.records);
+              const elapsedTimeToQuery = new Date() - start;
+              this.reporter.sendTelemetryEvent('executed-soql', {soql: soql}, {elapsedTimeToQuery: elapsedTimeToQuery });
           })
           .catch((reason) => {
-            if (reason.response.status === 400)
-              this.postMessage('soqlResult', reason.response.data[0]);
-            else this.postMessage('soqlResult', []);
-
-            this.reporter.sendTelemetryException(reason, { soql: soql });
+              if (reason.response.status === 400){
+                this.postMessage('soqlResult', reason.response.data[0]);
+              }else{
+                this.postMessage('soqlResult', []);
+              }
+              
+              this.reporter.sendTelemetryException(reason, { soql: soql, response: reason });
           });
       },
       addToApex: (soql) => {

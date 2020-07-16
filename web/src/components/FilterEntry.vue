@@ -104,6 +104,9 @@ export default {
                 case '=':
                     computedExpression = `${this.filter.field} = ${this.filter.value}`;
                     break;
+                case '!=':
+                    computedExpression = `${this.filter.field} != ${this.filter.value}`;
+                    break;
                 case '<':
                     computedExpression = `${this.filter.field} < ${this.filter.value}`;
                     break;
@@ -117,7 +120,7 @@ export default {
                     computedExpression = `${this.filter.field} >= ${this.filter.value}`;
                     break;
                 case 'startsWith':
-                    computedExpression = `${this.filter.field} LIKE '%${this.filter.value}'`;
+                    computedExpression = `${this.filter.field} LIKE '${this.filter.value}%'`;
                     break;
                 case 'endsWith':
                     computedExpression = `${this.filter.field} LIKE '%${this.filter.value}'`;

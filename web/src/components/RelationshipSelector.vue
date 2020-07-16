@@ -69,11 +69,11 @@ export default {
                 const picklistValue = picklist.value;
                 const picklistReference = picklist.reference;
                 this.picklists.splice(index + 1);
-                let newPicklist = this.createPicklist(picklistReference);
+                let newPicklist = this.createPicklist(picklistReference, index);
                 this.picklists.push(newPicklist);
             }
         },
-        createPicklist(reference){
+        createPicklist(reference, index){
             let newPicklist = {
                 options: [],
                 selected: undefined,
@@ -86,7 +86,7 @@ export default {
                         this.$store.dispatch('sobjects/getSObjectDescribe', reference);
                     }
                     
-                    if(field.relationshipName)
+                    if(field.relationshipName && index != 3)
                         newPicklist.options.push({
                             label: field.label,
                             value: field.relationshipName,

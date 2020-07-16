@@ -382,28 +382,25 @@ export default {
                 this.sobjectFields = sObjectFields;
             }
         },
-        selectedFields(newValue) {
+        selectedFields() {
             this.createSOQL();
         },
-        computedFields(newValue){
+        computedFields(){
             this.createSOQL();
         },
-        filters: {
-            deep: true,
-            handler() {
-                this.createSOQL();
-            },
-        },
-        orderBy(newValue) {
+        computedFilters(){
             this.createSOQL();
         },
-        sortBy(newValue) {
+        orderBy() {
             this.createSOQL();
         },
-        nullsOrder(newValue) {
+        sortBy() {
             this.createSOQL();
         },
-        limitBy(newValue) {
+        nullsOrder() {
+            this.createSOQL();
+        },
+        limitBy() {
             this.createSOQL();
         },
         autoFormat(newValue) {
