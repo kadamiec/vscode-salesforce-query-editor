@@ -7,10 +7,15 @@
           @click="toogleForm"
         >{{ showForm ? 'Hide Form' : 'Show Form' }}</button>
       </div>
-      <div class="ml-auto pr-3">
-        <a target="_blank" href="https://www.buymeacoffee.com/allanoricil">
-          <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
-        </a>
+      <div class="col-auto">
+        <div class="row pr-3">
+            <a target="_blank" href="https://github.com/AllanOricil/SOQL-Editor-Issues" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
+              <i class="fab fa-github" style="color: white; font-size: 2.3em"></i>
+            </a>
+            <a target="_blank" href="https://www.buymeacoffee.com/allanoricil" v-b-tooltip.hover title="Buy me a Coffe if you liked it">
+              <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
+            </a>
+        </div>
       </div>
     </div>
     <div v-if="showForm" class="row">
