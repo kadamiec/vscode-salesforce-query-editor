@@ -21,7 +21,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 ## Requirements
 
 - sfdx-cli 7.58.2 or above
-- VS Code 1.32.0 or above
+- VS Code 1.47.2 -> To update your vscode go to Help -> then click on Check for Updates / Restart to Update
 - MUST BE USED FROM A SFDX PROJECT
 
 ## Issues

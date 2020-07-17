@@ -214,7 +214,6 @@ class WebView {
   /**
    *Get html from the file path and replace resources protocol to `vscode-resource`
    *
-   * @static
    * @param {string} htmlPath path of html path
    * @returns
    * @memberof WebView
