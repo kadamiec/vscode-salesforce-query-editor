@@ -34,7 +34,7 @@
     "workspaceContains:sfdx-project.json",
     "onCommand:SFDX.soqlEditor"
   ],
-  "main": "./dist/extension.js",
+  "main": "./src/extension.js",
   "contributes": {
     "commands": [
       {

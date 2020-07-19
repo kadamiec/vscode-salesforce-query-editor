@@ -152,14 +152,16 @@
           <table class="table table-dark table-sm table-bordered">
             <thead>
               <tr>
-                <th scope="col" v-for="(field, index) in soqlResultKeys" :key="index">{{ field }}</th>
+                <th scope="col" v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName">{{ field }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(record, indexRecord) in soqlResultValues" :key="indexRecord">
+              <tr v-for="(record, indexRecord) in soqlResultRecords" :key="indexRecord">
                 <td v-for="(value, indexValue) in Object.values(record)" :key="indexValue">
-                  <pre v-if="typeof value === 'object' && value">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
-                  <span v-else>{{value}}</span>
+                  <pre v-if="typeof value === 'object'">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
+                  <span v-else>
+                    <span @click="Object.keys(record)[indexValue] === 'Id' ? openRecordDetailPage(value): null" :class="Object.keys(record)[indexValue] === 'Id' ? 'record-id' : ''">{{value}}</span>
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -361,14 +363,14 @@ export default {
         computedLimitBy() {
             return this.limitBy ? ` LIMIT ${this.limitBy}` : '';
         },
-        soqlResultKeys() {
+        soqlResultFields() {
             return this.soqlResult && this.soqlResult.length > 0
                 ? Object.keys(this.soqlResult[0]).filter(
                       (key) => key !== 'attributes'
                   )
                 : [];
         },
-        soqlResultValues() {
+        soqlResultRecords() {
             return this.soqlResult && this.soqlResult.length > 0
                 ? this.soqlResult.map(function (item) {
                       delete item.attributes;
@@ -505,9 +507,20 @@ export default {
         },
         toogleForm(){
             this.showForm = !this.showForm;
+        },
+        openRecordDetailPage(id){
+          window.vscode.post({
+            cmd: 'openRecordDetailPage',
+            args: id
+          })
         }
     },
 };
 </script>
 
-<style></style>
+<style scoped>
+.record-id{
+  color: var(--vscode-textLink-foreground);
+  cursor: pointer;
+}
+</style>

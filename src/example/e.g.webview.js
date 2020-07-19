@@ -7,6 +7,7 @@ const {
   getGlobalDescribe,
   callSObjectDescribe,
   executeSOQL,
+  openRecordDetailPage
 } = require('../lib/utils.js');
 /**
  *Add business
@@ -108,6 +109,9 @@ class EGWebView extends WebView {
             soql: soql,
           });
         }
+      },
+      openRecordDetailPage: (recordId) =>{
+        openRecordDetailPage(recordId);
       },
     });
   }

@@ -313,6 +313,15 @@ const callSObjectDescribe = (defaultOrg, sObjectName) => {
   );
 };
 
+const openRecordDetailPage = (recordId) =>{
+  exec(
+    `sfdx force:org:open -p "/${recordId}"`, {
+      encoding: 'utf-8',
+      cwd: vscode.workspace.rootPath,
+    }
+  );
+};
+
 const joinOrgLists = (orgResponse) => {
   return orgResponse.result.nonScratchOrgs && orgResponse.result.scratchOrgs ?
     orgResponse.result.nonScratchOrgs.concat(orgResponse.result.scratchOrgs) :
@@ -335,6 +344,7 @@ module.exports = {
   getLabels,
   refreshLabels,
   executeSOQL,
+  openRecordDetailPage,
   HOME_DIR,
   GLOBAL_STORAGE_DIR,
   ORG_LIST_PATH,

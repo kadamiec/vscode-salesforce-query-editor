@@ -99,3 +99,14 @@ You can also write your query in the Query Editor and run it without using any o
 - In the SOQL editor click on the button `Add to Apex`. The query will appear on the apex class, at the position you clicked before.
 
 <img src="https://drive.google.com/uc?id=1NwUzkAQ2x_LHk2ecIMlK9aNxz1bYAko-" width="1200px"></img>
+
+
+## Release Notes
+
+### 0.3.0
+
+Ids can now be clicked to open the Record Detail Page.
+
+<img src="https://drive.google.com/uc?id=1KBRDhPY093MdRw0JcAp-19IifD_BjS96" width="600px"></img>
+
+
