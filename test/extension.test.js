@@ -1,6 +1,6 @@
 const assert = require('assert');
 const vscode = require('vscode');
-const EGWebView = require('../src/example/e.g.webview');
+const EGWebView = require('../src/soqlEditor/soqlEditorWebView');
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Extension Tests", function () {

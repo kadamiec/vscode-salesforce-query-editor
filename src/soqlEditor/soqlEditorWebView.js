@@ -8,18 +8,19 @@ const {
   callSObjectDescribe,
   executeSOQL,
   openRecordDetailPage
-} = require('../lib/utils.js');
+} = require('../utils/sfdxCommands.js');
+
 /**
  *Add business
  *
- * @class EGWebView
+ * @class SOQLEditorWebView
  * @extends {WebView}
  */
 
-class EGWebView extends WebView {
+class SOQLEditorWebView extends WebView {
   /**
-   * Creates an instance of EGWebView.
-   * @memberof EGWebView
+   * Creates an instance of SOQLEditorWebView.
+   * @memberof SOQLEditorWebView
    */
 
   constructor(reporter) {
@@ -146,4 +147,4 @@ class EGWebView extends WebView {
   }
 }
 
-module.exports = EGWebView;
+module.exports = SOQLEditorWebView;

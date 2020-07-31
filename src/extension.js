@@ -1,12 +1,11 @@
-const example = require('./example');
+const soqlEditor = require('./soqlEditor');
 
 /**
  * Called when the extension is activated
  * @param {import('vscode').ExtensionContext} context
  */
 function activate(context) {
-    console.log(`Extension(${example.name}) is activated.`);
-    example.activate(context);
+    soqlEditor.activate(context);
 }
 exports.activate = activate;
 
@@ -14,8 +13,7 @@ exports.activate = activate;
  * Called when the extension is deactivated
  */
 function deactivate() {
-    example.deactivate();
-    console.log(`Extension(${example.name}) is deactivated.`);
+    soqlEditor.deactivate();
 }
 
 module.exports = {

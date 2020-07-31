@@ -2,7 +2,7 @@
 const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs');
-const EGWebView = require('./e.g.webview');
+const SOQLEditorWebView = require('./soqlEditorWebView');
 const TelemetryReporter = require('vscode-extension-telemetry');
 
 const name = 'SOQL Editor';
@@ -29,7 +29,7 @@ const activate = (context) => {
     extensionVersion,
     key
   );
-  webview = new EGWebView(reporter);
+  webview = new SOQLEditorWebView(reporter);
   webview.activate(context, name, 'SFDX.soqlEditor');
   vscode.window.showInformationMessage('Salesforce SOQL Editor is Activated');
   reporter.sendTelemetryEvent('activation');
@@ -38,6 +38,7 @@ const activate = (context) => {
 
 const deactivate = () => {
   webview.deactivate();
+  reporter.sendTelemetryEvent('deactivation');
   reporter.dispose();
 };
 

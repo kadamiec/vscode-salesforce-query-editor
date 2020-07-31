@@ -52,14 +52,14 @@ const getSObjectsNames = (defaultOrg) => {
     const sObjectsFilePath = path.resolve(
       path.join(GLOBAL_STORAGE_DIR, defaultOrg.username, 'sobjects.json')
     );
-    //check if the files is already retrieved for the default org
+    //check if the files has been already retrieved for the default org
     try {
       sObjectsFile = fs.readFileSync(sObjectsFilePath, {
         encoding: 'utf-8',
       });
     } catch (e) {}
 
-    //if there is no file or the file is emtpy call sfdx and save the result in the default org directory
+    //if there is no file, or the file is emtpy, call sfdx and save the result in the default org directory
     let sObjects = sObjectsFile ? JSON.parse(sObjectsFile) : undefined;
     if (!(sObjects && sObjects.result && sObjects.result.length)) {
       sObjects = refreshSObjects();

@@ -74,7 +74,6 @@
   },
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "prepublish": "npm run build",
     "test": "node ./node_modules/vscode/bin/test",
     "build": "node .build/build.js"
   },
@@ -90,6 +89,7 @@
     "@types/vscode": "^1.46.0",
     "applicationinsights": "^1.8.2",
     "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
     "fs-extra": "^9.0.1",
     "vscode-extension-telemetry": "^0.1.6"
   }
