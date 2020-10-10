@@ -29,6 +29,7 @@ const activate = (context) => {
     extensionVersion,
     key
   );
+
   webview = new SOQLEditorWebView(reporter);
   webview.activate(context, name, 'SFDX.soqlEditor');
   vscode.window.showInformationMessage('Salesforce SOQL Editor is Activated');
@@ -38,7 +39,6 @@ const activate = (context) => {
 
 const deactivate = () => {
   webview.deactivate();
-  reporter.sendTelemetryEvent('deactivation');
   reporter.dispose();
 };
 

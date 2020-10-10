@@ -1,6 +1,10 @@
 <template>
-  <div class="container h-100 px-xl-5 py-2">
-    <div class="row">
+  <div class="container vh-100 vw-100 px-xl-5 py-2">
+    <div v-if="loading" class="d-flex justify-content-center h-100">
+      <square-grid class="m-auto" size="100px" background="var(--vscode-button-background)"></square-grid>
+    </div>
+    <span v-else>
+          <div class="row">
       <div class="col">
         <button
           class="btn btn-primary"
@@ -9,8 +13,13 @@
       </div>
       <div class="col-auto">
         <div class="row pr-3">
+            <span
+              class="icon fa fa-sync mr-2"
+              data-placement="top"
+              @click="refreshSobjects()"
+            ></span>
             <a target="_blank" href="https://github.com/AllanOricil/SOQL-Editor-Issues" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
-              <i class="fa fa-github" style="color: var(--vscode-badge-foreground); font-size: 2.3em"></i>
+              <i class="icon fa fa-github"></i>
             </a>
             <a target="_blank" href="https://www.buymeacoffee.com/allanoricil" v-b-tooltip.hover title="Buy me a Coffee if you liked it">
               <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
@@ -204,6 +213,7 @@
         >Insert</button>
       </template>
     </b-modal>
+    </span>
   </div>
 </template>
 
@@ -215,20 +225,27 @@ import '../../static/css/vscode-dark.css';
 import FilterEntry from './FilterEntry.vue';
 import sqlFormatter from 'sql-formatter';
 import RelationshipSelector from './RelationshipSelector.vue';
+import { SquareGrid } from 'vue-loading-spinner';
 
 export default {
     name: 'Index',
     components: {
         codemirror,
         FilterEntry,
-        RelationshipSelector
+        RelationshipSelector,
+        SquareGrid
     },
     beforeMount() {
+        window.vscode.onLoading(()=>{
+          this.loading = true;
+        });
         window.vscode.onReceiveObjects((message) => {
+            this.object = undefined;
             this.$store.commit('sobjects/setSObjects', message.data);
             window.vscode.showMessage({
                 txt: 'SObjects Loaded',
             });
+            this.loading = false;
         });
         window.vscode.onReceiveSObjectDescription((message) => {
             if (message.data) {
@@ -269,6 +286,7 @@ export default {
     },
     data() {
         return {
+            loading: true,
             cmOptions: {
                 tabSize: 4,
                 mode: 'sql',
@@ -294,7 +312,6 @@ export default {
             ],
             selectedReference: undefined,
             selectedReferenceValue: undefined,
-            isRefreshingMetadata: false,
             sobjectFields: [],
             sObjectsToGetFields: [],
             sortBy: undefined,
@@ -415,11 +432,11 @@ export default {
         }
     },
     methods: {
-        refreshSObjects() {
+        refreshSobjects() {
             window.vscode.post({
                 cmd: 'refreshSObjects',
             });
-            this.isRefreshingMetadata = true;
+            this.loading = true;
         },
         addFilter() {
             this.filters.push({
@@ -488,7 +505,6 @@ export default {
             ],
             this.selectedReference = undefined;
             this.selectedReferenceValue = undefined;
-            this.isRefreshingMetadata = false;
             this.sobjectFields = [];
             this.sObjectsToGetFields = [];
             this.sortBy = undefined;
@@ -521,6 +537,16 @@ export default {
 <style scoped>
 .record-id{
   color: var(--vscode-textLink-foreground);
+  cursor: pointer;
+}
+
+.icon{
+  color: var(--vscode-menu-separatorBackground);
+  font-size: 2.3em;
+}
+
+.icon:hover{
+  color: var(--vscode-badge-foreground);
   cursor: pointer;
 }
 </style>

@@ -9,6 +9,9 @@ import {
  * @extends {Vscode}
  */
 class EGVscode extends Vscode {
+    onLoading(callback){
+        this.on('loading', callback, 0);
+    }
     onReceiveObjects(callback) {
         this.on('objects', callback, 0);
     }

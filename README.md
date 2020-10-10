@@ -12,11 +12,11 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 
 ## Features
 
-- [x] Create SOQL Queries
+- [x] Create SOQL Queries.
 - [x] Run SOQL Queries.
 - [x] Add SOQL Queries to Apex.
-- [ ] Inner Queries.
-- [ ] Easy Access to Relationship Fields. --> Almost there <--
+- [ ] Parent Relationship Queries.
+- [ ] Easy Access to Relationship Fields.
 
 ## Requirements
 
@@ -28,13 +28,13 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 
 You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 
-# Instalation
+# Installation
 
 Open VS Code, click on the Extension button in the side bar menu, search for `Salesforce SOQL Editor` and click `Install`.
 
 <img src="https://drive.google.com/uc?id=1Rvs9f6quK06iQnIo5fqr7iiQfJXbQQkB" width="800px"></img>
 
-Then open a SFDX project and wait for the Activation Message to appear. The extension will be activated automatically in workspaces that have the file `sfdx-project.json`.
+Then open a SFDX project and wait for the Activation Message to appear. The extension will be activated automatically on workspaces that have a file called `sfdx-project.json`.
 
 <img src="https://drive.google.com/uc?id=1Hdr8xEuQ6ct_g37SLG29fFGk6G-BBExK" width="600px"></img>
 
@@ -44,15 +44,26 @@ In cases where the file `sfdx-project.json` is not in the root of the current wo
 
 # How to use the SOQL Editor
 
-## Choose a Default Username / Environment
+## 
 
-Configure a Default Username in the SFDX using the Global flag. The App will use this user to query the data.
+Configure a Default Username on SFDX. The App will use this user to query the data.
 
 ```
-sfdx force:config:set defaultusername=me@myhub.org -g
+sfdx force:config:set defaultusername=me@myhub.org
 ```
 
-## Open the SOQL Editor
+If you have the official Salesforce Extensions for VSCode you can change the Defaultusername Org by clicking on this button:
+
+<img src="https://drive.google.com/uc?id=1xcn1XP3ntCFgwJ91WAC1TKcnKy81X-6a" width="600px"></img>
+
+Whenever you change the org or refresh the objects list, a loading component appears until the new objects list is retrieved. If sfdx could not retrieve a valid accessToken for the current selected org, then the loading component will be displayed forever until you pick up a new org that has a valid accessToken.
+
+If the accessToken is not valid, the following message will be displayed:
+
+<img src="https://drive.google.com/uc?id=11pp2nGl5zHgMGJJjipdfQVaWxtjA4AnG" width="600px"></img>
+
+
+## How to open the SOQL Editor
 
 There are three ways to open the SOQL Editor.
 
@@ -102,6 +113,23 @@ You can also write your query in the Query Editor and run it without using any o
 
 
 ## Release Notes
+
+
+### 0.3.5
+
+ - Now whenever you switch orgs, the Schema builder will Reload the Sobjects List automatically:
+
+<img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
+
+
+ - Now you can refresh the SObject List clicking on the Refresh Button:
+
+<img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
+
+
+
+ - Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
+
 
 ### 0.3.0
 

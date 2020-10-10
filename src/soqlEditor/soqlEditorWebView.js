@@ -2,8 +2,7 @@
 const { WebView } = require('../vscode/vscode.webview');
 const vscode = require('vscode');
 const {
-  refreshSObjects,
-  getOrgDisplay,
+  getDefaultusername,
   getGlobalDescribe,
   callSObjectDescribe,
   executeSOQL,
@@ -25,15 +24,29 @@ class SOQLEditorWebView extends WebView {
 
   constructor(reporter) {
     super();
-
-    this.defaultOrg = getOrgDisplay();
-
+    this.defaultOrg;
     this.activeTextEditor = vscode.window.activeTextEditor;
-
     this.reporter = reporter;
 
+    this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);
+    this.fileSystemWatcher.onDidChange(() => {
+      if(this.panel){
+        this.postMessage('loading');
+        this.onDidPose();
+      }
+    });
+
     this.onDidPose = () => {
-      this.defaultOrg = getOrgDisplay();
+      getDefaultusername().then(defaultOrg => {
+        this.defaultOrg = defaultOrg;
+        getGlobalDescribe(this.defaultOrg)
+          .then((response) => {
+            this.postMessage('objects', response.data.sobjects);
+          }).catch ((e) => {
+            this.showErrorMessage("Couldn't get the SObjects");
+            this.channel.appendLine(e);
+        });
+      }).catch(reason => this.showErrorMessage(reason));
     };
 
     this.didChangeViewState = () => {
@@ -42,32 +55,16 @@ class SOQLEditorWebView extends WebView {
 
     this.handler.addApi({
       getAllObjectNames: () => {
-        try {
-          getGlobalDescribe(this.defaultOrg).then((response) => {
-            this.postMessage('objects', response.data.sobjects);
-          });
-        } catch (e) {
-          this.showErrorMessage("Couldn't get the SObjects");
-          this.channel.appendLine(e);
-        }
-      },
-      refreshSObjects: () => {
-        this.defaultOrg = getOrgDisplay();
-        refreshSObjects(this.defaultOrg)
+        getGlobalDescribe(this.defaultOrg)
           .then((response) => {
             this.postMessage('objects', response.data.sobjects);
-          })
-          .catch((e) => {
-            vscode.window
-              .showErrorMessage("Couldn't Refresh SObjects", 'Show Output')
-              .then((selection) => {
-                if (selection === 'Show Output') {
-                  this.channel.show();
-                }
-              });
-            this.postMessage('objects');
+          }).catch ((e) => {
+            this.showErrorMessage("Couldn't get the SObjects");
             this.channel.appendLine(e);
-          });
+        });
+      },
+      refreshSObjects: () => {
+        this.onDidPose();
       },
       getSObjectDescribe: (sObject) => {
         callSObjectDescribe(this.defaultOrg, sObject).then((response) => {

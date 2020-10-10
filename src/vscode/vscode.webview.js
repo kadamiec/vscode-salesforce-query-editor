@@ -28,6 +28,12 @@ class WebView {
     this._bridgeData.syncHandler = (data) => {
       this.panel.webview.postMessage(Message.syncBridgeData(data));
     };
+
+    /**
+     * @type {() => Promise}
+     */
+    this.onBeforePose = undefined;
+
     /**
      * @type {(uri: vscode.Uri) => void}
      */
@@ -190,18 +196,18 @@ class WebView {
       ));
     context.subscriptions.push(
       vscode.commands.registerCommand(cmdName, (uri) => {
-        this._uri = uri;
-        this.showPanel(context, htmlPath);
-        this.bridgeData.updateItems({
-            extensionPath: context.extensionPath,
-            rootPath: vscode.workspace.rootPath,
-            startPath: uri ? uri.path : vscode.workspace.rootPath,
-          },
-          false
-        );
-        this.bridgeData.syncAll();
-        this.onDidPose && this.onDidPose(uri);
-        this.panel.webview.postMessage(Message.webviewDidPose(undefined));
+          this._uri = uri;
+          this.showPanel(context, htmlPath);
+          this.bridgeData.updateItems({
+              extensionPath: context.extensionPath,
+              rootPath: vscode.workspace.rootPath,
+              startPath: uri ? uri.path : vscode.workspace.rootPath,
+            },
+            false
+          );
+          this.bridgeData.syncAll();
+          this.onDidPose && this.onDidPose(uri);
+          this.panel.webview.postMessage(Message.webviewDidPose(undefined));
       })
     );
     return this;
