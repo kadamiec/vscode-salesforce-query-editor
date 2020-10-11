@@ -43,12 +43,9 @@ const getGlobalDescribe = (defaultOrg) => {
   });
 };
 
-const executeSOQL = (soql, defaultOrg) => {
+const getSOQLPlan = (soql, defaultOrg) => {
   return axios.get(
-    encodeURI(`${defaultOrg.instanceUrl}/services/data/v48.0/query/?q=${soql.replace(/\s\s+/g, ' ').replace(
-      /\s/g,
-      '+'
-    )}`), {
+    encodeURI(`${defaultOrg.instanceUrl}/services/data/v48.0/query/?explain=${soql.replace(/\s+/g, '+')}`), {
       headers: {
         Authorization: `Bearer ${defaultOrg.accessToken}`,
       },
@@ -56,7 +53,17 @@ const executeSOQL = (soql, defaultOrg) => {
   );
 };
 
-const callSObjectDescribe = (defaultOrg, sObjectName) => {
+const getSOQLData = (soql, defaultOrg) => {
+  return axios.get(
+    encodeURI(`${defaultOrg.instanceUrl}/services/data/v48.0/query/?q=${soql.replace(/\s+/g, '+')}`), {
+      headers: {
+        Authorization: `Bearer ${defaultOrg.accessToken}`,
+      },
+    }
+  );
+};
+
+const getSObjectDescribe = (defaultOrg, sObjectName) => {
   return axios.get(
     `${defaultOrg.instanceUrl}/services/data/v48.0/sobjects/${sObjectName}/describe/`, {
       headers: {
@@ -79,7 +86,8 @@ const openRecordDetailPage = (recordId) =>{
 module.exports = {
   getDefaultusername,
   getGlobalDescribe,
-  callSObjectDescribe,
-  executeSOQL,
+  getSObjectDescribe,
+  getSOQLData,
+  getSOQLPlan,
   openRecordDetailPage
 };

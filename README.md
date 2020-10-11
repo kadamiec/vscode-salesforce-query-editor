@@ -14,6 +14,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 
 - [x] Create SOQL Queries.
 - [x] Run SOQL Queries.
+- [x] Get SOQL Query Plans.
 - [x] Add SOQL Queries to Apex.
 - [ ] Parent Relationship Queries.
 - [ ] Easy Access to Relationship Fields.
@@ -113,6 +114,13 @@ You can also write your query in the Query Editor and run it without using any o
 
 
 ## Release Notes
+
+
+### 0.3.6
+
+ - Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
+
+<img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
 
 
 ### 0.3.5

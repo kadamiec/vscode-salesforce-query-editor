@@ -4,8 +4,9 @@ const vscode = require('vscode');
 const {
   getDefaultusername,
   getGlobalDescribe,
-  callSObjectDescribe,
-  executeSOQL,
+  getSObjectDescribe,
+  getSOQLData,
+  getSOQLPlan,
   openRecordDetailPage
 } = require('../utils/sfdxCommands.js');
 
@@ -22,11 +23,10 @@ class SOQLEditorWebView extends WebView {
    * @memberof SOQLEditorWebView
    */
 
-  constructor(reporter) {
+  constructor() {
     super();
     this.defaultOrg;
     this.activeTextEditor = vscode.window.activeTextEditor;
-    this.reporter = reporter;
 
     this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);
     this.fileSystemWatcher.onDidChange(() => {
@@ -43,7 +43,7 @@ class SOQLEditorWebView extends WebView {
           .then((response) => {
             this.postMessage('objects', response.data.sobjects);
           }).catch ((e) => {
-            this.showErrorMessage("Couldn't get the SObjects");
+            this.showErrorMessage("Couldn't retrieve the Sobjects List");
             this.channel.appendLine(e);
         });
       }).catch(reason => this.showErrorMessage(reason));
@@ -67,17 +67,14 @@ class SOQLEditorWebView extends WebView {
         this.onDidPose();
       },
       getSObjectDescribe: (sObject) => {
-        callSObjectDescribe(this.defaultOrg, sObject).then((response) => {
+        getSObjectDescribe(this.defaultOrg, sObject).then((response) => {
           this.postMessage('sobjectDescription', response.data);
         });
       },
       executeSOQL: (soql) => {
-        const start = new Date();
-        executeSOQL(soql, this.defaultOrg)
+        getSOQLData(soql, this.defaultOrg)
           .then((response) => {
               this.postMessage('soqlResult', response.data.records);
-              const elapsedTimeToQuery = new Date() - start;
-              this.reporter.sendTelemetryEvent('executed-soql', {soql: soql}, {elapsedTimeToQuery: elapsedTimeToQuery });
           })
           .catch((reason) => {
               if (reason.response.status === 400){
@@ -85,26 +82,29 @@ class SOQLEditorWebView extends WebView {
               }else{
                 this.postMessage('soqlResult', []);
               }
-              
-              this.reporter.sendTelemetryException(reason, { soql: soql, response: reason });
+          });
+      },
+      getSOQLPlan: (soql) => {
+        getSOQLPlan(soql, this.defaultOrg)
+          .then((response) => {
+              this.postMessage('soqlPlan', response.data.plans);
+          })
+          .catch((reason) => {
+              if (reason.response.status === 400){
+                this.postMessage('soqlPlan', reason.response.data[0]);
+              }else{
+                this.postMessage('soqlPlan', []);
+              }
           });
       },
       addToApex: (soql) => {
-        // current editor
         const editor = this.activeTextEditor;
-
-        // check if there is no selection
         if (editor.selection.isEmpty) {
-          // the Position object gives you the line and character where the cursor is
           const position = editor.selection.active;
           editor.edit((editBuilder) => {
             soql = soql.replace(/\n/g, ' ');
             soql = soql.replace(/ +(?= )/g, ' ');
             editBuilder.insert(position, `[${soql}]`);
-          });
-
-          this.reporter.sendTelemetryEvent('add-to-apex', {
-            soql: soql,
           });
         }
       },

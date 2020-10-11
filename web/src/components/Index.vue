@@ -146,15 +146,65 @@
         </div>
         <div class="row mt-2">
           <div class="col-12">
-            <button class="btn btn-primary" @click="executeQuery()" :disabled="isExecutingSOQL">
+            <button class="btn btn-primary" @click="executeQuery()" :disabled="isExecutingSOQL  || isRetrievingSOQLPlan">
               Execute
               <i v-if="isExecutingSOQL" class="fa fa fa-circle-o-notch fa-spin"></i>
+            </button>
+            <button class="btn btn-primary" @click="getSOQLPlan()" :disabled="isExecutingSOQL || isRetrievingSOQLPlan">
+              Query Plan
+              <i v-if="isRetrievingSOQLPlan" class="fa fa fa-circle-o-notch fa-spin"></i>
             </button>
             <button class="btn btn-primary" @click="addToApex()">Add to Apex</button>
           </div>
         </div>
       </div>
     </div>
+
+     <!-- SOQL PLAN -->
+    <div v-if="soqlPlan && soqlPlan.length > 0">
+      <div class="row">
+        <div class="col">
+          <div class="table-responsive mb-0">
+            <table class="table table-dark table-sm table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Cardinality</th>
+                  <th scope="col">Fields</th>
+                  <th scope="col">Leading Operation Type</th>
+                  <th scope="col">Cost</th>
+                  <th scope="col">SObject Cardinality</th>
+                  <th scope="col">SObject Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(plan, index) in soqlPlan" :key="index">
+                  <td>{{plan.cardinality}}</td>
+                  <td><span v-for="(field, indexField) in plan.fields" :key="indexField">{{field}}</br></span></td>
+                  <td>{{plan.leadingOperationType}}</td>
+                  <td>{{plan.relativeCost}}</td>
+                  <td>{{plan.sobjectCardinality}}</td>
+                  <td>{{plan.sobjectType}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <div class="p-2" style="border: thin solid var(--vscode-badge-background); background-color: var(--vscode-input-background); color: var(--vscode-input-foreground)">
+            <p style="border-bottom: thin slid var(--vscode-badge-background) !important"><b>Notes:</b></p>
+            <span v-for="(plan, index) in soqlPlan" :key="index">
+                <li v-for="(note, indexNote) in plan.notes" :key="indexNote">
+                  {{note.description}}. Table: {{note.tableEnumOrId}} Fields: {{note.fields}}
+                </li>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOQL DATA -->
     <div v-if="soqlResult && soqlResult.length > 0" class="row">
       <div class="col">
         <div class="table-responsive">
@@ -178,11 +228,12 @@
         </div>
       </div>
     </div>
-    <div v-if="soqlResult && soqlResult.length === 0" class="row">
+    <div v-else-if="soqlResult && soqlResult.length === 0" class="row">
       <div class="col-12">
         <label class="m-auto">0 Results</label>
       </div>
     </div>
+
     <div v-if="error" class="row">
       <div class="col-12">
         <label class="m-auto">{{ error.errorCode }}</label>
@@ -280,6 +331,15 @@ export default {
                 this.soqlResult = response;
             }
         });
+        window.vscode.onReceiveSOQLPlan((message) => {
+            this.isRetrievingSOQLPlan = false;
+            let response = message.data;
+            if (response.errorCode) {
+                this.error = response;
+            } else {
+                this.soqlPlan = response;
+            }
+        });
     },
     mounted() {
         this.$store.dispatch('sobjects/getAvailableSObjects');
@@ -298,6 +358,44 @@ export default {
             autoFormat: false,
             soql: '',
             soqlResult: undefined,
+            soqlPlan: [
+        {
+            "cardinality": 1,
+            "fields": [
+                "HC_CPF_CNPJ_Cliente__c"
+            ],
+            "leadingOperationType": "Index",
+            "notes": [
+                {
+                    "description": "Not considering filter for optimization because unindexed",
+                    "fields": [
+                        "IsDeleted"
+                    ],
+                    "tableEnumOrId": "Account"
+                }
+            ],
+            "relativeCost": 0.2,
+            "sobjectCardinality": 49,
+            "sobjectType": "Account"
+        },
+        {
+            "cardinality": 1,
+            "fields": [],
+            "leadingOperationType": "TableScan",
+            "notes": [
+                {
+                    "description": "Not considering filter for optimization because unindexed",
+                    "fields": [
+                        "IsDeleted"
+                    ],
+                    "tableEnumOrId": "Account"
+                }
+            ],
+            "relativeCost": 0.8433333333333334,
+            "sobjectCardinality": 49,
+            "sobjectType": "Account"
+        }
+    ],
             error: undefined,
             object: undefined,
             selectedFields: [],
@@ -319,7 +417,8 @@ export default {
             nullsOrder: 'NULLS FIRST',
             limitBy: undefined,
             showForm: true,
-            isExecutingSOQL: false
+            isExecutingSOQL: false,
+            isRetrievingSOQLPlan: false
         };
     },
     computed: {
@@ -456,6 +555,15 @@ export default {
                 args: this.soql,
             });
         },
+        getSOQLPlan() {
+            this.isRetrievingSOQLPlan = true;
+            this.soqlPlan = undefined;
+            this.error = undefined;
+            window.vscode.post({
+                cmd: 'getSOQLPlan',
+                args: this.soql,
+            });
+        },
         addToApex() {
             window.vscode.post({
                 cmd: 'addToApex',
@@ -492,6 +600,7 @@ export default {
             this.autoFormat = false;
             this.soql = '';
             this.soqlResult = undefined;
+            this.soqlPlan = undefined;
             this.error = undefined;
             this.selectedFields = [];
             this.filters = [
@@ -512,6 +621,7 @@ export default {
             this.nullsOrder = 'NULLS FIRST';
             this.limitBy = undefined;
             this.isExecutingSOQL = false;
+            this.isRetrievingSOQLPlan = false;
         },
         insertField(field){
             this.selectedFields.forEach(selectedField => {
@@ -548,5 +658,9 @@ export default {
 .icon:hover{
   color: var(--vscode-badge-foreground);
   cursor: pointer;
+}
+
+p{
+  margin-bottom: 0px;
 }
 </style>

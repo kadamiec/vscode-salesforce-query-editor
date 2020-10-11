@@ -21,6 +21,9 @@ class EGVscode extends Vscode {
     onReceiveSOQLResult(callback) {
         this.on('soqlResult', callback, 0);
     }
+    onReceiveSOQLPlan(callback){
+        this.on('soqlPlan', callback, 0);
+    }
 }
 
 export default EGVscode;
