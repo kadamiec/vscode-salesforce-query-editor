@@ -12,7 +12,7 @@ let webview;
 const activate = (context) => {
   webview = new SOQLEditorWebView();
   webview.activate(context, name, 'SFDX.soqlEditor');
-  vscode.window.showInformationMessage('The Salesforce SOQL Editor was Activated');
+  vscode.window.showInformationMessage('The SOQL Editor was Activated');
 };
 
 const deactivate = () => {

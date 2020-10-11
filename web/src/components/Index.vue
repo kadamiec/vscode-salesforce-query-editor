@@ -358,44 +358,7 @@ export default {
             autoFormat: false,
             soql: '',
             soqlResult: undefined,
-            soqlPlan: [
-        {
-            "cardinality": 1,
-            "fields": [
-                "HC_CPF_CNPJ_Cliente__c"
-            ],
-            "leadingOperationType": "Index",
-            "notes": [
-                {
-                    "description": "Not considering filter for optimization because unindexed",
-                    "fields": [
-                        "IsDeleted"
-                    ],
-                    "tableEnumOrId": "Account"
-                }
-            ],
-            "relativeCost": 0.2,
-            "sobjectCardinality": 49,
-            "sobjectType": "Account"
-        },
-        {
-            "cardinality": 1,
-            "fields": [],
-            "leadingOperationType": "TableScan",
-            "notes": [
-                {
-                    "description": "Not considering filter for optimization because unindexed",
-                    "fields": [
-                        "IsDeleted"
-                    ],
-                    "tableEnumOrId": "Account"
-                }
-            ],
-            "relativeCost": 0.8433333333333334,
-            "sobjectCardinality": 49,
-            "sobjectType": "Account"
-        }
-    ],
+            soqlPlan: undefined,
             error: undefined,
             object: undefined,
             selectedFields: [],

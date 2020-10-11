@@ -115,15 +115,13 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+### 0.4.0
 
-### 0.3.6
+ - Reduce the size of the bundle with Terser.
 
  - Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
 
 <img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
-
-
-### 0.3.5
 
  - Now whenever you switch orgs, the Schema builder will Reload the Sobjects List automatically:
 
@@ -133,7 +131,6 @@ You can also write your query in the Query Editor and run it without using any o
  - Now you can refresh the SObject List clicking on the Refresh Button:
 
 <img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
-
 
 
  - Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
