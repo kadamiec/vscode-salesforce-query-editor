@@ -5,10 +5,10 @@ import {
 /**
  *vscode API of business
  *
- * @class EGVscode
+ * @class SoqlEditorExtensionApi
  * @extends {Vscode}
  */
-class EGVscode extends Vscode {
+class SoqlEditorExtensionApi extends Vscode {
     onLoading(callback){
         this.on('loading', callback, 0);
     }
@@ -26,4 +26,4 @@ class EGVscode extends Vscode {
     }
 }
 
-export default EGVscode;
+export default SoqlEditorExtensionApi;

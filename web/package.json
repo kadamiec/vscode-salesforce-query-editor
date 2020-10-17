@@ -1,7 +1,7 @@
 {
-    "name": "salesforce-schema-builder-web",
+    "name": "salesforce-soql-editor-app",
     "version": "1.0.0",
-    "description": "Salesforce Schema Builder Web",
+    "description": "Salesforce SOQL Editor App",
     "author": "allanoricilcos@outlook.com",
     "private": true,
     "scripts": {

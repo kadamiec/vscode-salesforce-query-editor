@@ -2,7 +2,7 @@ import {
     WebviewData
 } from '../vscode.web';
 
-class EGData extends WebviewData {
+class SoqlEditorWebviewData extends WebviewData {
     constructor(vscode) {
         super(vscode);
         this.startPath = ''; // start path
@@ -11,5 +11,5 @@ class EGData extends WebviewData {
 }
 
 export {
-    EGData
+    SoqlEditorWebviewData
 };

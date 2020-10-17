@@ -1,7 +1,7 @@
 import Vue from "vue";
 import App from "./App";
 import router from "./router";
-import example from "./utils/example/e.g.index";
+import soqlEditor from "./utils/soqlEditor/index";
 import Vuex from "vuex";
 import {
     store
@@ -16,7 +16,7 @@ import "highlight.js/styles/vs2015.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
-example.activate();
+soqlEditor.activate();
 
 Vue.config.productionTip = false;
 

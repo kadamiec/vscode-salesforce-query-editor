@@ -3,12 +3,14 @@ const { WebView } = require('../vscode/vscode.webview');
 const vscode = require('vscode');
 const {
   getDefaultusername,
+  openRecordDetailPage
+} = require('../services/sfdxServices.js');
+const {
   getGlobalDescribe,
   getSObjectDescribe,
   getSOQLData,
   getSOQLPlan,
-  openRecordDetailPage
-} = require('../utils/sfdxCommands.js');
+} = require('../services/salesforceServices.js');
 
 /**
  *Add business
@@ -32,44 +34,56 @@ class SOQLEditorWebView extends WebView {
     this.fileSystemWatcher.onDidChange(() => {
       if(this.panel){
         this.postMessage('loading');
-        this.onDidPose();
+        onSelectDefaultUsername();
       }
     });
 
-    this.onDidPose = () => {
-      getDefaultusername().then(defaultOrg => {
-        this.defaultOrg = defaultOrg;
-        getGlobalDescribe(this.defaultOrg)
-          .then((response) => {
-            this.postMessage('objects', response.data.sobjects);
-          }).catch ((e) => {
-            this.showErrorMessage("Couldn't retrieve the Sobjects List");
-            this.channel.appendLine(e);
+    const getSObjects = () => {
+      getGlobalDescribe(this.defaultOrg)
+        .then((response) => {
+          this.postMessage('objects', response.data.sobjects);
+        }).catch ((e) => {
+          this.channel.appendLine(e);
+          this.showErrorMessage("Couldn't get the SObjects");            
         });
-      }).catch(reason => this.showErrorMessage(reason));
+    };
+
+    const onSelectDefaultUsername = () => {
+      getDefaultusername()
+        .then(defaultOrg => {
+          this.defaultOrg = defaultOrg;
+          getSObjects();
+        }).catch(reason => {
+          this.channel.appendLine(reason);
+          this.showErrorMessage('Could not get Defaultusername Credentials');
+        });
+    };
+
+    this.onDidPose = () => {
+      onSelectDefaultUsername();
     };
 
     this.didChangeViewState = () => {
-      this.activeTextEditor = vscode.window.activeTextEditor;
+      const editor = vscode.window.activeTextEditor;
+      if(editor){
+        const fileName = editor.document.fileName.split(/\/|\\/).pop();
+        if(fileName.includes('.cls')){
+          this.activeTextEditor = editor;
+        }
+      }
     };
 
     this.handler.addApi({
-      getAllObjectNames: () => {
-        getGlobalDescribe(this.defaultOrg)
-          .then((response) => {
-            this.postMessage('objects', response.data.sobjects);
-          }).catch ((e) => {
-            this.showErrorMessage("Couldn't get the SObjects");
-            this.channel.appendLine(e);
-        });
-      },
-      refreshSObjects: () => {
-        this.onDidPose();
-      },
+      getAllObjectNames: () => getSObjects(),
+      refreshSObjects: () => onSelectDefaultUsername(),
       getSObjectDescribe: (sObject) => {
-        getSObjectDescribe(this.defaultOrg, sObject).then((response) => {
-          this.postMessage('sobjectDescription', response.data);
-        });
+        getSObjectDescribe(sObject, this.defaultOrg)
+          .then((response) => {
+            this.postMessage('sobjectDescription', response.data);
+          }).catch((reason) =>{
+            this.channel.appendLine(reason);
+            this.showErrorMessage('Could not get SObject Fields');
+          });
       },
       executeSOQL: (soql) => {
         getSOQLData(soql, this.defaultOrg)
@@ -98,13 +112,10 @@ class SOQLEditorWebView extends WebView {
           });
       },
       addToApex: (soql) => {
-        const editor = this.activeTextEditor;
-        if (editor.selection.isEmpty) {
-          const position = editor.selection.active;
-          editor.edit((editBuilder) => {
-            soql = soql.replace(/\n/g, ' ');
-            soql = soql.replace(/ +(?= )/g, ' ');
-            editBuilder.insert(position, `[${soql}]`);
+        if(this.activeTextEditor && this.activeTextEditor.selection.isEmpty) {
+          const position = this.activeTextEditor.selection.active;
+          this.activeTextEditor.edit((editBuilder) => {
+            editBuilder.insert(position, `[${soql.replace(/ +(?= )|\n/g, ' ')}]`);
           });
         }
       },
@@ -124,16 +135,16 @@ class SOQLEditorWebView extends WebView {
    * @memberof WebView
    */
   activate(context, name, cmdName, htmlPath = undefined) {
-    // custom code if need
     return super.activate(context, name, cmdName, htmlPath);
   }
 
   showErrorMessage(message) {
-    vscode.window.showErrorMessage(message, 'Show Output').then((selection) => {
-      if (selection === 'Show Output') {
-        this.channel.show();
-      }
-    });
+    vscode.window.showErrorMessage(message, 'Show Output')
+      .then((selection) => {
+        if (selection === 'Show Output') {
+          this.channel.show();
+        }
+      });
   }
 
   postMessage(message, data) {

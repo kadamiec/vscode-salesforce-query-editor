@@ -1,269 +1,270 @@
 <template>
   <div class="container vh-100 vw-100 px-xl-5 py-2">
     <div v-if="loading" class="d-flex justify-content-center h-100">
-      <square-grid class="m-auto" size="100px" background="var(--vscode-button-background)"></square-grid>
+      <square-grid class="m-auto" background="var(--vscode-button-background)"></square-grid>
     </div>
     <span v-else>
-          <div class="row">
-      <div class="col">
-        <button
-          class="btn btn-primary"
-          @click="toogleForm"
-        >{{ showForm ? 'Hide Form' : 'Show Form' }}</button>
-      </div>
-      <div class="col-auto">
-        <div class="row pr-3">
-            <span
-              class="icon fa fa-sync mr-2"
-              data-placement="top"
-              @click="refreshSobjects()"
-            ></span>
-            <a target="_blank" href="https://github.com/AllanOricil/SOQL-Editor-Issues" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
-              <i class="icon fa fa-github"></i>
-            </a>
-            <a target="_blank" href="https://www.buymeacoffee.com/allanoricil" v-b-tooltip.hover title="Buy me a Coffee if you liked it">
-              <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
-            </a>
-        </div>
-      </div>
-    </div>
-    <div v-if="showForm" class="row">
-      <div class="col-4">
-        <div class="row mb-3">
-          <div class="col">
-            <label for="fieldRelatedTo">Object</label>
-            <select id="fieldRelatedTo" v-model="object" class="form-control">
-              <option
-                v-for="(object, index) in objects"
-                :key="index"
-                :value="object.name"
-              >{{ object.name }}</option>
-            </select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <select size="16" class="mr-2 w-100" multiple v-model="selectedFields">
-              <option
-                v-for="(field, index) in fieldsToQuery"
-                :key="index"
-                :value="field"
-                @click="field.hasNext ? onSelectReference(field) : null"
-              >{{ field.value + (field.hasNext ? ' ➤' : '')}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="col-8">
-        <div class="row">
-          <div class="col-12 form-row align-items-center">
-            <div class="form-group col-md-5 mr-2">
-              <label for="sortBy">Order by:</label>
-              <select id="sortBy" class="form-control" v-model="sortBy">
-                <option
-                  v-for="(field, index) in sobjectFields"
-                  :key="index"
-                  :value="field.name"
-                >{{ field.name }}</option>
-              </select>
-            </div>
-            <div class="form-group col-md-2 mr-2">
-              <label for="orderBy" style="opacity: 0;">-</label>
-              <select id="orderBy" class="form-control" v-model="orderBy">
-                <option value="ASC">A to Z</option>
-                <option value="DESC">Z to A</option>
-              </select>
-            </div>
-            <div class="form-group col-md-2 mr-2">
-              <label for="nullsOrder" style="opacity: 0;">-</label>
-              <select id="nullsOrder" class="form-control" v-model="nullsOrder">
-                <option value="NULLS FIRST">Null First</option>
-                <option value="NULLS LAST">Null Last</option>
-              </select>
-            </div>
-            <div class="form-group col">
-              <label for="limitBy">Max Records:</label>
-              <input id="limitBy" type="number" class="form-control" min="0" v-model="limitBy">
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 form-row justify-content-between mb-2">
-            <label class="my-auto" for="inputCity">Filter Results By:</label>
-            <button class="btn btn-primary" @click="addFilter()">Add Filter</button>
-          </div>
-          <div class="col-12 px-0 overflow-auto" style="max-height: 310px;">
-            <filter-entry
-              v-for="(filter, index) in filters"
-              :key="index"
-              :index="index"
-              :showLogic="index !== filters.length - 1"
-              :sObjectFieldsToFilter="sobjectFields"
-              :object="object"
-              v-model="filters[index]"
-              @deleteEntry="onDelete"
-            ></filter-entry>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row my-2 mb-3">
-      <div class="col-12">
-        <div class="row mb-2">
-          <div class="col my-auto">
-            <label>Enter or modify a SOQL query below:</label>
-          </div>
-          <div class="col-auto">
-            <div class="row">
-              <div class="col-auto my-auto">
-                <label class="form-check-label custom-checkbox-container" for="autoFormatButton">
-                  Autoformat
-                  <input
-                    id="autoFormatButton"
-                    class="form-check-input"
-                    type="checkbox"
-                    v-model="autoFormat"
-                  >
-                  <span class="checkmark"/>
-                </label>
-              </div>
-              <div class="col-auto pl-0">
-                <button class="btn btn-primary" @click="formatSOQL()">Click to Format</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <codemirror
-              ref="cmEditor"
-              v-model="soql"
-              :options="cmOptions"
-              heigth="200px"
-              @ready="onCmReady"
-            />
-          </div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-12">
-            <button class="btn btn-primary" @click="executeQuery()" :disabled="isExecutingSOQL  || isRetrievingSOQLPlan">
-              Execute
-              <i v-if="isExecutingSOQL" class="fa fa fa-circle-o-notch fa-spin"></i>
-            </button>
-            <button class="btn btn-primary" @click="getSOQLPlan()" :disabled="isExecutingSOQL || isRetrievingSOQLPlan">
-              Query Plan
-              <i v-if="isRetrievingSOQLPlan" class="fa fa fa-circle-o-notch fa-spin"></i>
-            </button>
-            <button class="btn btn-primary" @click="addToApex()">Add to Apex</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-     <!-- SOQL PLAN -->
-    <div v-if="soqlPlan && soqlPlan.length > 0">
       <div class="row">
         <div class="col">
-          <div class="table-responsive mb-0">
+          <button
+            class="btn btn-primary"
+            @click="toogleForm"
+          >{{ showForm ? 'Hide Form' : 'Show Form' }}</button>
+        </div>
+        <div class="col-auto">
+          <div class="row pr-3">
+              <span
+                class="icon fa fa-sync mr-2"
+                data-placement="top"
+                @click="refreshSobjects()"
+                v-b-tooltip.hover title="Refresh SObjects"
+              ></span>
+              <a target="_blank" href="https://github.com/AllanOricil/SOQL-Editor-Issues" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
+                <i class="icon fa fa-github"></i>
+              </a>
+              <a target="_blank" href="https://www.buymeacoffee.com/allanoricil" v-b-tooltip.hover title="Buy me a Coffee if you liked it">
+                <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
+              </a>
+          </div>
+        </div>
+      </div>
+      <div v-if="showForm" class="row">
+        <div class="col-4">
+          <div class="row mb-3">
+            <div class="col">
+              <label for="fieldRelatedTo">Object</label>
+              <select id="fieldRelatedTo" v-model="object" class="form-control">
+                <option
+                  v-for="(object, index) in objects"
+                  :key="index"
+                  :value="object.name"
+                >{{ object.name }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <select size="16" class="mr-2 w-100" multiple v-model="selectedFields">
+                <option
+                  v-for="(field, index) in fieldsToQuery"
+                  :key="index"
+                  :value="field"
+                  @click="field.hasNext ? onSelectReference(field) : null"
+                >{{ field.value + (field.hasNext ? ' ➤' : '')}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-8">
+          <div class="row">
+            <div class="col-12 form-row align-items-center">
+              <div class="form-group col-md-5 mr-2">
+                <label for="sortBy">Order by:</label>
+                <select id="sortBy" class="form-control" v-model="sortBy">
+                  <option
+                    v-for="(field, index) in sobjectFields"
+                    :key="index"
+                    :value="field.name"
+                  >{{ field.name }}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2 mr-2">
+                <label for="orderBy" style="opacity: 0;">-</label>
+                <select id="orderBy" class="form-control" v-model="orderBy">
+                  <option value="ASC">A to Z</option>
+                  <option value="DESC">Z to A</option>
+                </select>
+              </div>
+              <div class="form-group col-md-2 mr-2">
+                <label for="nullsOrder" style="opacity: 0;">-</label>
+                <select id="nullsOrder" class="form-control" v-model="nullsOrder">
+                  <option value="NULLS FIRST">Null First</option>
+                  <option value="NULLS LAST">Null Last</option>
+                </select>
+              </div>
+              <div class="form-group col">
+                <label for="limitBy">Max Records:</label>
+                <input id="limitBy" type="number" class="form-control" min="0" v-model="limitBy">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 form-row justify-content-between mb-2">
+              <label class="my-auto" for="inputCity">Filter Results By:</label>
+              <button class="btn btn-primary" @click="addFilter()">Add Filter</button>
+            </div>
+            <div class="col-12 px-0 overflow-auto" style="max-height: 310px;">
+              <filter-entry
+                v-for="(filter, index) in filters"
+                :key="index"
+                :index="index"
+                :showLogic="index !== filters.length - 1"
+                :sObjectFieldsToFilter="sobjectFields"
+                :object="object"
+                v-model="filters[index]"
+                @deleteEntry="onDelete"
+              ></filter-entry>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row my-2 mb-3">
+        <div class="col-12">
+          <div class="row mb-2">
+            <div class="col my-auto">
+              <label>Enter or modify a SOQL query below:</label>
+            </div>
+            <div class="col-auto">
+              <div class="row">
+                <div class="col-auto my-auto">
+                  <label class="form-check-label custom-checkbox-container" for="autoFormatButton">
+                    Autoformat
+                    <input
+                      id="autoFormatButton"
+                      class="form-check-input"
+                      type="checkbox"
+                      v-model="autoFormat"
+                    >
+                    <span class="checkmark"/>
+                  </label>
+                </div>
+                <div class="col-auto pl-0">
+                  <button class="btn btn-primary" @click="formatSOQL()">Click to Format</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <codemirror
+                ref="cmEditor"
+                v-model="soql"
+                :options="cmOptions"
+                heigth="200px"
+                @ready="onCmReady"
+              />
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <button class="btn btn-primary" @click="executeQuery()" :disabled="isExecutingSOQL  || isRetrievingSOQLPlan">
+                Execute
+                <i v-if="isExecutingSOQL" class="fa fa fa-circle-o-notch fa-spin"></i>
+              </button>
+              <button class="btn btn-primary" @click="getSOQLPlan()" :disabled="isExecutingSOQL || isRetrievingSOQLPlan">
+                Query Plan
+                <i v-if="isRetrievingSOQLPlan" class="fa fa fa-circle-o-notch fa-spin"></i>
+              </button>
+              <button class="btn btn-primary" @click="addToApex()">Add to Apex</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOQL PLAN -->
+      <div v-if="soqlPlan && soqlPlan.length > 0">
+        <div class="row">
+          <div class="col">
+            <div class="table-responsive mb-0">
+              <table class="table table-dark table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Cardinality</th>
+                    <th scope="col">Fields</th>
+                    <th scope="col">Leading Operation Type</th>
+                    <th scope="col">Cost</th>
+                    <th scope="col">SObject Cardinality</th>
+                    <th scope="col">SObject Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(plan, index) in soqlPlan" :key="index">
+                    <td>{{plan.cardinality}}</td>
+                    <td><span v-for="(field, indexField) in plan.fields" :key="indexField">{{field}}</br></span></td>
+                    <td>{{plan.leadingOperationType}}</td>
+                    <td>{{plan.relativeCost}}</td>
+                    <td>{{plan.sobjectCardinality}}</td>
+                    <td>{{plan.sobjectType}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <div class="p-2" style="border: thin solid var(--vscode-badge-background); background-color: var(--vscode-input-background); color: var(--vscode-input-foreground)">
+              <p style="border-bottom: thin slid var(--vscode-badge-background) !important"><b>Notes:</b></p>
+              <span v-for="(plan, index) in soqlPlan" :key="index">
+                  <li v-for="(note, indexNote) in plan.notes" :key="indexNote">
+                    {{note.description}}. Table: {{note.tableEnumOrId}} Fields: {{note.fields}}
+                  </li>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOQL DATA -->
+      <div v-if="soqlResult && soqlResult.length > 0" class="row">
+        <div class="col">
+          <div class="table-responsive">
             <table class="table table-dark table-sm table-bordered">
               <thead>
                 <tr>
-                  <th scope="col">Cardinality</th>
-                  <th scope="col">Fields</th>
-                  <th scope="col">Leading Operation Type</th>
-                  <th scope="col">Cost</th>
-                  <th scope="col">SObject Cardinality</th>
-                  <th scope="col">SObject Type</th>
+                  <th scope="col" v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName">{{ field }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(plan, index) in soqlPlan" :key="index">
-                  <td>{{plan.cardinality}}</td>
-                  <td><span v-for="(field, indexField) in plan.fields" :key="indexField">{{field}}</br></span></td>
-                  <td>{{plan.leadingOperationType}}</td>
-                  <td>{{plan.relativeCost}}</td>
-                  <td>{{plan.sobjectCardinality}}</td>
-                  <td>{{plan.sobjectType}}</td>
+                <tr v-for="(record, indexRecord) in soqlResultRecords" :key="indexRecord">
+                  <td v-for="(value, indexValue) in Object.values(record)" :key="indexValue">
+                    <pre v-if="typeof value === 'object'">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
+                    <span v-else>
+                      <span @click="Object.keys(record)[indexValue] === 'Id' ? openRecordDetailPage(value): null" :class="Object.keys(record)[indexValue] === 'Id' ? 'record-id' : ''">{{value}}</span>
+                    </span>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-      <div class="row mb-3">
-        <div class="col">
-          <div class="p-2" style="border: thin solid var(--vscode-badge-background); background-color: var(--vscode-input-background); color: var(--vscode-input-foreground)">
-            <p style="border-bottom: thin slid var(--vscode-badge-background) !important"><b>Notes:</b></p>
-            <span v-for="(plan, index) in soqlPlan" :key="index">
-                <li v-for="(note, indexNote) in plan.notes" :key="indexNote">
-                  {{note.description}}. Table: {{note.tableEnumOrId}} Fields: {{note.fields}}
-                </li>
-            </span>
-          </div>
+      <div v-else-if="soqlResult && soqlResult.length === 0" class="row">
+        <div class="col-12">
+          <label class="m-auto">0 Results</label>
         </div>
       </div>
-    </div>
 
-    <!-- SOQL DATA -->
-    <div v-if="soqlResult && soqlResult.length > 0" class="row">
-      <div class="col">
-        <div class="table-responsive">
-          <table class="table table-dark table-sm table-bordered">
-            <thead>
-              <tr>
-                <th scope="col" v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName">{{ field }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(record, indexRecord) in soqlResultRecords" :key="indexRecord">
-                <td v-for="(value, indexValue) in Object.values(record)" :key="indexValue">
-                  <pre v-if="typeof value === 'object'">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
-                  <span v-else>
-                    <span @click="Object.keys(record)[indexValue] === 'Id' ? openRecordDetailPage(value): null" :class="Object.keys(record)[indexValue] === 'Id' ? 'record-id' : ''">{{value}}</span>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div v-if="error" class="row">
+        <div class="col-12">
+          <label class="m-auto">{{ error.errorCode }}</label>
+        </div>
+        <div class="col-12">
+          <label class="m-auto">{{ error.message }}</label>
         </div>
       </div>
-    </div>
-    <div v-else-if="soqlResult && soqlResult.length === 0" class="row">
-      <div class="col-12">
-        <label class="m-auto">0 Results</label>
-      </div>
-    </div>
+      <b-modal
+        id="relationshipSelectorModal"
+        size="xl"
+        :title="selectedReference + ': ' + selectedReferenceValue"
+        centered
+        cancel-disabled
+      >
+        <relationship-selector
+          :referenceName="selectedReference"
+          :referenceValue="selectedReferenceValue"
+          ref="relationshipSelector"
+        ></relationship-selector>
 
-    <div v-if="error" class="row">
-      <div class="col-12">
-        <label class="m-auto">{{ error.errorCode }}</label>
-      </div>
-      <div class="col-12">
-        <label class="m-auto">{{ error.message }}</label>
-      </div>
-    </div>
-    <b-modal
-      id="relationshipSelectorModal"
-      size="xl"
-      :title="selectedReference + ': ' + selectedReferenceValue"
-      centered
-      cancel-disabled
-    >
-      <relationship-selector
-        :referenceName="selectedReference"
-        :referenceValue="selectedReferenceValue"
-        ref="relationshipSelector"
-      ></relationship-selector>
-
-      <template v-slot:modal-footer="{ close }">
-        <button type="button" class="btn btn-md danger" @click="close()">Close</button>
-        <button
-          type="button"
-          class="btn btn-md danger"
-          @click="insertField($refs.relationshipSelector.fieldToInsert)"
-        >Insert</button>
-      </template>
-    </b-modal>
+        <template v-slot:modal-footer="{ close }">
+          <button type="button" class="btn btn-md danger" @click="close()">Close</button>
+          <button
+            type="button"
+            class="btn btn-md danger"
+            @click="insertField($refs.relationshipSelector.fieldToInsert)"
+          >Insert</button>
+        </template>
+      </b-modal>
     </span>
   </div>
 </template>
@@ -273,13 +274,13 @@ import { codemirror } from 'vue-codemirror';
 import 'codemirror/mode/sql/sql.js';
 import 'codemirror/lib/codemirror.css';
 import '../../static/css/vscode-dark.css';
-import FilterEntry from './FilterEntry.vue';
+import FilterEntry from './filter-entry.vue';
 import sqlFormatter from 'sql-formatter';
-import RelationshipSelector from './RelationshipSelector.vue';
+import RelationshipSelector from './relationship-selector.vue';
 import { SquareGrid } from 'vue-loading-spinner';
 
 export default {
-    name: 'Index',
+    name: 'Editor',
     components: {
         codemirror,
         FilterEntry,
@@ -293,9 +294,6 @@ export default {
         window.vscode.onReceiveObjects((message) => {
             this.object = undefined;
             this.$store.commit('sobjects/setSObjects', message.data);
-            window.vscode.showMessage({
-                txt: 'SObjects Loaded',
-            });
             this.loading = false;
         });
         window.vscode.onReceiveSObjectDescription((message) => {
@@ -304,9 +302,6 @@ export default {
                 this.$store.commit('sobjects/setSObject', message.data);
                 if(objectApiName === this.object){
                   this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](objectApiName);
-                  window.vscode.showMessage({
-                      txt: 'SObject Details Received',
-                  });
                 }
 
                 this.sobjectFields.forEach(field => {

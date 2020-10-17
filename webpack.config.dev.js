@@ -1,9 +1,9 @@
 'use strict';
 
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -19,20 +19,13 @@ const config = {
     vscode: 'commonjs vscode',
     request: 'commonjs request'
   },
+  devtool: "source-map",
   resolve: {
     extensions: ['.js'],
   },
   plugins:[
     new CleanWebpackPlugin(),
     new Dotenv()
-  ],
-  optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        mangle: true
-      }
-    })]
-  }
+  ]
 };
 module.exports = config;

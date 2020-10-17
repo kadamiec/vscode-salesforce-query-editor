@@ -18,9 +18,9 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.4.0",
+  "version": "0.4.2",
   "engines": {
-    "vscode": "^1.47.2"
+    "vscode": "^1.48.0"
   },
   "categories": [
     "Other"
@@ -73,6 +73,7 @@
     }
   },
   "scripts": {
+    "dev": "webpack --config webpack.config.dev.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test",
     "build": "node .build/build.js",
@@ -81,6 +82,8 @@
   "devDependencies": {
     "@types/mocha": "^2.2.42",
     "@types/node": "^10.12.21",
+    "clean-webpack-plugin": "^3.0.0",
+    "dotenv-webpack": "^4.0.0",
     "eslint": "^5.13.0",
     "terser-webpack-plugin": "^4.2.3",
     "typescript": "^3.3.1",

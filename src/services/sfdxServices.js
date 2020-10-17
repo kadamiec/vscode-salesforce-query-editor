@@ -1,0 +1,45 @@
+// @ts-nocheck
+const vscode = require('vscode');
+const fs = require('fs-extra');
+const { exec } = require('child_process');
+
+const SFDX_WORKSPACE_CONFIG_FILE_PATH = `${vscode.workspace.rootPath}/.sfdx/sfdx-config.json`;
+
+const executeSfdxCommand = (command, callback) => {
+  command += ' --json';
+  exec(command, { encoding: 'utf-8', cwd: vscode.workspace.rootPath }, (error, stdout, stderr) => {
+    if(!error && !stderr) callback(JSON.parse(stdout));
+    else callback('error');
+  });
+};
+
+const getOrgDisplay = (username, callback) => {
+  return executeSfdxCommand(`sfdx force:org:display -u ${username}`, callback);
+};
+
+const openRecordDetailPage = (recordId, callback) => {
+  return executeSfdxCommand(`sfdx force:org:open -p "/${recordId}"`, callback);
+};
+
+const getDefaultusername = () => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(SFDX_WORKSPACE_CONFIG_FILE_PATH, { encoding: 'utf-8' }, (error, data) => {
+      if(error) reject('Set a defaultusername on SFDX and try again');
+      else if(data){
+        const defaultusername = JSON.parse(data).defaultusername;
+        getOrgDisplay(defaultusername, (org) => {
+          if(org.result){
+            resolve(org.result);
+          }else {
+            reject('Could not get accessToken for the current defaultusername');
+          }
+        });
+      }
+    });
+  });
+};
+
+module.exports = {
+  getDefaultusername,
+  openRecordDetailPage
+};

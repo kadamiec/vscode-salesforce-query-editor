@@ -95,7 +95,7 @@ class WebView {
       this.panel.reveal(viewColumn);
     } else {
       this.channel = vscode.window.createOutputChannel(
-        'Salesforce Schema Builder'
+        'Salesforce SOQL Editor'
       );
       this._panel = vscode.window.createWebviewPanel(
         viewType,

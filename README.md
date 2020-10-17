@@ -127,11 +127,9 @@ You can also write your query in the Query Editor and run it without using any o
 
 <img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
 
-
  - Now you can refresh the SObject List clicking on the Refresh Button:
 
 <img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
-
 
  - Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
 
