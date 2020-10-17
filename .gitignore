@@ -7,3 +7,4 @@ web/selenium-server.log
 web/chromedriver.log
 web/selenium-server.log
 *.env
+dist
