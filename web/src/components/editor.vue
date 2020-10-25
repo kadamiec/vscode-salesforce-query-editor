@@ -1,7 +1,15 @@
 <template>
   <div class="container vh-100 vw-100 px-xl-5 py-2">
     <div v-if="loading" class="d-flex justify-content-center h-100">
-      <square-grid class="m-auto" background="var(--vscode-button-background)"></square-grid>
+      <div class="m-auto">
+          <div class="d-flex flex-column">
+            <h2>Buy me a Coffee</h2>
+            <a target="_blank" class="mx-auto" href="https://www.buymeacoffee.com/allanoricil" >
+              <img src="../../static/images/buyMeACoffeIcon.svg" width="200px;" alt="Kiwi standing on oval">
+            </a>
+            <square-grid background="var(--vscode-button-background)" class="mt-4 mx-auto"></square-grid>
+        </div>
+      </div>
     </div>
     <span v-else>
       <div class="row">
@@ -239,7 +247,7 @@
                         <button v-if="showEditRecordButton" style="width: 30px;" class="btn btn-primary btn-sm mb-1" @click="onClickEditRecordButton(indexRecord)" :disabled="isCommitingChanges">
                           <span class="fa fa-pencil fa-xs"></span>
                         </button>
-                        <button class="btn btn-primary btn-sm" style="width: 30px;" @click="onClickDeleteRecordButton(indexRecord)" :disabled="isCommitingChanges">
+                        <button v-if="false" class="btn btn-primary btn-sm" style="width: 30px;" @click="onClickDeleteRecordButton(indexRecord)" :disabled="isCommitingChanges">
                           <span class="fa fa-trash fa-xs"></span>
                         </button>
                       </span>
