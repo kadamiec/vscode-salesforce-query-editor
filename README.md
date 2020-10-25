@@ -115,6 +115,17 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+### 0.5.0
+ 
+ - Remove "attributes" from nested results.
+
+    <img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
+
+ - Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field.
+
+    <img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
+
+
 ### 0.4.0
 
  - Reduce the size of the bundle with Terser.
