@@ -21,6 +21,10 @@ const openRecordDetailPage = (recordId, callback) => {
   return executeSfdxCommand(`sfdx force:org:open -p "/${recordId}"`, callback);
 };
 
+const bulkUpsert = (csvPath, sObjectName, externalId, callback) => {
+  return executeSfdxCommand(`sfdx force:data:bulk:upsert -s ${sObjectName} -f ${csvPath} -i ${externalId } -w 120`, callback);
+};
+
 const getDefaultusername = () => {
   return new Promise((resolve, reject) => {
     fs.readFile(SFDX_WORKSPACE_CONFIG_FILE_PATH, { encoding: 'utf-8' }, (error, data) => {
@@ -41,5 +45,6 @@ const getDefaultusername = () => {
 
 module.exports = {
   getDefaultusername,
-  openRecordDetailPage
+  openRecordDetailPage,
+  bulkUpsert
 };

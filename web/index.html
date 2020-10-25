@@ -86,6 +86,11 @@
         border-color: var(--vscode-inputValidation-errorBorder) !important;
     }
 
+    ul,
+    ol{
+        color: var(--vscode-input-foreground) !important;
+    }
+
     ::placeholder {
         /* Chrome, Firefox, Opera, Safari 10.1+ */
         color: var(--vscode-input-placeholderForeground) !important;
@@ -268,6 +273,15 @@
     a:focus,
     i:focus{
         outline: none !important;
+    }
+
+    ::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--vscode-scrollbarSlider-background);
+        outline: 1px solid slategrey;
     }
 </style>
 

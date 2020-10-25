@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <vue-confirm-dialog></vue-confirm-dialog>
         <router-view />
     </div>
 </template>
@@ -10,13 +11,4 @@ export default {
 };
 </script>
 
-<style>
-::-webkit-scrollbar {
-    width: 0.5em;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--vscode-scrollbarSlider-background);
-    outline: 1px solid slategrey;
-}
-</style>
+<style></style>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 const { WebView } = require('../vscode/vscode.webview');
 const vscode = require('vscode');
+
 const {
   getDefaultusername,
   openRecordDetailPage
@@ -10,6 +11,7 @@ const {
   getSObjectDescribe,
   getSOQLData,
   getSOQLPlan,
+  updateRecords
 } = require('../services/salesforceServices.js');
 
 /**
@@ -29,7 +31,6 @@ class SOQLEditorWebView extends WebView {
     super();
     this.defaultOrg;
     this.activeTextEditor = vscode.window.activeTextEditor;
-
     this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);
     this.fileSystemWatcher.onDidChange(() => {
       if(this.panel){
@@ -122,6 +123,39 @@ class SOQLEditorWebView extends WebView {
       openRecordDetailPage: (recordId) =>{
         openRecordDetailPage(recordId);
       },
+      commitChanges: async (changes) => {
+        let sobject = changes.sobject;
+        let recordsToUpdate = changes.recordsToUpdate;
+
+        if(recordsToUpdate){
+          recordsToUpdate = 
+            recordsToUpdate.map(record => {
+                for(var key in record) {
+                  if(typeof record[key] === 'object') delete record[key];
+                }
+                record.attributes = {
+                  type: sobject
+                };
+                return record;
+            });
+
+          let i,j,temparray,chunk = 200;
+          let updatedRecordsResults = [];
+          for (i = 0, j = recordsToUpdate.length; i < j; i += chunk) {
+              temparray = recordsToUpdate.slice(i, i + chunk); 
+              const result = await updateRecords(
+                { 
+                  allOrNone: false, 
+                  records: temparray 
+                }, 
+                this.defaultOrg
+              );
+              updatedRecordsResults.push(...result.data);
+          }
+          
+          this.postMessage('commitResult', updatedRecordsResults);
+        }
+      }
     });
   }
 

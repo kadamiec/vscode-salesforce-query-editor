@@ -18,6 +18,17 @@ const createAxiosCall = (service, queryParams, defaultOrg)=>{
     );
 };
 
+const createAxiosCall2 = (method, service, queryParams, data, defaultOrg)=>{
+    return axios({
+        method,
+        url: encodeURI(`${defaultOrg.instanceUrl}/services/data/v${process.env.SALESFORCE_API_VERSION}/${service}/${queryParams ? buildQueryParams(queryParams) : ''}`),
+        data,
+        headers: {
+            Authorization: `Bearer ${defaultOrg.accessToken}`
+        }
+    });
+};
+
 const getGlobalDescribe = (defaultOrg) => {
     return createAxiosCall('sobjects', null, defaultOrg);
 };
@@ -34,9 +45,15 @@ const getSObjectDescribe = (sObjectName, defaultOrg) => {
     return createAxiosCall(`sobjects/${sObjectName}/describe`, null, defaultOrg);
 };
 
+const updateRecords = (records, defaultOrg) => {
+    return createAxiosCall2('patch','composite/sobjects', null, records, defaultOrg);
+};
+
+
 module.exports = {
     getGlobalDescribe,
     getSObjectDescribe,
     getSOQLData,
     getSOQLPlan,
+    updateRecords
 };
