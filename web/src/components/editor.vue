@@ -19,7 +19,7 @@
                 @click="refreshSobjects()"
                 v-b-tooltip.hover title="Refresh SObjects"
               ></span>
-              <a target="_blank" href="https://github.com/AllanOricil/SOQL-Editor-Issues" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
+              <a target="_blank" href="https://github.com/AllanOricil/salesforce-soql-editor" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
                 <i class="icon fa fa-github"></i>
               </a>
               <a target="_blank" href="https://www.buymeacoffee.com/allanoricil" v-b-tooltip.hover title="Buy me a Coffee if you liked it">
@@ -219,29 +219,31 @@
             <table class="table table-dark table-sm table-bordered">
               <thead>
                 <tr>
-                  <th v-if="showTableActionButtons" style="width: 70px;"></th>
+                  <th v-if="showTableActionButtons" style="width: 30px;"></th>
                   <th scope="col" v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName">{{ field }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(record, indexRecord) in soqlResult" :key="indexRecord">
                   <td v-if="showTableActionButtons">
-                    <span v-if="record.editing">
-                      <!--<button class="btn btn-primary btn-sm" @click="confirmChanges(indexRecord)" :disabled="isCommitingChanges">
-                        <span class="fa fa-check fa-xs"></span>
-                      </button>-->
-                      <button class="btn btn-primary btn-sm" @click="onClickCancelChangesButton(indexRecord)" :disabled="isCommitingChanges">
-                        <span class="fa fa-times-circle fa-xs"></span>
-                      </button>
-                    </span>
-                    <span v-else>
-                      <button v-if="showEditRecordButton" class="btn btn-primary btn-sm" @click="onClickEditRecordButton(indexRecord)" :disabled="isCommitingChanges">
-                        <span class="fa fa-pencil fa-xs"></span>
-                      </button>
-                      <button class="btn btn-primary btn-sm" @click="onClickDeleteRecordButton(indexRecord)" :disabled="isCommitingChanges">
-                        <span class="fa fa-trash fa-xs"></span>
-                      </button>
-                    </span>
+                    <div class="d-flex flex-column">
+                      <span v-if="record.editing">
+                        <!--<button class="btn btn-primary btn-sm" @click="confirmChanges(indexRecord)" :disabled="isCommitingChanges">
+                          <span class="fa fa-check fa-xs"></span>
+                        </button>-->
+                        <button class="btn btn-primary btn-sm" @click="onClickCancelChangesButton(indexRecord)" :disabled="isCommitingChanges">
+                          <span class="fa fa-times-circle fa-xs"></span>
+                        </button>
+                      </span>
+                      <span v-else>
+                        <button v-if="showEditRecordButton" style="width: 30px;" class="btn btn-primary btn-sm mb-1" @click="onClickEditRecordButton(indexRecord)" :disabled="isCommitingChanges">
+                          <span class="fa fa-pencil fa-xs"></span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" style="width: 30px;" @click="onClickDeleteRecordButton(indexRecord)" :disabled="isCommitingChanges">
+                          <span class="fa fa-trash fa-xs"></span>
+                        </button>
+                      </span>
+                    </div>
                   </td>
                   <template v-for="(value, indexValue) in Object.values(record)">
                     <td :key="indexValue" v-if="!excludedKeys.includes(Object.keys(record)[indexValue])">
@@ -254,6 +256,7 @@
                       <span v-else-if="notEditableFields.includes(Object.keys(record)[indexValue])">
                             {{value}}
                       </span>
+                      <span v-else-if="value === null"></span>
                       <span v-else>
                         <input v-if="record.editing" class="w-100" type="text" v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]">
                         <span v-else>{{value}}</span>
@@ -429,7 +432,7 @@ export default {
             commitResults: [],
             excludedKeys: ['editing', 'error', 'attributes'],
             notEditableFields: ['Id', 'CreatedDate', 'LastModifiedDate'],
-            loading: false,
+            loading: true,
             cmOptions: {
                 tabSize: 4,
                 mode: 'sql',
@@ -440,39 +443,8 @@ export default {
             },
             autoFormat: false,
             soql: '',
-            soqlResult: [
-        {
-            "attributes": {
-                "type": "Case",
-                "url": "/services/data/v48.0/sobjects/Case/5001k00000Dm0LNAAZ"
-            },
-            "Id": "5001k00000Dm0LNAAZ",
-            "Account": {
-                "attributes": {
-                    "type": "Account",
-                    "url": "/services/data/v48.0/sobjects/Account/0011k00000cywmdAAA"
-                },
-                "Name": "Gustavo Bernal Valentini"
-            },
-            "error" : "erros",
-            "email" : 'Allan'
-        },
-        {
-            "attributes": {
-                "type": "Case",
-                "url": "/services/data/v48.0/sobjects/Case/5001k00000DyljQAAR"
-            },
-            "Id": "5001k00000DyljQAAR",
-            "Account": {
-                "attributes": {
-                    "type": "Account",
-                    "url": "/services/data/v48.0/sobjects/Account/0011k00000cywmdAAA"
-                },
-                "Name": "Gustavo Bernal Valentini"
-            },
-            "email" : 'Allan'
-        }
-    ],
+            soqlResult: null,
+            backupForChanges: [],
             soqlPlan: undefined,
             error: undefined,
             object: undefined,
@@ -499,40 +471,7 @@ export default {
             isRetrievingSOQLPlan: false,
             isCommitingChanges: false,
             recordsToUpdate: [],
-            recordsToDelete: {},
-            backupForChanges: [
-        {
-            "attributes": {
-                "type": "Case",
-                "url": "/services/data/v48.0/sobjects/Case/5001k00000Dm0LNAAZ"
-            },
-            "Id": "5001k00000Dm0LNAAZ",
-            "Account": {
-                "attributes": {
-                    "type": "Account",
-                    "url": "/services/data/v48.0/sobjects/Account/0011k00000cywmdAAA"
-                },
-                "Name": "Gustavo Bernal Valentini"
-            },
-            "error" : "erros",
-            "email" : 'Allan'
-        },
-        {
-            "attributes": {
-                "type": "Case",
-                "url": "/services/data/v48.0/sobjects/Case/5001k00000DyljQAAR"
-            },
-            "Id": "5001k00000DyljQAAR",
-            "Account": {
-                "attributes": {
-                    "type": "Account",
-                    "url": "/services/data/v48.0/sobjects/Account/0011k00000cywmdAAA"
-                },
-                "Name": "Gustavo Bernal Valentini"
-            },
-            "email" : 'Allan'
-        }
-    ],
+            recordsToDelete: {}
         };
     },
     computed: {
@@ -602,7 +541,7 @@ export default {
         },
         sobject(){
           const soqlTokens = this.soql ? this.soql.toLowerCase().replace(/\s+/g, ' ').split(' ') : [];
-          const fromTokenIndex = soqlTokens.indexOf('from');
+          const fromTokenIndex = soqlTokens.lastIndexOf('from');
           if(fromTokenIndex === -1) return '';
           else return soqlTokens[fromTokenIndex + 1];
         },
@@ -876,9 +815,5 @@ p{
 
 table input{
   border: 3px solid var(--vscode-inputOption-activeBackground) !important;
-}
-
-error {
-  border: 3px solid rgb(255,0,0) !important;
 }
 </style>
