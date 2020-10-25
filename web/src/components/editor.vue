@@ -774,7 +774,6 @@ export default {
           this.isCommitingChanges = true;
         },
         getRecordsToUpdate(){
-          console.log('Recalculating Records to Update');
           this.recordsToUpdate = [];
           if(this.soqlResult && this.soqlResult.length && this.backupForChanges && this.backupForChanges.length){
             this.soqlResult.forEach((record, index) => {
