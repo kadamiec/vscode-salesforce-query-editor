@@ -130,6 +130,21 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+### 0.6.0
+
+ - Hide the form using the `soqlEditor.displayEditor` setting. This setting defaults to true, so if you want to hide the editor just change it to false.
+
+ <img src="https://drive.google.com/uc?id=1VR8BmzJ1-NISLV_8k7RQoWUuBRmh15Wr" width="1200px"></img>
+
+ <img src="https://drive.google.com/uc?id=14VcoE7YLW8zX4ru5CrAhl21LuKsOz84w" width="1200px"></img>
+
+ - Select the API version.
+
+<img src="https://drive.google.com/uc?id=1mL0N9PydICn9MBHvZVBLA66btukvpNrh" width="1200px"></img>
+
+ - The loading animation was changed to one that it is not flickering.
+
+
 ### 0.5.0
  
  - Remove "attributes" from nested results.
@@ -143,7 +158,7 @@ You can also write your query in the Query Editor and run it without using any o
 
 ### 0.4.0
 
- - Reduce the size of the bundle with Terser.
+ - Reduce the size of the extension.
 
  - Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
 
