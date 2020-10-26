@@ -16,6 +16,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 - [x] Run SOQL Queries.
 - [x] Get SOQL Query Plans.
 - [x] Add SOQL Queries to Apex.
+- [x] Update Records.
 - [ ] Parent Relationship Queries.
 - [ ] Easy Access to Relationship Fields.
 
@@ -45,7 +46,7 @@ In cases where the file `sfdx-project.json` is not in the root of the current wo
 
 # How to use the SOQL Editor
 
-## 
+## How to select an Org
 
 Configure a Default Username on SFDX. The App will use this user to query the data.
 
@@ -111,6 +112,20 @@ You can also write your query in the Query Editor and run it without using any o
 - In the SOQL editor click on the button `Add to Apex`. The query will appear on the apex class, at the position you clicked before.
 
 <img src="https://drive.google.com/uc?id=1NwUzkAQ2x_LHk2ecIMlK9aNxz1bYAko-" width="1200px"></img>
+
+## Update Records
+
+ - Query an Id field and at least one editable field to show the Edit and Delete buttons.
+ 
+ - Click on the Edit button to change a particular record. 
+ 
+ - And if you want to discard all your changes just click on the Cancel button.
+
+ - Once you are happy with your changes you can click on the Commit button to save everything on the database.
+
+ - If all the changes you did for that record are saved without any errors, the record changes back to read mode. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
+
+ - System Fields that are not editable: `Id, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, LastViewedDate, LastReferencedDate`
 
 
 ## Release Notes

@@ -1,5 +1,5 @@
 <template>
-  <div class="container vh-100 vw-100 px-xl-5 py-2">
+  <div class="container vh-100 vw-100 py-2">
     <div v-if="loading" class="d-flex justify-content-center h-100">
       <div class="m-auto">
           <div class="d-flex flex-column">
@@ -7,7 +7,7 @@
             <a target="_blank" class="mx-auto" href="https://www.buymeacoffee.com/allanoricil" >
               <img src="../../static/images/buyMeACoffeIcon.svg" width="200px;" alt="Kiwi standing on oval">
             </a>
-            <square-grid background="var(--vscode-button-background)" class="mt-4 mx-auto"></square-grid>
+            <stretch background="var(--vscode-button-background)" class="mt-4 mx-auto"></stretch>
         </div>
       </div>
     </div>
@@ -24,7 +24,7 @@
               <span
                 class="icon fa fa-sync mr-2"
                 data-placement="top"
-                @click="refreshSobjects()"
+                @click="onClickRefreshObjectsButton()"
                 v-b-tooltip.hover title="Refresh SObjects"
               ></span>
               <a target="_blank" href="https://github.com/AllanOricil/salesforce-soql-editor" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
@@ -345,7 +345,7 @@ import '../../static/css/vscode-dark.css';
 import FilterEntry from './filter-entry.vue';
 import sqlFormatter from 'sql-formatter';
 import RelationshipSelector from './relationship-selector.vue';
-import { SquareGrid } from 'vue-loading-spinner';
+import { Stretch } from 'vue-loading-spinner';
 import { checkDifferences, getDifferences, removeKeys } from '../utils/objectUtils.js';
 
 export default {
@@ -354,7 +354,7 @@ export default {
         codemirror,
         FilterEntry,
         RelationshipSelector,
-        SquareGrid
+        Stretch
     },
     beforeMount() {
         window.vscode.onLoading(()=>{
@@ -439,7 +439,7 @@ export default {
         return {
             commitResults: [],
             excludedKeys: ['editing', 'error', 'attributes'],
-            notEditableFields: ['Id', 'CreatedDate', 'LastModifiedDate'],
+            notEditableFields: ['Id', 'CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'LastViewedDate', 'LastReferencedDate'],
             loading: true,
             cmOptions: {
                 tabSize: 4,
@@ -561,11 +561,7 @@ export default {
           return this.soqlResultFields.includes('Id') && this.soqlResultFields.length > 1;
         },
         showEditRecordButton(){
-          return this.soqlResultFields.find(field => field !== 'Id' && 
-                                                     field !== 'CreatedDate' && 
-                                                     field !== 'LastModifiedDate' && 
-                                                     field !== 'OwnerId' && 
-                                                     typeof this.soqlResult[0][field] !== 'object');
+          return this.soqlResultFields.find(field => !this.notEditableFields.includes(field) && typeof this.soqlResult[0][field] !== 'object');
         }
     },
     watch: {
@@ -628,7 +624,7 @@ export default {
         }
     },
     methods: {
-        refreshSobjects() {
+        onClickRefreshObjectsButton() {
             window.vscode.post({
                 cmd: 'refreshSObjects',
             });
