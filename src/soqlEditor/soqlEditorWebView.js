@@ -29,6 +29,7 @@ class SOQLEditorWebView extends WebView {
 
   constructor() {
     super();
+    this.configProperties = ['displayEditor'];
     this.defaultOrg;
     this.activeTextEditor = vscode.window.activeTextEditor;
     this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);
@@ -45,7 +46,7 @@ class SOQLEditorWebView extends WebView {
           this.postMessage('objects', response.data.sobjects);
         }).catch ((e) => {
           this.channel.appendLine(e);
-          this.showErrorMessage("Couldn't get the SObjects");            
+          this.showErrorMessage("Couldn't get SObjects");            
         });
     };
 
@@ -78,16 +79,18 @@ class SOQLEditorWebView extends WebView {
       getAllObjectNames: () => getSObjects(),
       refreshSObjects: () => onSelectDefaultUsername(),
       getSObjectDescribe: (sObject) => {
-        getSObjectDescribe(sObject, this.defaultOrg)
-          .then((response) => {
-            this.postMessage('sobjectDescription', response.data);
-          }).catch((reason) =>{
-            this.channel.appendLine(reason);
-            this.showErrorMessage('Could not get SObject Fields');
-          });
+        if(sObject){
+          getSObjectDescribe(sObject, this.defaultOrg)
+            .then((response) => {
+              this.postMessage('sobjectDescription', response.data);
+            }).catch((reason) =>{
+              this.channel.appendLine(reason);
+              this.showErrorMessage('Could not get SObject Fields');
+            });
+        }
       },
-      executeSOQL: (soql) => {
-        getSOQLData(soql, this.defaultOrg)
+      executeSOQL: ({ soql, apiVersion }) => {
+        getSOQLData(soql, apiVersion, this.defaultOrg)
           .then((response) => {
               this.postMessage('soqlResult', response.data.records);
           })
@@ -99,8 +102,8 @@ class SOQLEditorWebView extends WebView {
               }
           });
       },
-      getSOQLPlan: (soql) => {
-        getSOQLPlan(soql, this.defaultOrg)
+      getSOQLPlan: ({ soql, apiVersion }) => {
+        getSOQLPlan(soql, apiVersion, this.defaultOrg)
           .then((response) => {
               this.postMessage('soqlPlan', response.data.plans);
           })
@@ -155,6 +158,13 @@ class SOQLEditorWebView extends WebView {
           
           this.postMessage('commitResult', updatedRecordsResults);
         }
+      },
+      getConfigurations: () => {
+        const configurations = {}
+        this.configProperties.forEach((configProperty) => {
+          configurations[configProperty] = vscode.workspace.getConfiguration('soqlEditor').get(configProperty)
+        });
+        this.postMessage('configurations', configurations);
       }
     });
   }

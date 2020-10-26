@@ -7,21 +7,10 @@ const buildQueryParams = (params) => {
         .join('&');
 };
 
-const createAxiosCall = (service, queryParams, defaultOrg)=>{
-    return axios.get(
-        encodeURI(`${defaultOrg.instanceUrl}/services/data/v${process.env.SALESFORCE_API_VERSION}/${service}/${queryParams ? buildQueryParams(queryParams) : ''}`),
-        {
-            headers: {
-                Authorization: `Bearer ${defaultOrg.accessToken}`,
-            },
-        }
-    );
-};
-
-const createAxiosCall2 = (method, service, queryParams, data, defaultOrg)=>{
+const createAxiosCall = (method, service, apiVersion, queryParams, data, defaultOrg) => {
     return axios({
         method,
-        url: encodeURI(`${defaultOrg.instanceUrl}/services/data/v${process.env.SALESFORCE_API_VERSION}/${service}/${queryParams ? buildQueryParams(queryParams) : ''}`),
+        url: encodeURI(`${defaultOrg.instanceUrl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/${service}/${queryParams ? buildQueryParams(queryParams) : ''}`),
         data,
         headers: {
             Authorization: `Bearer ${defaultOrg.accessToken}`
@@ -30,23 +19,23 @@ const createAxiosCall2 = (method, service, queryParams, data, defaultOrg)=>{
 };
 
 const getGlobalDescribe = (defaultOrg) => {
-    return createAxiosCall('sobjects', null, defaultOrg);
+    return createAxiosCall('get', 'sobjects', null, null, null, defaultOrg);
 };
   
-const getSOQLPlan = (soql, defaultOrg) => {
-    return createAxiosCall('query', {'?explain' : soql.replace(/\s+/g, '+')}, defaultOrg);
+const getSOQLPlan = (soql, apiVersion, defaultOrg) => {
+    return createAxiosCall('get', 'query', apiVersion, {'?explain' : soql.replace(/\s+/g, '+')}, null, defaultOrg);
 };
 
-const getSOQLData = (soql, defaultOrg) => {
-    return createAxiosCall('query', {'?q' : soql.replace(/\s+/g, '+')}, defaultOrg);
+const getSOQLData = (soql, apiVersion, defaultOrg) => {
+    return createAxiosCall('get', 'query', apiVersion, {'?q' : soql.replace(/\s+/g, '+')}, null, defaultOrg);
 };
 
 const getSObjectDescribe = (sObjectName, defaultOrg) => {
-    return createAxiosCall(`sobjects/${sObjectName}/describe`, null, defaultOrg);
+    return createAxiosCall('get', `sobjects/${sObjectName}/describe`, null, null, null, defaultOrg);
 };
 
 const updateRecords = (records, defaultOrg) => {
-    return createAxiosCall2('patch','composite/sobjects', null, records, defaultOrg);
+    return createAxiosCall('patch','composite/sobjects', null, null, records, defaultOrg);
 };
 
 

@@ -6,6 +6,7 @@ export const mutations = {
     },
     setSObjects(state, newSObjects) {
         state.sobjects = {};
+        state.sobjectsWithDetails = {};
         newSObjects.forEach(newSObject => {
             Vue.set(state.sobjects, newSObject.name, newSObject)
         });

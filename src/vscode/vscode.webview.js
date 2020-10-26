@@ -201,7 +201,7 @@ class WebView {
           this.bridgeData.updateItems({
               extensionPath: context.extensionPath,
               rootPath: vscode.workspace.rootPath,
-              startPath: uri ? uri.path : vscode.workspace.rootPath,
+              startPath: uri ? uri.path : vscode.workspace.rootPath
             },
             false
           );

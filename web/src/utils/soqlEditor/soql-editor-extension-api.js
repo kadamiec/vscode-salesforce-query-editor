@@ -32,6 +32,10 @@ class SoqlEditorExtensionApi extends Vscode {
     onReceiveCommitResult(callback){
         this.on('commitResult', callback, 0);
     }
+
+    onReceiveConfigurations(callback){
+        this.on('configurations', callback, 0);
+    }
 }
 
 export default SoqlEditorExtensionApi;

@@ -2,7 +2,7 @@ export const getters = {
     getSObjectByName: (state) => (apiName) => {
         return state.sobjectsWithDetails[apiName];
     },
-    referenceAbleObjects: (state) => {
+    referenceableObjects: (state) => {
         return Object.values(state.sobjects)
             .filter((object) => {
                 return !object.customSetting;

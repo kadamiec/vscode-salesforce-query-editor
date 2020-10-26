@@ -5,8 +5,8 @@ import {
 class SoqlEditorWebviewData extends WebviewData {
     constructor(vscode) {
         super(vscode);
-        this.startPath = ''; // start path
-        this.rootPath = ''; // current work space path
+        this.startPath = '';
+        this.rootPath = '';
     }
 }
 

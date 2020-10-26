@@ -15,6 +15,7 @@
       <div class="row">
         <div class="col">
           <button
+            v-if="configurations.displayEditor" 
             class="btn btn-primary"
             @click="onClickHideFormButton"
           >{{ showForm ? 'Hide Form' : 'Show Form' }}</button>
@@ -22,6 +23,7 @@
         <div class="col-auto">
           <div class="row pr-3">
               <span
+                v-if="configurations.displayEditor" 
                 class="icon fa fa-sync mr-2"
                 data-placement="top"
                 @click="onClickRefreshObjectsButton()"
@@ -36,86 +38,90 @@
           </div>
         </div>
       </div>
-      <div v-if="showForm" class="row">
-        <div class="col-4">
-          <div class="row mb-3">
-            <div class="col">
-              <label for="fieldRelatedTo">Object</label>
-              <select id="fieldRelatedTo" v-model="object" class="form-control">
-                <option
-                  v-for="(object, index) in objects"
-                  :key="index"
-                  :value="object.name"
-                >{{ object.name }}</option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <select size="16" class="mr-2 w-100" multiple v-model="selectedFields">
-                <option
-                  v-for="(field, index) in fieldsToQuery"
-                  :key="index"
-                  :value="field"
-                  @click="field.hasNext ? onSelectFieldReferenceOption(field) : null"
-                >{{ field.value + (field.hasNext ? ' ➤' : '')}}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="col-8">
-          <div class="row">
-            <div class="col-12 form-row align-items-center">
-              <div class="form-group col-md-5 mr-2">
-                <label for="sortBy">Order by:</label>
-                <select id="sortBy" class="form-control" v-model="sortBy">
+
+      <template v-if="configurations.displayEditor">
+        <div v-if="showForm" class="row">
+          <div class="col-4">
+            <div class="row mb-3">
+              <div class="col">
+                <label for="fieldRelatedTo">Object</label>
+                <select id="fieldRelatedTo" v-model="object" class="form-control">
                   <option
-                    v-for="(field, index) in sobjectFields"
+                    v-for="(object, index) in objects"
                     :key="index"
-                    :value="field.name"
-                  >{{ field.name }}</option>
+                    :value="object.name"
+                  >{{ object.name }}</option>
                 </select>
               </div>
-              <div class="form-group col-md-2 mr-2">
-                <label for="orderBy" style="opacity: 0;">-</label>
-                <select id="orderBy" class="form-control" v-model="orderBy">
-                  <option value="ASC">A to Z</option>
-                  <option value="DESC">Z to A</option>
+            </div>
+            <div class="row">
+              <div class="col">
+                <select size="16" class="mr-2 w-100" multiple v-model="selectedFields">
+                  <option
+                    v-for="(field, index) in fieldsToQuery"
+                    :key="index"
+                    :value="field"
+                    @click="field.hasNext ? onSelectFieldReferenceOption(field) : null"
+                  >{{ field.value + (field.hasNext ? ' ➤' : '')}}</option>
                 </select>
-              </div>
-              <div class="form-group col-md-2 mr-2">
-                <label for="nullsOrder" style="opacity: 0;">-</label>
-                <select id="nullsOrder" class="form-control" v-model="nullsOrder">
-                  <option value="NULLS FIRST">Null First</option>
-                  <option value="NULLS LAST">Null Last</option>
-                </select>
-              </div>
-              <div class="form-group col">
-                <label for="limitBy">Max Records:</label>
-                <input id="limitBy" type="number" class="form-control" min="0" v-model="limitBy">
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 form-row justify-content-between mb-2">
-              <label class="my-auto" for="inputCity">Filter Results By:</label>
-              <button class="btn btn-primary" @click="onClickAddFilterButton()">Add Filter</button>
+          <div class="col-8">
+            <div class="row">
+              <div class="col-12 form-row align-items-center">
+                <div class="form-group col-md-5 mr-2">
+                  <label for="sortBy">Order by:</label>
+                  <select id="sortBy" class="form-control" v-model="sortBy">
+                    <option
+                      v-for="(field, index) in sobjectFields"
+                      :key="index"
+                      :value="field.name"
+                    >{{ field.name }}</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-2 mr-2">
+                  <label for="orderBy" style="opacity: 0;">-</label>
+                  <select id="orderBy" class="form-control" v-model="orderBy">
+                    <option value="ASC">A to Z</option>
+                    <option value="DESC">Z to A</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-2 mr-2">
+                  <label for="nullsOrder" style="opacity: 0;">-</label>
+                  <select id="nullsOrder" class="form-control" v-model="nullsOrder">
+                    <option value="NULLS FIRST">Null First</option>
+                    <option value="NULLS LAST">Null Last</option>
+                  </select>
+                </div>
+                <div class="form-group col">
+                  <label for="limitBy">Max Records:</label>
+                  <input id="limitBy" type="number" class="form-control" min="0" v-model="limitBy">
+                </div>
+              </div>
             </div>
-            <div class="col-12 px-0 overflow-auto" style="max-height: 310px;">
-              <filter-entry
-                v-for="(filter, index) in filters"
-                :key="index"
-                :index="index"
-                :showLogic="index !== filters.length - 1"
-                :sObjectFieldsToFilter="sobjectFields"
-                :object="object"
-                v-model="filters[index]"
-                @deleteEntry="onDeleteFilterEntry"
-              ></filter-entry>
+            <div class="row">
+              <div class="col-12 form-row justify-content-between mb-2">
+                <label class="my-auto" for="inputCity">Filter Results By:</label>
+                <button class="btn btn-primary" @click="onClickAddFilterButton()">Add Filter</button>
+              </div>
+              <div class="col-12 px-0 overflow-auto" style="max-height: 310px;">
+                <filter-entry
+                  v-for="(filter, index) in filters"
+                  :key="index"
+                  :index="index"
+                  :showLogic="index !== filters.length - 1"
+                  :sObjectFieldsToFilter="sobjectFields"
+                  :object="object"
+                  v-model="filters[index]"
+                  @deleteEntry="onDeleteFilterEntry"
+                ></filter-entry>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
+
       <div class="row my-2 mb-3">
         <div class="col-12">
           <div class="row mb-2">
@@ -138,6 +144,15 @@
                 </div>
                 <div class="col-auto pl-0">
                   <button class="btn btn-primary" @click="onClickFormatQueryButton()">Click to Format</button>
+                </div>
+                <div class="col-auto pl-0">
+                  <select v-model="apiVersion" style="height: 100%; width: 70px;  ">
+                    <option
+                      v-for="(apiVersion, index) in apiVersions"
+                      :key="index"
+                      :value="'v' + apiVersion"
+                    >{{ apiVersion }}</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -431,12 +446,22 @@ export default {
 
             if(this.commitResults.length > 0) this.$bvModal.show('commitResultModal');
         });
+
+        window.vscode.onReceiveConfigurations((message)=>{
+          this.configurations = message.data;
+        });
+        window.vscode.post({ cmd: 'getConfigurations' });
     },
     mounted() {
         this.$store.dispatch('sobjects/getAvailableSObjects');
     },
     data() {
         return {
+            configurations: {
+              displayEditor: true
+            },
+            apiVersion: 'v50.0',
+            apiVersions: ['20.0', '21.0', '22.0', '23.0', '24.0', '25.0', '26.0', '27.0', '28.0', '29.0', '30.0', '31.0', '32.0', '33.0', '34.0', '35.0', '36.0', '37.0', '38.0', '39.0', '40.0', '41.0', '42.0', '43.0', '44.0', '45.0', '46.0', '47.0', '48.0', '49.0', '50.0'],
             commitResults: [],
             excludedKeys: ['editing', 'error', 'attributes'],
             notEditableFields: ['Id', 'CreatedDate', 'CreatedById', 'LastModifiedDate', 'LastModifiedById', 'LastViewedDate', 'LastReferencedDate'],
@@ -484,7 +509,7 @@ export default {
     },
     computed: {
         objects() {
-            return this.$store.getters['sobjects/referenceAbleObjects'];
+            return this.$store.getters['sobjects/referenceableObjects'];
         },
         fieldsToQuery() {
             let sObjectFieldsToQuery = this.sobjectFields.reduce((acc, cur) => {
@@ -643,14 +668,20 @@ export default {
             this.isExecutingSOQL = true;
             window.vscode.post({
                 cmd: 'executeSOQL',
-                args: this.soql,
+                args: {
+                  soql: this.soql,
+                  apiVersion: this.apiVersion
+                }
             });
         },
         onClickQueryPlanButton() {
             this.isRetrievingSOQLPlan = true;
             window.vscode.post({
                 cmd: 'getSOQLPlan',
-                args: this.soql,
+                args: {
+                  soql: this.soql,
+                  apiVersion: this.apiVersion
+                }
             });
         },
         onClickAddToApexButton() {

@@ -69,7 +69,13 @@
     },
     "configuration": {
       "title": "Salesforce SOQL Editor",
-      "properties": {}
+      "properties": {
+        "soqlEditor.displayEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true the editor will appear"
+        }
+      }
     }
   },
   "scripts": {
