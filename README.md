@@ -121,7 +121,7 @@ You can also write your query in the Query Editor and run it without using any o
 
     <img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
 
- - Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field.
+ - Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field and at least one editable field.
 
     <img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
 
