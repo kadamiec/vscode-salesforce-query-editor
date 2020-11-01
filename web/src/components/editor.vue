@@ -24,16 +24,16 @@
           <div class="row pr-3">
               <span
                 v-if="configurations.displayEditor" 
-                class="icon fa fa-sync mr-2"
+                class="icon-top-bar fa fa-sync mr-2 my-auto"
                 data-placement="top"
                 @click="onClickRefreshObjectsButton()"
                 v-b-tooltip.hover title="Refresh SObjects"
               ></span>
               <a target="_blank" href="https://github.com/AllanOricil/salesforce-soql-editor" class="mr-2 my-auto" v-b-tooltip.hover title="Open an Issue">
-                <i class="icon fa fa-github"></i>
+                <i class="icon-top-bar fa fa-github"></i>
               </a>
               <a target="_blank" href="https://www.buymeacoffee.com/allanoricil" v-b-tooltip.hover title="Buy me a Coffee if you liked it">
-                <img src="../../static/images/buyMeACoffeIcon.svg" alt="Kiwi standing on oval">
+                <img src="../../static/images/buyMeACoffeIcon.svg" style="width: 30px; height: 30px;" alt="Kiwi standing on oval">
               </a>
           </div>
         </div>
@@ -56,14 +56,37 @@
             </div>
             <div class="row">
               <div class="col">
-                <select size="16" class="mr-2 w-100" multiple v-model="selectedFields">
-                  <option
-                    v-for="(field, index) in fieldsToQuery"
+                <div class="d-flex flex-column" 
+                     style="height: 352px; 
+                            border: 1px solid var(--vscode-inputOption-activeBackground) !important;
+                            border-radius: 0 !important;
+                            background-color: var(--vscode-input-background) !important;
+                            color: var(--vscode-input-foreground) !important;
+                            overflow-y: auto;">
+                  <div
+                    v-for="(field, index) in availableFieldsToSelect"
                     :key="index"
                     :value="field"
-                    @click="field.hasNext ? onSelectFieldReferenceOption(field) : null"
-                  >{{ field.value + (field.hasNext ? ' ➤' : '')}}</option>
-                </select>
+                    class="p-1"
+                    style="width: 100%"
+                  >
+                    <label v-if="field.hasNext" class="form-check-label custom-checkbox-container" 
+                           @click="onClickFieldReference(field)">
+                      {{ field.value + '    (' + field.numberOfSelectedFields + ')' }}
+                      <span class="field-has-next">➤</span>
+                    </label>
+                    <label v-else class="form-check-label custom-checkbox-container">
+                      {{ field.value }}
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        v-model="field.selected"
+                        @change="onClickFieldCheckbox(field)"
+                      >
+                      <span class="checkmark"/>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -71,8 +94,8 @@
             <div class="row">
               <div class="col-12 form-row align-items-center">
                 <div class="form-group col-md-5 mr-2">
-                  <label for="sortBy">Order by:</label>
-                  <select id="sortBy" class="form-control" v-model="sortBy">
+                  <label for="orderByField">Order by:</label>
+                  <select id="orderByField" class="form-control" v-model="orderByField">
                     <option
                       v-for="(field, index) in sobjectFields"
                       :key="index"
@@ -81,10 +104,10 @@
                   </select>
                 </div>
                 <div class="form-group col-md-2 mr-2">
-                  <label for="orderBy" style="opacity: 0;">-</label>
-                  <select id="orderBy" class="form-control" v-model="orderBy">
-                    <option value="ASC">A to Z</option>
-                    <option value="DESC">Z to A</option>
+                  <label for="orderByDirection" style="opacity: 0;">-</label>
+                  <select id="orderByDirection" class="form-control" v-model="orderByDirection">
+                    <option value="ASC">ASC</option>
+                    <option value="DESC">DESC</option>
                   </select>
                 </div>
                 <div class="form-group col-md-2 mr-2">
@@ -279,7 +302,6 @@
                       <span v-else-if="notEditableFields.includes(Object.keys(record)[indexValue])">
                             {{value}}
                       </span>
-                      <span v-else-if="value === null"></span>
                       <span v-else>
                         <input v-if="record.editing" class="w-100" type="text" v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]">
                         <span v-else>{{value}}</span>
@@ -316,6 +338,8 @@
         <relationship-selector
           :referenceName="selectedReference"
           :referenceValue="selectedReferenceValue"
+          :selectedRelationshipFields="selectedRelationshipFields[selectedReferenceValue]"
+          @removeField="onRemoveRelationshipField"
           ref="relationshipSelector"
         ></relationship-selector>
 
@@ -324,7 +348,7 @@
           <button
             type="button"
             class="btn btn-md danger"
-            @click="onClickInsertFieldButton($refs.relationshipSelector.fieldToInsert)"
+            @click="onClickInsertRelationshipFieldButton($refs.relationshipSelector.fieldToInsert)"
           >Insert</button>
         </template>
       </b-modal>
@@ -390,8 +414,8 @@ export default {
 
                 this.sobjectFields.forEach(field => {
                   field.referenceTo.forEach((reference) => {
-                      if (this.$store.getters['sobjects/getSObjectFields'](reference).length === 0 && !this.sObjectsToGetFields.includes(reference)) {
-                        this.sObjectsToGetFields.push(reference);
+                      if (this.$store.getters['sobjects/getSObjectFields'](reference).length === 0 && !this.sobjectsToFetchFields.includes(reference)) {
+                        this.sobjectsToFetchFields.push(reference);
                         this.$store.dispatch(
                             'sobjects/getSObjectDescribe',
                             reference
@@ -408,7 +432,7 @@ export default {
                 this.error = response;
                 this.soqlResult = [];
             } else {
-                response.forEach((record) => removeKeys(record, ['attributes']));
+                response.forEach((record) => removeKeys(record, ['attributes', 'done', 'totalSize']));
                 this.soqlResult = [...response];
                 this.backupForChanges = [...response];
             }
@@ -446,7 +470,6 @@ export default {
 
             if(this.commitResults.length > 0) this.$bvModal.show('commitResultModal');
         });
-
         window.vscode.onReceiveConfigurations((message)=>{
           this.configurations = message.data;
         });
@@ -481,7 +504,6 @@ export default {
             soqlPlan: undefined,
             error: undefined,
             object: undefined,
-            selectedFields: [],
             filters: [
                 {
                     field: undefined,
@@ -494,9 +516,13 @@ export default {
             selectedReference: undefined,
             selectedReferenceValue: undefined,
             sobjectFields: [],
-            sObjectsToGetFields: [],
-            sortBy: undefined,
-            orderBy: 'ASC',
+            availableFieldsToSelect : [],
+            selectedFields: [],
+            selectedRelationshipFields: {},
+            computedRelationshipFields: '',
+            sobjectsToFetchFields: [],
+            orderByField: undefined,
+            orderByDirection: 'ASC',
             nullsOrder: 'NULLS FIRST',
             limitBy: undefined,
             showForm: true,
@@ -511,39 +537,10 @@ export default {
         objects() {
             return this.$store.getters['sobjects/referenceableObjects'];
         },
-        fieldsToQuery() {
-            let sObjectFieldsToQuery = this.sobjectFields.reduce((acc, cur) => {
-              let array = [];
-              array.push({
-                value: cur.name,
-                hasNext: false
-              });
-
-              cur.referenceTo.forEach((reference) => {
-                if(cur.relationshipName)
-                  array.push({
-                    value: cur.relationshipName,
-                    reference: reference,
-                    hasNext: true
-                  })
-              });
-
-              return acc.concat(array);
-            }, []);
-            
-            if(sObjectFieldsToQuery.length > 0)
-              return [{ value: 'COUNT(Id)', hasNext: false }, ...sObjectFieldsToQuery];
-            else
-              return [];
-        },
-        computedFields() {
-            return this.selectedFields.length > 0
-                ? 'SELECT ' +
-                      this.selectedFields.reduce((previous, current, index) => {
-                          return previous + (index !== 0 ? ', ' : '') + current.value;
-                      }, '') +
-                      ` FROM ${this.object}`
-                : '';
+        computedSelectedFields(){
+            return this.selectedFields.reduce((previous, current, index) =>{
+              return previous + (index !== 0 ? ', ' : '') + current.value;
+            }, '')
         },
         computedFilters() {
             return this.filters.length !== 0 && this.filters[0].filter
@@ -557,9 +554,9 @@ export default {
                   }, ' WHERE')
                 : '';
         },
-        computedSortBy() {
-            return this.sortBy
-                ? ` ORDER BY ${this.sortBy} ${this.orderBy} ${this.nullsOrder}`
+        computedOrderBy() {
+            return this.orderByField
+                ? ` ORDER BY ${this.orderByField} ${this.orderByDirection} ${this.nullsOrder}`
                 : '';
         },
         computedLimitBy() {
@@ -572,7 +569,7 @@ export default {
                   )
                 : [];
         },
-        sobject(){
+        computedSObjectName(){
           const soqlTokens = this.soql ? this.soql.toLowerCase().replace(/\s+/g, ' ').split(' ') : [];
           const fromTokenIndex = soqlTokens.lastIndexOf('from');
           if(fromTokenIndex === -1) return '';
@@ -586,8 +583,8 @@ export default {
           return this.soqlResultFields.includes('Id') && this.soqlResultFields.length > 1;
         },
         showEditRecordButton(){
-          return this.soqlResultFields.find(field => !this.notEditableFields.includes(field) && typeof this.soqlResult[0][field] !== 'object');
-        }
+          return this.soqlResultFields.find(field => !this.notEditableFields.includes(field));
+        },
     },
     watch: {
         object(newValue) {
@@ -599,19 +596,47 @@ export default {
                 this.sobjectFields = sObjectFields;
             }
         },
-        selectedFields() {
-            this.createSOQL();
+        sobjectFields: {
+          deep: true,
+          handler(newValues){
+            if(this.availableFieldsToSelect.length === 0){
+              this.availableFieldsToSelect = newValues.reduce((previous, current) => {
+                let array = [];
+                array.push({
+                  value: current.name,
+                  hasNext: false,
+                  selected: false,
+                });
+
+                current.referenceTo.forEach((reference) => {
+                  if(current.relationshipName)
+                    array.push({
+                      value: current.relationshipName,
+                      reference: reference,
+                      hasNext: true,
+                      numberOfSelectedFields: 0,
+                    })
+                });
+
+                return previous.concat(array);
+              }, []);
+                
+              if(this.availableFieldsToSelect.length > 0){
+                this.availableFieldsToSelect = [{ value: 'COUNT(Id)', hasNext: false, selected: false }, ...this.availableFieldsToSelect];
+              }
+            }
+          }
         },
-        computedFields(){
-            this.createSOQL();
+        computedSelectedFields(){
+          this.createSOQL();
         },
         computedFilters(){
             this.createSOQL();
         },
-        orderBy() {
+        orderByDirection() {
             this.createSOQL();
         },
-        sortBy() {
+        orderByField() {
             this.createSOQL();
         },
         nullsOrder() {
@@ -691,12 +716,19 @@ export default {
             });
         },
         createSOQL() {
+          if(this.selectedFields.length){
             const soql =
-                this.computedFields +
-                this.computedFilters +
-                this.computedSortBy +
-                this.computedLimitBy;
+                  'SELECT ' +
+                  this.computedSelectedFields +
+                  (this.computedRelationshipFields === '' ? '' : ( this.computedSelectedFields === '' ? this.computedRelationshipFields : `, ${this.computedRelationshipFields}` ) ) +
+                  ' FROM ' + this.object + 
+                  this.computedFilters +
+                  this.computedOrderBy +
+                  this.computedLimitBy;
             this.soql = this.autoFormat ? sqlFormatter.format(soql) : soql;
+          }else{
+            this.soql = '';
+          }
         },
         onClickFormatQueryButton() {
             this.soql = sqlFormatter.format(this.soql);
@@ -707,14 +739,10 @@ export default {
         onDeleteFilterEntry(index) {
             this.filters.splice(index, 1);
         },
-        onSelectFieldReferenceOption(field){
-            this.selectedFields.forEach(selectedField =>{
-                if(selectedField.value === field.value){
-                  this.selectedReferenceValue = field.value;
-                  this.selectedReference = field.reference;
-                  this.$bvModal.show('relationshipSelectorModal');
-                }
-            });
+        onClickFieldReference(field){
+          this.selectedReferenceValue = field.value;
+          this.selectedReference = field.reference;
+          this.$bvModal.show('relationshipSelectorModal');
         },
         resetData() {
             this.autoFormat = false;
@@ -735,21 +763,39 @@ export default {
             this.selectedReference = undefined;
             this.selectedReferenceValue = undefined;
             this.sobjectFields = [];
-            this.sObjectsToGetFields = [];
-            this.sortBy = undefined;
-            this.orderBy = 'ASC';
+            this.availableFieldsToSelect = [];
+            this.selectedRelationshipFields = {};
+            this.computedRelationshipFields = '';
+            this.sobjectsToFetchFields = [];
+            this.orderByField = undefined;
+            this.orderByDirection = 'ASC';
             this.nullsOrder = 'NULLS FIRST';
             this.limitBy = undefined;
             this.isExecutingSOQL = false;
             this.isRetrievingSOQLPlan = false;
+            this.isCommitingChanges = false;
+            this.recordsToUpdate = [];
+            this.recordsToDelete = {};
         },
-        onClickInsertFieldButton(field){
-            this.selectedFields.forEach(selectedField => {
-                if(selectedField.value === field.split('.')[0]){
-                    selectedField.value = field;
-                }
+        onClickInsertRelationshipFieldButton(field){
+          const relationshipParent = field.split('.')[0];
+          if(!this.selectedRelationshipFields[relationshipParent] )  this.selectedRelationshipFields[relationshipParent]  = [];
+          const relationshipFieldIndex = this.selectedRelationshipFields[relationshipParent].findIndex(relationshipField => relationshipField === field);
+          if(relationshipFieldIndex === -1){
+            this.selectedRelationshipFields[relationshipParent].push(field);
+            this.computeRelationshipFields();
+
+            this.availableFieldsToSelect.forEach(availableFieldToSelect => {
+              if(availableFieldToSelect.value === relationshipParent){
+                if(this.selectedRelationshipFields[relationshipParent].length)
+                  availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[relationshipParent].length;
+                else
+                  availableFieldToSelect.numberOfSelectedFields = 0;
+              }
             });
-            this.$bvModal.hide('relationshipSelectorModal');
+          }
+
+          this.$bvModal.hide('relationshipSelectorModal');
         },
         onClickHideFormButton(){
             this.showForm = !this.showForm;
@@ -800,7 +846,7 @@ export default {
           window.vscode.post({
             cmd: 'commitChanges',
             args: { 
-              sobject: this.sobject,
+              sobject: this.computedSObjectName,
               recordsToUpdate: this.recordsToUpdate,
               recordsToDelete: this.recordsToDelete
             }
@@ -822,6 +868,43 @@ export default {
               }
             })
           }
+        },
+        onClickFieldCheckbox(field){
+          if(field.selected){
+            this.selectedFields.push(field);
+          }else{
+            const indexOf = this.selectedFields.findIndex( f => field.value === f.value );
+            this.selectedFields.splice(indexOf, 1);
+          }
+          
+        },
+        computeRelationshipFields(){
+          this.computedRelationshipFields = '';
+          let n = 0;
+          Object.entries(this.selectedRelationshipFields).forEach(( [key, fieldEntries] ) => {
+            fieldEntries.forEach((fieldEntry) => {
+              this.computedRelationshipFields += ( n !== 0 ? ', ' : '') + fieldEntry;
+              n++;
+            });
+          });
+
+          this.createSOQL();
+        },
+        onRemoveRelationshipField(field){
+          const relationshipParent = field.split('.')[0];
+          const relationshipFieldIndex = this.selectedRelationshipFields[relationshipParent].findIndex(relationshipField => relationshipField === field);
+          this.selectedRelationshipFields[relationshipParent].splice(relationshipFieldIndex, 1);
+
+          this.availableFieldsToSelect.forEach(availableFieldToSelect => {
+            if(availableFieldToSelect.value === relationshipParent){
+              if(this.selectedRelationshipFields[relationshipParent].length)
+                availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[relationshipParent].length;
+              else
+                availableFieldToSelect.numberOfSelectedFields = 0;
+            }
+          });
+
+          this.computeRelationshipFields();
         }
     },
 };
@@ -833,21 +916,26 @@ export default {
   cursor: pointer;
 }
 
-.icon{
+.icon-top-bar{
   color: var(--vscode-menu-separatorBackground);
   font-size: 2.3em;
 }
-
-.icon:hover{
+      
+.icon-top-bar:hover{
   color: var(--vscode-badge-foreground);
   cursor: pointer;
 }
 
-p{
-  margin-bottom: 0px;
+.field-has-next{
+  position: absolute !important;
+  top: 0px !important;
+  left: 4px !important;
+  height: 20px !important;
+  width: 20px !important;
+  background-color: var(--vscode-input-background) !important;
 }
 
-table input{
-  border: 3px solid var(--vscode-inputOption-activeBackground) !important;
+.field-has-next:hover{
+  color: var(--vscode-button-background) !important;
 }
 </style>

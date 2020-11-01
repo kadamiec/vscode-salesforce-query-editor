@@ -2,7 +2,7 @@
   "name": "salesforce-soql-editor",
   "displayName": "Salesforce SOQL Editor",
   "publisher": "allanoricil",
-  "preview": true,
+  "preview": false,
   "author": {
     "name": "Allan Oricil",
     "email": "allanoricilcos@outlook.com"
@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.6.0",
+  "version": "0.7.0",
   "engines": {
     "vscode": "^1.48.0"
   },

@@ -119,7 +119,7 @@ class SOQLEditorWebView extends WebView {
         if(this.activeTextEditor && this.activeTextEditor.selection.isEmpty) {
           const position = this.activeTextEditor.selection.active;
           this.activeTextEditor.edit((editBuilder) => {
-            editBuilder.insert(position, `[${soql.replace(/ +(?= )|\n/g, ' ')}]`);
+            editBuilder.insert(position, `[${soql.replace(/  +|\n|\s\s+/g, ' ')}]`);
           });
         }
       },

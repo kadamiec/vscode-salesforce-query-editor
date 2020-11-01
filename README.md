@@ -17,8 +17,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 - [x] Get SOQL Query Plans.
 - [x] Add SOQL Queries to Apex.
 - [x] Update Records.
-- [ ] Parent Relationship Queries.
-- [ ] Easy Access to Relationship Fields.
+- [x] Add Relationship Fields.
 
 ## Requirements
 
@@ -130,6 +129,20 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+### 0.7.0
+
+ - Fields are now added using a checkbox input.
+
+ <img src="https://drive.google.com/uc?id=1X4Ne2dcHbhbG_eAmNcho0uM7b16cJH6F" width="400px"></img>
+
+ - Relationship fields can now be added.
+
+ <img src="https://drive.google.com/uc?id=1xOuSnKwpaahq6r-4MXoQIjhoSUpQowSf" width="800px"></img>
+
+ The number of relationship fields added is displayed between parenthesis.
+
+ <img src="https://drive.google.com/uc?id=1GRTRLoz7Oj1RH-CKuwbjhD05qKZwrTW_" width="400px"></img>
+
 ### 0.6.0
 
  - Hide the form using the `soqlEditor.displayEditor` setting. This setting defaults to true, so if you want to hide the editor just change it to false.
@@ -140,7 +153,7 @@ You can also write your query in the Query Editor and run it without using any o
 
  - Select the API version.
 
-<img src="https://drive.google.com/uc?id=1mL0N9PydICn9MBHvZVBLA66btukvpNrh" width="1200px"></img>
+ <img src="https://drive.google.com/uc?id=1mL0N9PydICn9MBHvZVBLA66btukvpNrh" width="1200px"></img>
 
  - The loading animation was changed to one that it is not flickering.
 
@@ -149,11 +162,11 @@ You can also write your query in the Query Editor and run it without using any o
  
  - Remove "attributes" from nested results.
 
-    <img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
+ <img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
 
  - Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field and at least one editable field.
 
-    <img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
+ <img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
 
 
 ### 0.4.0
@@ -162,15 +175,15 @@ You can also write your query in the Query Editor and run it without using any o
 
  - Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
 
-<img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
+ <img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
 
  - Now whenever you switch orgs, the Schema builder will Reload the Sobjects List automatically:
 
-<img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
+ <img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
 
  - Now you can refresh the SObject List clicking on the Refresh Button:
 
-<img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
+ <img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
 
  - Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
 

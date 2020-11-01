@@ -17,9 +17,15 @@
       </select>
     </div>
 
-    <div class="container text-wrap mt-2">
+    <div class="container text-wrap mt-2 mb-1">
       <span id="formula">{{ fieldToInsert }}</span>
     </div>
+
+    <button v-for="(field, index) in selectedRelationshipFieldsData" :key="field" @click="onClickRemoveFieldButton(field, index)" class="ml-1 mb-1">
+        {{ field }}
+        <i class="icon fa fa-times fa-xs"></i>
+    </button>
+
   </div>
 </template>
 
@@ -27,16 +33,24 @@
 export default {
     props: {
         referenceName: String,
-        referenceValue: String
+        referenceValue: String,
+        selectedRelationshipFields: []
     },
     mounted(){
         let newPicklist = this.createPicklist(this.referenceName);
         this.picklists.push(newPicklist);
+        this.selectedRelationshipFieldsData = this.selectedRelationshipFields;
     },
     data() {
         return {
             picklists: [],
+            selectedRelationshipFieldsData: []
         };
+    },
+    watch:{
+        selectedRelationshipFields(newValue){
+            this.selectedRelationshipFieldsData = newValue;
+        }
     },
     computed: {
         fieldToInsert() {
@@ -108,6 +122,9 @@ export default {
         },
         removeNext(index) {
             this.picklists.splice(index + 1);
+        },
+        onClickRemoveFieldButton(field, index){
+            this.$emit('removeField', field);
         }
     },
 };

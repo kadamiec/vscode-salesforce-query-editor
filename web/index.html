@@ -16,7 +16,11 @@
     #app {
         padding: 0;
         margin: 0;
-        background-color: var(--vscode-editor-background) !important;
+        background-color: var(--vscode-editor-background);
+        color: var(--vscode-editor-foreground);
+        font-family: var(--vscode-font-family);
+        font-weight: var(--vscode-font-weight);
+        font-size: var(--vscode-font-size);
         position: relative;
         float: left;
         width: 100%;
@@ -44,11 +48,10 @@
 
     .icon {
         color: var(--vscode-menu-foreground) !important;
-        font-size: 35px !important;
     }
 
-    .icon:hover {
-        color: var(--vscode-menu-selectionForeground) !important;
+    .icon:hover{
+        color: var(--vscode-badge-foreground);
         cursor: pointer;
     }
 
@@ -140,6 +143,15 @@
         box-shadow: none !important;
     }
 
+    p{
+        margin-bottom: 0px;
+    }
+
+    table input,
+    table input:focus{
+        border: 3px solid var(--vscode-inputOption-activeBackground) !important;
+    }
+
     .custom-checkbox-container {
         display: block !important;
         position: relative !important;
@@ -195,7 +207,7 @@
 
     /* Style the checkmark/indicator */
     .custom-checkbox-container .checkmark:after {
-        left: 7px !important;
+        left: 6px !important;
         top: 4px !important;
         width: 5px !important;
         height: 10px !important;
