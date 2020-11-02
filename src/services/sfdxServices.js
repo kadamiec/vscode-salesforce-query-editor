@@ -8,8 +8,8 @@ const SFDX_WORKSPACE_CONFIG_FILE_PATH = `${vscode.workspace.rootPath}/.sfdx/sfdx
 const executeSfdxCommand = (command, callback) => {
   command += ' --json';
   exec(command, { encoding: 'utf-8', cwd: vscode.workspace.rootPath }, (error, stdout, stderr) => {
-    if(!error) callback(JSON.parse(stdout));
-    else callback('error');
+    if(error) callback('error'); 
+    else callback(JSON.parse(stdout));
   });
 };
 
@@ -31,9 +31,9 @@ const getDefaultusername = () => {
       if(error) reject('Set a defaultusername on SFDX and try again');
       else if(data){
         const defaultusername = JSON.parse(data).defaultusername;
-        getOrgDisplay(defaultusername, (org) => {
-          if(org.result){
-            resolve(org.result);
+        getOrgDisplay(defaultusername, (orgDisplayResponse) => {
+          if(orgDisplayResponse.result){
+            resolve(orgDisplayResponse.result);
           }else {
             reject('Could not get accessToken for the current defaultusername');
           }

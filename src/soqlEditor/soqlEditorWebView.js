@@ -30,18 +30,18 @@ class SOQLEditorWebView extends WebView {
   constructor() {
     super();
     this.configProperties = ['displayEditor'];
-    this.defaultOrg;
+    this.defaultusername;
     this.activeTextEditor = vscode.window.activeTextEditor;
     this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);
     this.fileSystemWatcher.onDidChange(() => {
       if(this.panel){
         this.postMessage('loading');
-        onSelectDefaultUsername();
+        setDefaultusername();
       }
     });
 
     const getSObjects = () => {
-      getGlobalDescribe(this.defaultOrg)
+      getGlobalDescribe(this.defaultusername)
         .then((response) => {
           this.postMessage('objects', response.data.sobjects);
         }).catch ((e) => {
@@ -50,10 +50,10 @@ class SOQLEditorWebView extends WebView {
         });
     };
 
-    const onSelectDefaultUsername = () => {
+    const setDefaultusername = () => {
       getDefaultusername()
-        .then(defaultOrg => {
-          this.defaultOrg = defaultOrg;
+        .then(defaultusername => {
+          this.defaultusername = defaultusername;
           getSObjects();
         }).catch(reason => {
           this.channel.appendLine(reason);
@@ -62,7 +62,7 @@ class SOQLEditorWebView extends WebView {
     };
 
     this.onDidPose = () => {
-      onSelectDefaultUsername();
+      setDefaultusername();
     };
 
     this.didChangeViewState = () => {
@@ -77,10 +77,10 @@ class SOQLEditorWebView extends WebView {
 
     this.handler.addApi({
       getAllObjectNames: () => getSObjects(),
-      refreshSObjects: () => onSelectDefaultUsername(),
+      refreshSObjects: () => setDefaultusername(),
       getSObjectDescribe: (sObject) => {
         if(sObject){
-          getSObjectDescribe(sObject, this.defaultOrg)
+          getSObjectDescribe(sObject, this.defaultusername)
             .then((response) => {
               this.postMessage('sobjectDescription', response.data);
             }).catch((reason) =>{
@@ -90,7 +90,7 @@ class SOQLEditorWebView extends WebView {
         }
       },
       executeSOQL: ({ soql, apiVersion }) => {
-        getSOQLData(soql, apiVersion, this.defaultOrg)
+        getSOQLData(soql, apiVersion, this.defaultusername)
           .then((response) => {
               this.postMessage('soqlResult', response.data.records);
           })
@@ -103,7 +103,7 @@ class SOQLEditorWebView extends WebView {
           });
       },
       getSOQLPlan: ({ soql, apiVersion }) => {
-        getSOQLPlan(soql, apiVersion, this.defaultOrg)
+        getSOQLPlan(soql, apiVersion, this.defaultusername)
           .then((response) => {
               this.postMessage('soqlPlan', response.data.plans);
           })
@@ -151,7 +151,7 @@ class SOQLEditorWebView extends WebView {
                   allOrNone: false, 
                   records: temparray 
                 }, 
-                this.defaultOrg
+                this.defaultusername
               );
               updatedRecordsResults.push(...result.data);
           }
