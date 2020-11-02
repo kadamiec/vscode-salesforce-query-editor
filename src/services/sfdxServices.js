@@ -8,7 +8,7 @@ const SFDX_WORKSPACE_CONFIG_FILE_PATH = `${vscode.workspace.rootPath}/.sfdx/sfdx
 const executeSfdxCommand = (command, callback) => {
   command += ' --json';
   exec(command, { encoding: 'utf-8', cwd: vscode.workspace.rootPath }, (error, stdout, stderr) => {
-    if(!error && !stderr) callback(JSON.parse(stdout));
+    if(!error) callback(JSON.parse(stdout));
     else callback('error');
   });
 };
