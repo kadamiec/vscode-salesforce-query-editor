@@ -5,10 +5,12 @@
         <div class="d-flex flex-column">
           <h2 class="mx-auto mb-3">Buy me a coffee</h2>
           <div class="d-flex flex-column">
-            <a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="../../static/images/buymeacoffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+            <a href="https://www.buymeacoffee.com/allanoricil" target="_blank">
+              <img src="../../static/images/buymeacoffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
+            </a>
             <div class="donation-card d-flex flex-column py-4 mx-auto mt-3">
-              <img src="../../static/images/paypallogo.png" width="128px;" class="mx-auto mb-2"/>
-              <img src="../../static/images/QR Code.png" width="128px;" class="mx-auto"/>
+              <img src="../../static/images/qrcodelogo.png" width="128px;" class="mx-auto mb-2">
+              <img src="../../static/images/QR Code.png" width="128px;" class="mx-auto">
             </div>
           </div>
           <stretch background="var(--vscode-button-background)" class="mt-4 mx-auto"></stretch>
@@ -947,16 +949,5 @@ export default {
   border-radius: 1rem; 
   background-color: white; 
   width: 200px;
-}
-
-.generate-btn-preview{
-    height: 60px;
-    border-radius: 12px;
-    background-color: #FFDD00;
-    color: #000;
-    font-size: 32px;
-    border: none;
-    padding: 0px 24px;
-    font-family: 'Cookie', cursive;
 }
 </style>
