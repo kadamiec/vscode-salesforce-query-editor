@@ -109,23 +109,19 @@
                     >{{ field.name }}</option>
                   </select>
                 </div>
-                <div class="form-group col-md-2 mr-2">
+                <div class="form-group col mr-2">
                   <label for="orderByDirection" style="opacity: 0;">-</label>
                   <select id="orderByDirection" class="form-control" v-model="orderByDirection">
                     <option value="ASC">ASC</option>
                     <option value="DESC">DESC</option>
                   </select>
                 </div>
-                <div class="form-group col-md-2 mr-2">
+                <div class="form-group col">
                   <label for="nullsOrder" style="opacity: 0;">-</label>
                   <select id="nullsOrder" class="form-control" v-model="nullsOrder">
                     <option value="NULLS FIRST">Null First</option>
                     <option value="NULLS LAST">Null Last</option>
                   </select>
-                </div>
-                <div class="form-group col">
-                  <label for="limitBy">Max Records:</label>
-                  <input id="limitBy" type="number" class="form-control" min="0" v-model="limitBy">
                 </div>
               </div>
             </div>
@@ -154,12 +150,12 @@
       <div class="row my-2 mb-3">
         <div class="col-12">
           <div class="row mb-2">
-            <div class="col my-auto">
+            <div class="col mt-auto">
               <label>Enter or modify a SOQL query below:</label>
             </div>
             <div class="col-auto">
               <div class="row">
-                <div class="col-auto my-auto">
+                <div class="col-auto mt-auto">
                   <label class="form-check-label custom-checkbox-container" for="autoFormatButton">
                     Autoformat
                     <input
@@ -171,11 +167,16 @@
                     <span class="checkmark"/>
                   </label>
                 </div>
-                <div class="col-auto pl-0">
+                <div class="col-auto mt-auto pl-0">
                   <button class="btn btn-primary" @click="onClickFormatQueryButton()">Click to Format</button>
                 </div>
+                <div v-if="configurations.displayEditor && showForm" class="col-auto pl-0">
+                  <label for="limit-by-input">Limit:</label>
+                  <input id="limit-by-input" type="number" class="form-control" style="width: 100px" min="0" v-model="limitBy">
+                </div>
                 <div class="col-auto pl-0">
-                  <select v-model="apiVersion" style="height: 100%; width: 70px;  ">
+                  <label for="api-version-input">API:</label>
+                  <select id="api-version-input" v-model="apiVersion" class="form-control" style="width: 70px;  ">
                     <option
                       v-for="(apiVersion, index) in apiVersions"
                       :key="index"
@@ -198,7 +199,7 @@
             </div>
           </div>
           <div class="row mt-2 justify-content-between">
-            <div class="col-10">
+            <div class="col-auto">
               <button class="btn btn-primary" @click="onClickExecuteQueryButton()" :disabled="isExecutingSOQL  || isRetrievingSOQLPlan || isCommitingChanges">
                 Execute
                 <i v-if="isExecutingSOQL" class="fa fa-circle-o-notch fa-spin"></i>
@@ -353,16 +354,11 @@
           :referenceValue="selectedReferenceValue"
           :selectedRelationshipFields="selectedRelationshipFields[selectedReferenceValue]"
           @removeField="onRemoveRelationshipField"
+          @insertField="onReceiveFieldToInsert"
           ref="relationshipSelector"
         ></relationship-selector>
-
         <template v-slot:modal-footer="{ close }">
           <button type="button" class="btn btn-md danger" @click="close()">Close</button>
-          <button
-            type="button"
-            class="btn btn-md danger"
-            @click="onClickInsertRelationshipFieldButton($refs.relationshipSelector.fieldToInsert)"
-          >Insert</button>
         </template>
       </b-modal>
       <b-modal 
@@ -552,9 +548,11 @@ export default {
             return this.$store.getters['sobjects/referenceableObjects'];
         },
         computedSelectedFields(){
-            return this.selectedFields.reduce((previous, current, index) =>{
+            const selectedObjectFields = this.selectedFields.reduce((previous, current, index) => {
               return previous + (index !== 0 ? ', ' : '') + current.value;
             }, '')
+
+            return [selectedObjectFields, this.computedRelationshipFields].filter(Boolean).join(', ');
         },
         computedFilters() {
             return this.filters.length !== 0 && this.filters[0].filter
@@ -600,7 +598,7 @@ export default {
           return this.soqlResultFields.find(field => !this.notEditableFields.includes(field));
         },
         showExportDataButton(){
-          return this.soqlResult && this.soqlResult.length > 0;
+          return this.soql && this.soqlResult && this.soqlResult.length > 0;
         }
     },
     watch: {
@@ -733,11 +731,10 @@ export default {
             });
         },
         createSOQL() {
-          if(this.selectedFields.length){
+          if(this.computedSelectedFields){
             const soql =
                   'SELECT ' +
                   this.computedSelectedFields +
-                  (this.computedRelationshipFields === '' ? '' : ( this.computedSelectedFields === '' ? this.computedRelationshipFields : `, ${this.computedRelationshipFields}` ) ) +
                   ' FROM ' + this.object + 
                   this.computedFilters +
                   this.computedOrderBy +
@@ -795,26 +792,6 @@ export default {
             this.recordsToDelete = {};
             this.showExportDataButton = false;
             this.isExportingData = false;
-        },
-        onClickInsertRelationshipFieldButton(field){
-          const relationshipParent = field.split('.')[0];
-          if(!this.selectedRelationshipFields[relationshipParent] )  this.selectedRelationshipFields[relationshipParent]  = [];
-          const relationshipFieldIndex = this.selectedRelationshipFields[relationshipParent].findIndex(relationshipField => relationshipField === field);
-          if(relationshipFieldIndex === -1){
-            this.selectedRelationshipFields[relationshipParent].push(field);
-            this.computeRelationshipFields();
-
-            this.availableFieldsToSelect.forEach(availableFieldToSelect => {
-              if(availableFieldToSelect.value === relationshipParent){
-                if(this.selectedRelationshipFields[relationshipParent].length)
-                  availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[relationshipParent].length;
-                else
-                  availableFieldToSelect.numberOfSelectedFields = 0;
-              }
-            });
-          }
-
-          this.$bvModal.hide('relationshipSelectorModal');
         },
         onClickHideFormButton(){
             this.showForm = !this.showForm;
@@ -897,7 +874,17 @@ export default {
           }
           
         },
-        computeRelationshipFields(){
+        updateNumberOfSelectedFields(parentRelationshipName){
+          this.availableFieldsToSelect.forEach(availableFieldToSelect => {
+            if(availableFieldToSelect.value === parentRelationshipName){
+              if(this.selectedRelationshipFields[parentRelationshipName].length)
+                availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[parentRelationshipName].length;
+              else
+                availableFieldToSelect.numberOfSelectedFields = 0;
+            }
+          });
+        },
+        computeRelationshipFields(parentRelationshipName){
           this.computedRelationshipFields = '';
           let n = 0;
           Object.entries(this.selectedRelationshipFields).forEach(( [key, fieldEntries] ) => {
@@ -910,20 +897,21 @@ export default {
           this.createSOQL();
         },
         onRemoveRelationshipField(field){
-          const relationshipParent = field.split('.')[0];
-          const relationshipFieldIndex = this.selectedRelationshipFields[relationshipParent].findIndex(relationshipField => relationshipField === field);
-          this.selectedRelationshipFields[relationshipParent].splice(relationshipFieldIndex, 1);
-
-          this.availableFieldsToSelect.forEach(availableFieldToSelect => {
-            if(availableFieldToSelect.value === relationshipParent){
-              if(this.selectedRelationshipFields[relationshipParent].length)
-                availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[relationshipParent].length;
-              else
-                availableFieldToSelect.numberOfSelectedFields = 0;
-            }
-          });
-
-          this.computeRelationshipFields();
+          const parentRelationshipName = field.split('.')[0];
+          const relationshipFieldIndex = this.selectedRelationshipFields[parentRelationshipName].findIndex(relationshipField => relationshipField === field);
+          this.selectedRelationshipFields[parentRelationshipName].splice(relationshipFieldIndex, 1);
+          this.computeRelationshipFields(parentRelationshipName);
+          this.updateNumberOfSelectedFields(parentRelationshipName);
+        },
+        onReceiveFieldToInsert(field){
+          const parentRelationshipName = field.split('.')[0];
+          if(!this.selectedRelationshipFields[parentRelationshipName])  this.selectedRelationshipFields[parentRelationshipName]  = [];
+          const relationshipFieldIndex = this.selectedRelationshipFields[parentRelationshipName].findIndex(relationshipField => relationshipField === field);
+          if(relationshipFieldIndex === -1){
+            this.selectedRelationshipFields[parentRelationshipName].push(field);
+            this.computeRelationshipFields(parentRelationshipName);
+            this.updateNumberOfSelectedFields(parentRelationshipName);
+          }
         },
         onClickExportAsSourceTree(){
           this.isExportingData = true;

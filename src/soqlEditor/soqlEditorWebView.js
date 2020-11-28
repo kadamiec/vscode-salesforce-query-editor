@@ -117,7 +117,7 @@ class SOQLEditorWebView extends WebView {
         if(this.activeTextEditor && this.activeTextEditor.selection.isEmpty) {
           const position = this.activeTextEditor.selection.active;
           this.activeTextEditor.edit((editBuilder) => {
-            editBuilder.insert(position, `[${soql.replace(/\s\s+/gm, ' ')}]`);
+            editBuilder.insert(position, `[${soql.replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ')}]`);
           });
         }
       },
@@ -160,7 +160,7 @@ class SOQLEditorWebView extends WebView {
       },
       exportSourceTree: async({ soql, apiVersion }) => {
         return ApiPromise((resolve) => {
-          exportSourceTree(soql.replace(/\s\s+/gm, ' '), apiVersion)
+          exportSourceTree(soql.replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' '), apiVersion)
             .then((result) =>resolve(result))
             .catch((error) => {
               resolve(error);

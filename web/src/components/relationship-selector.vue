@@ -17,6 +17,8 @@
       </select>
     </div>
 
+    <button class="btn btn-md my-1" @click="onClickAddField">Add Field</button>
+
     <div class="container text-wrap mt-2 mb-1">
       <span id="formula">{{ fieldToInsert }}</span>
     </div>
@@ -44,7 +46,7 @@ export default {
     data() {
         return {
             picklists: [],
-            selectedRelationshipFieldsData: []
+            selectedRelationshipFieldsData: [],
         };
     },
     watch:{
@@ -125,6 +127,10 @@ export default {
         },
         onClickRemoveFieldButton(field, index){
             this.$emit('removeField', field);
+        },
+        onClickAddField(){
+            console.log(this.fieldToInsert);
+            this.$emit('insertField', this.fieldToInsert);
         }
     },
 };

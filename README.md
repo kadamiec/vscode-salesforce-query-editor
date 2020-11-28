@@ -21,7 +21,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 
 ## Requirements
 
-- sfdx-cli 7.58.2 or above
+- sfdx-cli 7.81.0
 - VS Code 1.47.2 -> To update your vscode go to Help -> then click on Check for Updates / Restart to Update
 - MUST BE USED FROM A SFDX PROJECT
 
@@ -29,7 +29,7 @@ This extension enables developers to create, run and add to Apex SOQL queries wi
 
 You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 
-# Installation
+# Instalation
 
 Open VS Code, click on the Extension button in the side bar menu, search for `Salesforce SOQL Editor` and click `Install`.
 
@@ -114,83 +114,105 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Update Records
 
- - Query an Id field and at least one editable field to show the Edit and Delete buttons.
- 
- - Click on the Edit button to change a particular record. 
- 
- - And if you want to discard all your changes just click on the Cancel button.
+- Query an Id field and at least one editable field to show the Edit and Delete buttons.
 
- - Once you are happy with your changes you can click on the Commit button to save everything on the database.
+- Click on the Edit button to change a particular record. 
 
- - If all the changes you did for that record are saved without any errors, the record changes back to read mode. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
+- And if you want to discard all your changes just click on the Cancel button.
 
- - System Fields that are not editable: `Id, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, LastViewedDate, LastReferencedDate`
+- Once you are happy with your changes you can click on the Commit button to save everything on the database.
+
+- If all the changes you did for that record are saved without any errors, the record changes back to read mode. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
+
+- System Fields that are not editable: `Id, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, LastViewedDate, LastReferencedDate`
 
 
 ## Release Notes
 
+### 0.8.0
+
+- Now users can Export data as Source Plan.
+
+<img src="https://drive.google.com/uc?id=1FjxvaqyBZ-JecXFdxIGgTYzKvEb2aHoj" width="700px"></img>
+
+The exported files are saved inside a folder called `data/sourcetree` in the root of your sfdx project.
+
+<img src="https://drive.google.com/uc?id=1FEl-qHa-yMKc2kVJYLLvcTI9rBAULjvI" width="200px"></img>
+
+- Now users can Add Multiple relationship fields at once. Previously it was necessary to add one after another.
+
+<img src="https://drive.google.com/uc?id=12I0Z1EntVxIZ4ojDxc4JSOunjeUOezXc" width="700px"></img>
+
+- Limit field was moved to a better place. And API field was properly labeled.
+
+<img src="https://drive.google.com/uc?id=1lAwza1Rmxy5LYp31-S1XuzHh5i_BpApE" width="400px"></img>
+
+- Add to Apex button was separating each Query Token by two white spaces, but now it is only one.
+- Now there is only one Output Channel for the Webview.
+
+
 ### 0.7.0
 
- - Fields are now added using a checkbox input.
+- Fields are now added using a checkbox input.
 
- <img src="https://drive.google.com/uc?id=1X4Ne2dcHbhbG_eAmNcho0uM7b16cJH6F" width="400px"></img>
+<img src="https://drive.google.com/uc?id=1X4Ne2dcHbhbG_eAmNcho0uM7b16cJH6F" width="400px"></img>
 
- - Relationship fields can now be added.
+- Relationship fields can now be added.
 
- <img src="https://drive.google.com/uc?id=1xOuSnKwpaahq6r-4MXoQIjhoSUpQowSf" width="800px"></img>
+<img src="https://drive.google.com/uc?id=1xOuSnKwpaahq6r-4MXoQIjhoSUpQowSf" width="800px"></img>
 
- The number of relationship fields added is displayed between parenthesis.
+- The number of relationship fields added is displayed between parenthesis.
 
- <img src="https://drive.google.com/uc?id=1GRTRLoz7Oj1RH-CKuwbjhD05qKZwrTW_" width="400px"></img>
+<img src="https://drive.google.com/uc?id=1GRTRLoz7Oj1RH-CKuwbjhD05qKZwrTW_" width="400px"></img>
 
 ### 0.6.0
 
- - Hide the form using the `soqlEditor.displayEditor` setting. This setting defaults to true, so if you want to hide the editor just change it to false.
+- Hide the form using the `soqlEditor.displayEditor` setting. This setting defaults to true, so if you want to hide the editor just change it to false.
 
- <img src="https://drive.google.com/uc?id=1VR8BmzJ1-NISLV_8k7RQoWUuBRmh15Wr" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=1VR8BmzJ1-NISLV_8k7RQoWUuBRmh15Wr" width="1200px"></img>
 
- <img src="https://drive.google.com/uc?id=14VcoE7YLW8zX4ru5CrAhl21LuKsOz84w" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=14VcoE7YLW8zX4ru5CrAhl21LuKsOz84w" width="1200px"></img>
 
- - Select the API version.
+- Select the API version.
 
- <img src="https://drive.google.com/uc?id=1mL0N9PydICn9MBHvZVBLA66btukvpNrh" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=1mL0N9PydICn9MBHvZVBLA66btukvpNrh" width="1200px"></img>
 
- - The loading animation was changed to one that it is not flickering.
+- The loading animation was changed to one that it is not flickering.
 
 
 ### 0.5.0
  
- - Remove "attributes" from nested results.
+- Removes "attributes" from nested results.
 
- <img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
 
- - Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field and at least one editable field.
+- Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field and at least one editable field.
 
- <img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
 
 
 ### 0.4.0
 
- - Reduce the size of the extension.
+- Reduce the size of the extension.
 
- - Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
+- Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
 
- <img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
+<img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
 
- - Now whenever you switch orgs, the Schema builder will Reload the Sobjects List automatically:
+- Now whenever you switch orgs, the Schema builder will Reload the Sobjects List automatically:
 
- <img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
 
- - Now you can refresh the SObject List clicking on the Refresh Button:
+- Now you can refresh the SObject List clicking on the Refresh Button:
 
- <img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
+<img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
 
- - Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
+- Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
 
 
 ### 0.3.0
 
-Ids can now be clicked to open the Record Detail Page.
+- Ids can now be clicked to open the Record Detail Page.
 
 <img src="https://drive.google.com/uc?id=1KBRDhPY093MdRw0JcAp-19IifD_BjS96" width="600px"></img>
 
