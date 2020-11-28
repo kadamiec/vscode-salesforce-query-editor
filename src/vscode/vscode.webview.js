@@ -94,9 +94,6 @@ class WebView {
     if (this.panel) {
       this.panel.reveal(viewColumn);
     } else {
-      this.channel = vscode.window.createOutputChannel(
-        'Salesforce SOQL Editor'
-      );
       this._panel = vscode.window.createWebviewPanel(
         viewType,
         title,
@@ -186,6 +183,7 @@ class WebView {
    */
   activate(context, name, cmdName, htmlPath = undefined) {
     // activate WebviewApi
+    this.channel = vscode.window.createOutputChannel(name);
     WebviewApi.activate(context, name, this.bridgeData);
     htmlPath ||
       (htmlPath = path.join(
@@ -211,6 +209,27 @@ class WebView {
       })
     );
     return this;
+  }
+
+  postMessage(message, data) {
+    this.panel.webview.postMessage({
+      cmd: message,
+      data: data,
+    });
+  }
+
+  showErrorMessage(message, error){
+    this.channel.appendLine(error);
+    vscode.window.showErrorMessage(message, 'Show Output')
+      .then((selection) => {
+        if (selection === 'Show Output') {
+          this.channel.show();
+        }
+      });
+  }
+
+  showInformationMessage(message){
+    vscode.window.showInformationMessage(message);
   }
 
   deactivate() {

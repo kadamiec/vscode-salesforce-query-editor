@@ -4,15 +4,16 @@ const vscode = require('vscode');
 
 const {
   getDefaultusername,
-  openRecordDetailPage
-} = require('../services/sfdxServices.js');
+  openRecordDetailPage,
+  exportSourceTree
+} = require('../services/sfdx.js');
 const {
   getGlobalDescribe,
   getSObjectDescribe,
   getSOQLData,
   getSOQLPlan,
   updateRecords
-} = require('../services/salesforceServices.js');
+} = require('../services/salesforceAPI.js');
 
 /**
  *Add business
@@ -44,9 +45,8 @@ class SOQLEditorWebView extends WebView {
       getGlobalDescribe(this.defaultusername)
         .then((response) => {
           this.postMessage('objects', response.data.sobjects);
-        }).catch ((e) => {
-          this.channel.appendLine(e);
-          this.showErrorMessage("Couldn't get SObjects");            
+        }).catch (error => {
+          this.showErrorMessage("Couldn't get SObjects", error);            
         });
     };
 
@@ -55,9 +55,8 @@ class SOQLEditorWebView extends WebView {
         .then(defaultusername => {
           this.defaultusername = defaultusername;
           getSObjects();
-        }).catch(reason => {
-          this.channel.appendLine(reason);
-          this.showErrorMessage('Could not get Defaultusername Credentials');
+        }).catch(error => {
+          this.showErrorMessage('Could not get Defaultusername Credentials', error);
         });
     };
 
@@ -83,9 +82,8 @@ class SOQLEditorWebView extends WebView {
           getSObjectDescribe(sObject, this.defaultusername)
             .then((response) => {
               this.postMessage('sobjectDescription', response.data);
-            }).catch((reason) =>{
-              this.channel.appendLine(reason);
-              this.showErrorMessage('Could not get SObject Fields');
+            }).catch(error =>{
+              this.showErrorMessage('Could not get SObject Fields', error);
             });
         }
       },
@@ -119,13 +117,11 @@ class SOQLEditorWebView extends WebView {
         if(this.activeTextEditor && this.activeTextEditor.selection.isEmpty) {
           const position = this.activeTextEditor.selection.active;
           this.activeTextEditor.edit((editBuilder) => {
-            editBuilder.insert(position, `[${soql.replace(/  +|\n|\s\s+/g, ' ')}]`);
+            editBuilder.insert(position, `[${soql.replace(/\s\s+/gm, ' ')}]`);
           });
         }
       },
-      openRecordDetailPage: (recordId) =>{
-        openRecordDetailPage(recordId);
-      },
+      openRecordDetailPage: (recordId) =>  openRecordDetailPage(recordId),
       commitChanges: async (changes) => {
         let sobject = changes.sobject;
         let recordsToUpdate = changes.recordsToUpdate;
@@ -133,31 +129,44 @@ class SOQLEditorWebView extends WebView {
         if(recordsToUpdate){
           recordsToUpdate = 
             recordsToUpdate.map(record => {
-                for(var key in record) {
-                  if(typeof record[key] === 'object') delete record[key];
-                }
-                record.attributes = {
-                  type: sobject
-                };
-                return record;
+              for(var key in record) {
+                if(typeof record[key] === 'object') delete record[key];
+              }
+              record.attributes = {
+                type: sobject
+              };
+              return record;
             });
 
-          let i,j,temparray,chunk = 200;
-          let updatedRecordsResults = [];
+          let i,j,chunk = 200;
+          const updatedRecordsResults = [];
+          const updateRecordsPromises = [];
           for (i = 0, j = recordsToUpdate.length; i < j; i += chunk) {
-              temparray = recordsToUpdate.slice(i, i + chunk); 
-              const result = await updateRecords(
-                { 
-                  allOrNone: false, 
-                  records: temparray 
-                }, 
-                this.defaultusername
-              );
-              updatedRecordsResults.push(...result.data);
+              const records = recordsToUpdate.slice(i, i + chunk); 
+              updateRecordsPromises.push(
+                updateRecords({ allOrNone: false, records }, this.defaultusername)
+              )
           }
-          
-          this.postMessage('commitResult', updatedRecordsResults);
+
+          await Promise.all(updateRecordsPromises)
+            .then((results) => {
+              results.forEach((result) =>  updatedRecordsResults.push(...result.data))
+              this.postMessage('commitResult', updatedRecordsResults);
+            })
+            .catch((error) => {
+              this.showErrorMessage('Error', error);
+            })
         }
+      },
+      exportSourceTree: async({ soql, apiVersion }) => {
+        return ApiPromise((resolve) => {
+          exportSourceTree(soql.replace(/\s\s+/gm, ' '), apiVersion)
+            .then((result) =>resolve(result))
+            .catch((error) => {
+              resolve(error);
+              this.showErrorMessage('Could not Export Source Tree', error);
+            })
+        });
       },
       getConfigurations: () => {
         const configurations = {}
@@ -182,21 +191,13 @@ class SOQLEditorWebView extends WebView {
     return super.activate(context, name, cmdName, htmlPath);
   }
 
-  showErrorMessage(message) {
-    vscode.window.showErrorMessage(message, 'Show Output')
-      .then((selection) => {
-        if (selection === 'Show Output') {
-          this.channel.show();
-        }
-      });
-  }
-
-  postMessage(message, data) {
-    this.panel.webview.postMessage({
-      cmd: message,
-      data: data,
-    });
-  }
+  
 }
+
+const ApiPromise = (callBack) => {
+  return new Promise((resolve, reject) => {
+    callBack(resolve, reject);
+  });
+};
 
 module.exports = SOQLEditorWebView;

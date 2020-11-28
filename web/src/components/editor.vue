@@ -201,20 +201,27 @@
             <div class="col-10">
               <button class="btn btn-primary" @click="onClickExecuteQueryButton()" :disabled="isExecutingSOQL  || isRetrievingSOQLPlan || isCommitingChanges">
                 Execute
-                <i v-if="isExecutingSOQL" class="fa fa fa-circle-o-notch fa-spin"></i>
+                <i v-if="isExecutingSOQL" class="fa fa-circle-o-notch fa-spin"></i>
               </button>
               <button class="btn btn-primary" @click="onClickQueryPlanButton()" :disabled="isExecutingSOQL || isRetrievingSOQLPlan || isCommitingChanges">
                 Query Plan
-                <i v-if="isRetrievingSOQLPlan" class="fa fa fa-circle-o-notch fa-spin"></i>
+                <i v-if="isRetrievingSOQLPlan" class="fa fa-circle-o-notch fa-spin"></i>
               </button>
               <button class="btn btn-primary" @click="onClickAddToApexButton()">Add to Apex</button>
             </div>
-            <div class="col-auto" 
-                 v-if="showCommitButton" >
-              <button class="btn btn-primary" @click="onClickCommitButton" :disabled="isCommitingChanges">
-                Commit
-                <i v-if="isCommitingChanges" class="fa fa fa-circle-o-notch fa-spin"></i>
-              </button>
+            <div class="col-auto">
+              <span v-if="showCommitButton">
+                <button class="btn btn-primary" @click="onClickCommitButton" :disabled="isCommitingChanges">
+                  Commit
+                  <i v-if="isCommitingChanges" class="fa fa-circle-o-notch fa-spin"></i>
+                </button>
+              </span>
+              <span v-if="showExportDataButton">
+                <button class="btn btn-primary" @click="onClickExportAsSourceTree" :disabled="isExportingData">
+                  Export
+                  <i v-if="isExportingData" class="fa fa-circle-o-notch fa-spin"></i>
+                </button>
+              </span>
             </div>
           </div>
         </div>
@@ -536,7 +543,8 @@ export default {
             isRetrievingSOQLPlan: false,
             isCommitingChanges: false,
             recordsToUpdate: [],
-            recordsToDelete: {}
+            recordsToDelete: {},
+            isExportingData: false
         };
     },
     computed: {
@@ -591,6 +599,9 @@ export default {
         showEditRecordButton(){
           return this.soqlResultFields.find(field => !this.notEditableFields.includes(field));
         },
+        showExportDataButton(){
+          return this.soqlResult && this.soqlResult.length > 0;
+        }
     },
     watch: {
         object(newValue) {
@@ -782,6 +793,8 @@ export default {
             this.isCommitingChanges = false;
             this.recordsToUpdate = [];
             this.recordsToDelete = {};
+            this.showExportDataButton = false;
+            this.isExportingData = false;
         },
         onClickInsertRelationshipFieldButton(field){
           const relationshipParent = field.split('.')[0];
@@ -911,6 +924,16 @@ export default {
           });
 
           this.computeRelationshipFields();
+        },
+        onClickExportAsSourceTree(){
+          this.isExportingData = true;
+          window.vscode.post({
+            cmd: 'exportSourceTree',
+            args: { 
+              soql: this.soql,
+              apiVersion: this.apiVersion
+            }
+          }).then(result => this.isExportingData = false);
         }
     },
 };
