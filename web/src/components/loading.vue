@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-center h-100">
         <div class="m-auto">
             <div class="d-flex flex-column">
-                <h2 class="mx-auto mb-3">Merry Christmas 🎁👀</h2>
+                <h2 class="mx-auto mb-3">Merry Christmas 🎁</h2>
                 <div class="d-flex flex-column">
                     <a class="mx-auto" href="https://www.buymeacoffee.com/allanoricil" target="_blank">
                         <img src="../../static/images/buymeacoffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
