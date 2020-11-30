@@ -1,22 +1,6 @@
 <template>
   <div class="container vh-100 vw-100 py-2">
-    <div v-if="loading" class="d-flex justify-content-center h-100">
-      <div class="m-auto">
-        <div class="d-flex flex-column">
-          <h2 class="mx-auto mb-3">Buy me a coffee</h2>
-          <div class="d-flex flex-column">
-            <a href="https://www.buymeacoffee.com/allanoricil" target="_blank">
-              <img src="../../static/images/buymeacoffee.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
-            </a>
-            <div class="donation-card d-flex flex-column py-4 mx-auto mt-3">
-              <img src="../../static/images/qrcodelogo.png" width="128px;" class="mx-auto mb-2">
-              <img src="../../static/images/QR Code.png" width="128px;" class="mx-auto">
-            </div>
-          </div>
-          <stretch background="var(--vscode-button-background)" class="mt-4 mx-auto"></stretch>
-        </div>
-      </div>
-    </div>
+    <loading v-if="loading"></loading>
     <span v-else>
       <div class="row">
         <div class="col">
@@ -155,7 +139,7 @@
             </div>
             <div class="col-auto">
               <div class="row">
-                <div class="col-auto mt-auto">
+                <div class="col-auto" style="margin-top: 32px">
                   <label class="form-check-label custom-checkbox-container" for="autoFormatButton">
                     Autoformat
                     <input
@@ -167,7 +151,7 @@
                     <span class="checkmark"/>
                   </label>
                 </div>
-                <div class="col-auto mt-auto pl-0">
+                <div class="col-auto pl-0" style="margin-top: 26px">
                   <button class="btn btn-primary" @click="onClickFormatQueryButton()">Click to Format</button>
                 </div>
                 <div v-if="configurations.displayEditor && showForm" class="col-auto pl-0">
@@ -393,8 +377,8 @@ import '../../static/css/vscode-dark.css';
 import FilterEntry from './filter-entry.vue';
 import sqlFormatter from 'sql-formatter';
 import RelationshipSelector from './relationship-selector.vue';
-import { Stretch } from 'vue-loading-spinner';
 import { checkDifferences, getDifferences, removeKeys } from '../utils/objectUtils.js';
+import Loading from './loading.vue';
 
 export default {
     name: 'Editor',
@@ -402,7 +386,7 @@ export default {
         codemirror,
         FilterEntry,
         RelationshipSelector,
-        Stretch
+        Loading
     },
     beforeMount() {
         window.vscode.onLoading(()=>{
@@ -954,11 +938,5 @@ export default {
 
 .field-has-next:hover{
   color: var(--vscode-button-background) !important;
-}
-
-.donation-card{
-  border-radius: 1rem; 
-  background-color: white; 
-  width: 200px;
 }
 </style>
