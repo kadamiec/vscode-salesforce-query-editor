@@ -7,11 +7,11 @@ function checkDifferences(object1, object2, keysToIgnore) {
     }
 
     for (const key of keys1) {
-        if(keysToIgnore.includes(key)) continue;
+        if (keysToIgnore.includes(key)) continue;
         const val1 = object1[key];
         const val2 = object2[key];
         const areObjects = isObject(val1) && isObject(val2);
-        if(areObjects) continue;
+        if (areObjects) continue;
         else if (val1 !== val2) {
             return false;
         }
@@ -26,10 +26,10 @@ function getDifferences(object1, object2, keysToIgnore) {
     const differences = {};
 
     for (const key of keys1) {
-        if(keysToIgnore.includes(key)) continue;
+        if (keysToIgnore.includes(key)) continue;
         const val1 = object1[key];
         const val2 = object2[key];
-        if(isObject(val1) && isObject(val2)) continue;
+        if (isObject(val1) && isObject(val2)) continue;
         else if (val1 !== val2) {
             differences[key] = val1;
         }
@@ -37,25 +37,24 @@ function getDifferences(object1, object2, keysToIgnore) {
 
     return differences;
 }
-  
+
 function isObject(object) {
     return object != null && typeof object === 'object';
 }
 
-
 function removeKeys(obj, keys) {
     for (var prop in obj) {
-        if(obj.hasOwnProperty(prop)) {
-            switch(typeof(obj[prop])) {
+        if (obj.hasOwnProperty(prop)) {
+            switch (typeof obj[prop]) {
                 case 'object':
-                    if(keys.indexOf(prop) > -1) {
+                    if (keys.indexOf(prop) > -1) {
                         delete obj[prop];
                     } else {
                         removeKeys(obj[prop], keys);
                     }
                     break;
-              default:
-                    if(keys.indexOf(prop) > -1) {
+            default:
+                    if (keys.indexOf(prop) > -1) {
                         delete obj[prop];
                     }
                     break;
@@ -63,8 +62,4 @@ function removeKeys(obj, keys) {
         }
     }
 }
-export {
-    checkDifferences,
-    getDifferences,
-    removeKeys
-}
+export { checkDifferences, getDifferences, removeKeys };

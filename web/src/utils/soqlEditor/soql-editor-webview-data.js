@@ -1,6 +1,4 @@
-import {
-    WebviewData
-} from '../vscode.web';
+import { WebviewData } from '../vscode.web';
 
 class SoqlEditorWebviewData extends WebviewData {
     constructor(vscode) {
@@ -10,6 +8,4 @@ class SoqlEditorWebviewData extends WebviewData {
     }
 }
 
-export {
-    SoqlEditorWebviewData
-};
+export { SoqlEditorWebviewData };

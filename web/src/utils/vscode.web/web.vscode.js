@@ -17,7 +17,7 @@ class Vscode {
          * @property {(key: string, value: any) => void} setState
          * @property {(key: string) => any} getState
          */
-        this.origin = (_ => {
+        this.origin = ((_) => {
             try {
                 // @ts-ignore
                 // eslint-disable-next-line no-undef
@@ -28,7 +28,12 @@ class Vscode {
                      * @type {(msg: Message) => void}
                      */
                     postMessage: (msg) => {
-                        if (msg.cmd === 'showMessage' || msg.cmd === 'showError' || msg.cmd === 'showWarn' || msg.cmd === 'showTxt2Output') {
+                        if (
+                            msg.cmd === 'showMessage' ||
+                            msg.cmd === 'showError' ||
+                            msg.cmd === 'showWarn' ||
+                            msg.cmd === 'showTxt2Output'
+                        ) {
                             console.log(msg.args.txt);
                         } else if (msg.cmd === 'showOpenDialog') {
                             /* try {
@@ -60,8 +65,7 @@ class Vscode {
                     },
                     getState: (key) => {
                         console.log("Not Found: 'acquireVsCodeApi'");
-                    },
-
+                    }
                 };
             }
         })();
@@ -73,14 +77,17 @@ class Vscode {
         this.off = this.messageCenter.off;
         this.webviewData = undefined;
         // @ts-ignore
-        window && window.addEventListener && window.addEventListener('message', this.received);
+        window &&
+            window.addEventListener &&
+            window.addEventListener('message', this.received);
     }
     get messageCenter() {
         return this._messageCenter;
     }
 
     // Lift Cycle
-    onWebviewDidPose(callBack) { // init webview
+    onWebviewDidPose(callBack) {
+        // init webview
         this.on(`webviewDidPose`, callBack, 1);
         return this;
     }
@@ -215,10 +222,7 @@ class Vscode {
      * Find file in current workspace
      * @type {({include, exclude}: {include: string, exclude?: string}) => Promise<{data?: string[]}>}
      */
-    findFileInWorkspace = ({
-        include,
-        exclude = undefined
-    }) => {
+    findFileInWorkspace = ({ include, exclude = undefined }) => {
         return this.post({
             cmd: `findFileInWorkspace`,
             args: {
@@ -242,14 +246,11 @@ class Vscode {
      * Show message alert
      * @type {({txt, btns}: {txt: string, btns?: string[]}) => Promise<{data: string}>}
      */
-    showMessage = ({
-        txt,
-        ouput = false,
-        btns = undefined
-    }) => {
-        ouput && this.showTxt2Output({
-            txt
-        });
+    showMessage = ({ txt, ouput = false, btns = undefined }) => {
+        ouput &&
+            this.showTxt2Output({
+                txt
+            });
         return this.post({
             cmd: `showMessage`,
             args: {
@@ -264,17 +265,14 @@ class Vscode {
      * Show error alert
      * @type {({txt, btns}: {txt: string, btns?: string[]}) => Promise<{data: string}>}
      */
-    showError = ({
-        txt,
-        ouput = false,
-        btns = undefined
-    }) => {
+    showError = ({ txt, ouput = false, btns = undefined }) => {
         if (txt && typeof txt !== 'string') {
             txt = txt['message'] || txt.toString();
         }
-        ouput && this.showTxt2Output({
-            txt
-        });
+        ouput &&
+            this.showTxt2Output({
+                txt
+            });
         return this.post({
             cmd: `showError`,
             args: {
@@ -289,14 +287,11 @@ class Vscode {
      * Show warn alert
      * @type {({txt, btns}: {txt: string, btns?: string[]}) => Promise<{data: string}>}
      */
-    showWarn = ({
-        txt,
-        ouput = false,
-        btns = undefined
-    }) => {
-        ouput && this.showTxt2Output({
-            txt
-        });
+    showWarn = ({ txt, ouput = false, btns = undefined }) => {
+        ouput &&
+            this.showTxt2Output({
+                txt
+            });
         return this.post({
             cmd: `showWarn`,
             args: {
@@ -380,10 +375,7 @@ class Vscode {
      * Show txt to output
      * @type {({txt, preserveFocus, line}: {txt: string, preserveFocus?: boolean, line?: boolean}) => void}
      */
-    showTxt2Output = ({
-        txt,
-        preserveFocus = false
-    }) => {
+    showTxt2Output = ({ txt, preserveFocus = false }) => {
         this.post({
             cmd: `showTxt2Output`,
             args: {
@@ -398,11 +390,7 @@ class Vscode {
      * Send cmd to terminal
      * @type {({cmd, addNewLine, preserveFocus}: {cmd: string, addNewLine?: boolean, preserveFocus?: boolean}) => void}
      */
-    sendCmd2Terminal = ({
-        cmd,
-        addNewLine = true,
-        preserveFocus = false
-    }) => {
+    sendCmd2Terminal = ({ cmd, addNewLine = true, preserveFocus = false }) => {
         this.post({
             cmd: `sendCmd2Terminal`,
             args: {
@@ -418,9 +406,7 @@ class Vscode {
      * a File or folder if exists
      * @type {({path}: {path: string}) => Promise<{data: boolean}>}
      */
-    exists4Path = ({
-        path
-    }) => {
+    exists4Path = ({ path }) => {
         return this.post({
             cmd: `exists4Path`,
             args: {
@@ -433,9 +419,7 @@ class Vscode {
      * Get stat for path
      * @type {({path}: {path: string}) => Promise<{data: {error?: string, data: undefined|{isFile: boolean, isDirectory: boolean, isSymbolicLink: boolean}}>}
      */
-    getStat4Path = ({
-        path
-    }) => {
+    getStat4Path = ({ path }) => {
         return this.post({
             cmd: `getStat4Path`,
             args: {
@@ -448,10 +432,7 @@ class Vscode {
      * Read file
      * @type {({path, options}: {path: string, options?: 'hex'|'json'|'string'}) => Promise<{data: {error?: string, data: any}}>}
      */
-    readFile = ({
-        path,
-        options = undefined
-    }) => {
+    readFile = ({ path, options = undefined }) => {
         return this.post({
             cmd: `readFile`,
             args: {
@@ -465,11 +446,7 @@ class Vscode {
      * Write file
      * @type {({path, data, options}: {path: string, data: string|[]|{}, options?: {encoding?: string|undefined, mode?: number|string, flag?: string}|string|undefined}) => Promise<{data: {error?: string|undefined}}>}
      */
-    writeFile = ({
-        path,
-        data,
-        options = undefined
-    }) => {
+    writeFile = ({ path, data, options = undefined }) => {
         return this.post({
             cmd: `writeFile`,
             args: {
@@ -489,7 +466,7 @@ class Vscode {
         method = 'POST',
         data = undefined,
         headers = {
-            "content-type": "application/json"
+            'content-type': 'application/json'
         }
     }) => {
         return this.post({

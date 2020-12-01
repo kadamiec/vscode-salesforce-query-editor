@@ -16,7 +16,9 @@ class GlobalState {
         this._vscode = vscode;
         this.data = {};
     }
-    get vscode() { return this._vscode; }
+    get vscode() {
+        return this._vscode;
+    }
 
     /**
      * Update state
@@ -26,7 +28,9 @@ class GlobalState {
      * @memberof GlobalState
      */
     _update = (state, isSync) => {
-        if (!this.data) { return this; }
+        if (!this.data) {
+            return this;
+        }
         for (const key in state) {
             if (state.hasOwnProperty(key)) {
                 this.data[key] = state[key];
@@ -41,7 +45,9 @@ class GlobalState {
      * @param {{}} state
      * @memberof GlobalState
      */
-    update = (state) => { return this._update(state, true); }
+    update = (state) => {
+        return this._update(state, true);
+    }
 
     /**
      * Activate
@@ -50,9 +56,10 @@ class GlobalState {
      */
     activate = (vscode = undefined) => {
         this._vscode = vscode;
-        this.data && this.vscode.getGlobalState().then((msg) => {
-            msg.data && this._update(msg.data, false);
-        });
+        this.data &&
+            this.vscode.getGlobalState().then((msg) => {
+                msg.data && this._update(msg.data, false);
+            });
         return this;
     }
 
@@ -70,7 +77,9 @@ class GlobalState {
      * @param {{}} state
      * @memberof GlobalState
      */
-    sync = (state) => { this.vscode.updateGlobalState(state); }
+    sync = (state) => {
+        this.vscode.updateGlobalState(state);
+    }
 }
 
 class WorkspaceState extends GlobalState {
@@ -81,12 +90,15 @@ class WorkspaceState extends GlobalState {
      */
     activate = (vscode = undefined) => {
         this._vscode = vscode;
-        this.data && this.vscode.getWorkspaceState().then((msg) => {
-            msg.data && this._update(msg.data, false);
-        });
+        this.data &&
+            this.vscode.getWorkspaceState().then((msg) => {
+                msg.data && this._update(msg.data, false);
+            });
         return this;
     }
-    sync = (state) => { this.vscode.updateWorkspaceState(state); }
+    sync = (state) => {
+        this.vscode.updateWorkspaceState(state);
+    }
 }
 
 class BridgeData extends GlobalState {
@@ -100,12 +112,15 @@ class BridgeData extends GlobalState {
         this.vscode.onSyncBridgeData((msg) => {
             msg.data && this._update(msg.data, false);
         }, 0);
-        this.data && this.vscode.getBridgeData().then((msg) => {
-            msg.data && this._update(msg.data, false);
-        });
+        this.data &&
+            this.vscode.getBridgeData().then((msg) => {
+                msg.data && this._update(msg.data, false);
+            });
         return this;
     }
-    sync = (state) => { this.vscode.updateBridgeData(state); }
+    sync = (state) => {
+        this.vscode.updateBridgeData(state);
+    }
 }
 
 class WebviewData {
@@ -123,14 +138,22 @@ class WebviewData {
         this.$workspaceState.data = this;
         this.$bridgeData.data = this;
 
-        this.extensionPath = '';    // extension path
-        this.rootPath = '';         // current work space path
-        this.startPath = '';        // start path
+        this.extensionPath = ''; // extension path
+        this.rootPath = ''; // current work space path
+        this.startPath = ''; // start path
     }
-    get $vscode() { return this.__vscode__; }
-    get $globalState() { return this.__globalState__; }
-    get $workspaceState() { return this.__workspaceState__; }
-    get $bridgeData() { return this.__bridgeData__; }
+    get $vscode() {
+        return this.__vscode__;
+    }
+    get $globalState() {
+        return this.__globalState__;
+    }
+    get $workspaceState() {
+        return this.__workspaceState__;
+    }
+    get $bridgeData() {
+        return this.__bridgeData__;
+    }
 
     /**
      * Activate
@@ -139,7 +162,9 @@ class WebviewData {
      */
     $activate(vscode = undefined) {
         vscode && (this.__vscode__ = vscode);
-        if (!this.$vscode) { throw Error("vscode can't be null."); }
+        if (!this.$vscode) {
+            throw Error("vscode can't be null.");
+        }
         this.$globalState.activate(this.$vscode);
         this.$workspaceState.activate(this.$vscode);
         this.$bridgeData.activate(this.$vscode);
@@ -160,9 +185,4 @@ class WebviewData {
     }
 }
 
-export {
-    WebviewData,
-    GlobalState,
-    WorkspaceState,
-    BridgeData
-};
+export { WebviewData, GlobalState, WorkspaceState, BridgeData };

@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {
-    sobjects
-} from './sobjects';
+import { sobjects } from './sobjects';
 
 Vue.use(Vuex);
 

@@ -14,7 +14,7 @@ function MessageCenter(poster) {
      * @type {(event: MessageEvent) => void}
      * @typedef {{data: Message}} MessageEvent
      */
-    this.received = event => {
+    this.received = (event) => {
         const message = event.data;
         this.emit(message);
     };
@@ -23,7 +23,10 @@ function MessageCenter(poster) {
      * Post message
      * @type {({cmd, args, reply, p2p, timeout}: Message, ext?: any) => Promise<Message>|undefined}
      */
-    this.post = ({ cmd, args = undefined, reply = true, p2p = true, timeout = 0 }, ext = {}) => {
+    this.post = (
+        { cmd, args = undefined, reply = true, p2p = true, timeout = 0 },
+        ext = {}
+    ) => {
         ext.cmd = cmd;
         ext.args = args;
         ext.reply = reply;
@@ -39,10 +42,11 @@ function MessageCenter(poster) {
                 };
                 p2p && (f.index = this.index);
                 this.on(cmd, f);
-                timeout > 0 && setTimeout(() => {
-                    f({ error: 'Operate timeout.' });
-                    this.off(cmd, f);
-                }, timeout);
+                timeout > 0 &&
+                    setTimeout(() => {
+                        f({ error: 'Operate timeout.' });
+                        this.off(cmd, f);
+                    }, timeout);
             });
         }
     };
@@ -53,7 +57,7 @@ function MessageCenter(poster) {
      */
     this.on = (cmd, handler, times = 1) => {
         if (handler && typeof handler === 'function') {
-            times === 0 && (times = -1); // `-1`: always receive, `0`: clear the handler  
+            times === 0 && (times = -1); // `-1`: always receive, `0`: clear the handler
             handler.times = times;
         } else {
             return this;
@@ -70,7 +74,12 @@ function MessageCenter(poster) {
     this.emit = (message) => {
         console.log(`Received message：${message.cmd}`);
         console.log(message.data);
-        if (!message || !message.cmd || !this.handlers || !this.handlers[message.cmd]) {
+        if (
+            !message ||
+            !message.cmd ||
+            !this.handlers ||
+            !this.handlers[message.cmd]
+        ) {
             console.log(`Not Found message: ${message.cmd}\n`);
             return this;
         }

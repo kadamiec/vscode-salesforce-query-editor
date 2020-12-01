@@ -5,9 +5,11 @@ import Editor from '@/components/editor';
 Vue.use(Router);
 
 export default new Router({
-    routes: [{
-        path: '/',
-        name: 'Editor',
-        component: Editor
-    }]
+    routes: [
+        {
+            path: '/',
+            name: 'Editor',
+            component: Editor
+        }
+    ]
 });

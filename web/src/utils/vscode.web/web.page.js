@@ -5,10 +5,18 @@ class Page {
         this._number = 0;
         this._eventEmitter = new EventEmitter();
     }
-    get number() { return this._number; }
-    get eventEmitter() { return this._eventEmitter; }
-    static getShowIdentifier(number) { return `show_page_${number}`; }
-    static getHideIdentifier(number) { return `hide_page_${number}`; }
+    get number() {
+        return this._number;
+    }
+    get eventEmitter() {
+        return this._eventEmitter;
+    }
+    static getShowIdentifier(number) {
+        return `show_page_${number}`;
+    }
+    static getHideIdentifier(number) {
+        return `hide_page_${number}`;
+    }
 
     /**
      * On to page
@@ -18,7 +26,9 @@ class Page {
      * @memberof Page
      */
     onTo(callBack) {
-        if (!callBack) { return this; }
+        if (!callBack) {
+            return this;
+        }
         this.__to__ = callBack;
         return this;
     }
@@ -30,7 +40,9 @@ class Page {
      * @memberof Page
      */
     show(to) {
-        if (this._number === to) { return this; }
+        if (this._number === to) {
+            return this;
+        }
         const from = this._number;
         this._number = to;
         return this._emit(to, from);
@@ -43,10 +55,11 @@ class Page {
      * @memberof Page
      */
     onShow(pageNumber, callBack) {
-        callBack && this.eventEmitter.on(Page.getShowIdentifier(pageNumber), (data) => {
-            callBack(data.show, data.hide);
-        });
-    };
+        callBack &&
+            this.eventEmitter.on(Page.getShowIdentifier(pageNumber), (data) => {
+                callBack(data.show, data.hide);
+            });
+    }
 
     /**
      * On hide page
@@ -55,13 +68,14 @@ class Page {
      * @memberof Page
      */
     onHide(pageNumber, callBack) {
-        callBack && this.eventEmitter.on(Page.getHideIdentifier(pageNumber), (data) => {
-            callBack(data.show, data.hide);
-        });
-    };
+        callBack &&
+            this.eventEmitter.on(Page.getHideIdentifier(pageNumber), (data) => {
+                callBack(data.show, data.hide);
+            });
+    }
 
     /**
-     * Emit 
+     * Emit
      * @private
      * @param {number} show
      * @param {number} hide
@@ -73,7 +87,7 @@ class Page {
         this.eventEmitter.emit(Page.getHideIdentifier(hide), { show, hide });
         this.eventEmitter.emit(Page.getShowIdentifier(show), { show, hide });
         return this;
-    };
+    }
 }
 
 export default Page;

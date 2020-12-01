@@ -1,6 +1,4 @@
-import {
-    Vscode
-} from '../vscode.web';
+import { Vscode } from '../vscode.web';
 
 /**
  *vscode API of business
@@ -9,10 +7,10 @@ import {
  * @extends {Vscode}
  */
 class SoqlEditorExtensionApi extends Vscode {
-    onLoading(callback){
+    onLoading(callback) {
         this.on('loading', callback, 0);
     }
-    
+
     onReceiveObjects(callback) {
         this.on('objects', callback, 0);
     }
@@ -25,15 +23,15 @@ class SoqlEditorExtensionApi extends Vscode {
         this.on('soqlResult', callback, 0);
     }
 
-    onReceiveSOQLPlan(callback){
+    onReceiveSOQLPlan(callback) {
         this.on('soqlPlan', callback, 0);
     }
 
-    onReceiveCommitResult(callback){
+    onReceiveCommitResult(callback) {
         this.on('commitResult', callback, 0);
     }
 
-    onReceiveConfigurations(callback){
+    onReceiveConfigurations(callback) {
         this.on('configurations', callback, 0);
     }
 }

@@ -1,3 +1,3 @@
 module.exports = {
-    test: function (browser) {},
+    test: function (browser) {}
 };
