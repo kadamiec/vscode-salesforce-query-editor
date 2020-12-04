@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.9.0",
+  "version": "0.9.1",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -77,12 +77,12 @@
         },
         "soqlEditor.showFieldType": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "If true, the form displays the field type between []. For instance, Name [STRING]."
         },
         "soqlEditor.showFieldTypeTable": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "If true, the query result table header displays the fields types between []. For instance, Name [STRING]."
         }
       }

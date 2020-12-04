@@ -129,7 +129,7 @@ You can also write your query in the Query Editor and run it without using any o
 
 ### 0.9.0
 
-- Now users can choose to display the field type in the form and in the query table header. These properties are off by default.
+- Now users can choose to display the field type in the form and in the query table header. These properties are off by default because they don't look that good yet. I will properly format it later.
 
 <img src="https://drive.google.com/uc?id=1jrRG6ni0GopLY90mP4XlyQNV11pzrhin" width="400px"></img>
 
