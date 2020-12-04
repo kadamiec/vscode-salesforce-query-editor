@@ -1,3 +1,13 @@
+function convertArrayToObject(array, key){
+    const initialValue = {};
+    return array.reduce((obj, item) => {
+        return {
+        ...obj,
+        [item[key]]: item,
+        };
+    }, initialValue);
+};
+
 function checkDifferences(object1, object2, keysToIgnore) {
     const keys1 = Object.keys(object1);
     const keys2 = Object.keys(object2);
@@ -62,4 +72,4 @@ function removeKeys(obj, keys) {
         }
     }
 }
-export { checkDifferences, getDifferences, removeKeys };
+export { checkDifferences, getDifferences, removeKeys, convertArrayToObject };

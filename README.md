@@ -114,20 +114,28 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Update Records
 
-- Query an Id field and at least one editable field to show the Edit and Delete buttons.
+- Query an Id field and at least one `updatabe` field to show the Edit and Delete buttons.
 
 - Click on the Edit button to change a particular record. 
 
-- And if you want to discard all your changes just click on the Cancel button.
+- And if you want to discard all of your changes just click on the Cancel button.
 
-- Once you are happy with your changes you can click on the Commit button to save everything on the database.
+- Once you are happy with your changes click on the Commit button to save everything on the database.
 
 - If all the changes you did for that record are saved without any errors, the record changes back to read mode. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
 
-- System Fields that are not editable: `Id, CreatedDate, CreatedById, LastModifiedDate, LastModifiedById, LastViewedDate, LastReferencedDate`
-
 
 ## Release Notes
+
+### 0.9.0
+
+- Now users can choose to display the field type in the form and in the query table header. These properties are off by default.
+
+<img src="https://drive.google.com/uc?id=1jrRG6ni0GopLY90mP4XlyQNV11pzrhin" width="400px"></img>
+
+Result:
+
+<img src="https://drive.google.com/uc?id=1jm6UiBiBD-9cy9gdhaV1EhRPQOnx0kAo" width="700px"></img>
 
 ### 0.8.0
 
@@ -139,16 +147,16 @@ The exported files are saved inside a folder called `data/sourcetree` in the roo
 
 <img src="https://drive.google.com/uc?id=1FEl-qHa-yMKc2kVJYLLvcTI9rBAULjvI" width="200px"></img>
 
-- Now users can Add Multiple relationship fields at once. Previously it was necessary to add one after another.
+- Now users can Add Multiple relationship fields at once. Previously it was necessary to open and close the modal to add multiple fields.
 
 <img src="https://drive.google.com/uc?id=12I0Z1EntVxIZ4ojDxc4JSOunjeUOezXc" width="700px"></img>
 
-- Limit field was moved to a better place. And API field was properly labeled.
+- The Limit field was moved to a better place. And the API field was properly labeled.
 
 <img src="https://drive.google.com/uc?id=1lAwza1Rmxy5LYp31-S1XuzHh5i_BpApE" width="400px"></img>
 
-- Add to Apex button was separating each Query Token by two white spaces, but now it is only one.
-- Now there is only one Output Channel for the Webview.
+- The `Add to Apex` button was separating each Query Token by two white spaces, but now it is only one when added to an editor.
+- Now there is only one Output Channel for the Webview. Previously, the extension was creating one for every time the editor was opened.
 
 
 ### 0.7.0

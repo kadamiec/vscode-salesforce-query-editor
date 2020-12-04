@@ -12,7 +12,7 @@
                     :key="index"
                     :value="field.name"
                 >
-                    {{ field.name }}
+                    {{ field.name + (configurations.showFieldType && field.type ? ' [' + field.type.toUpperCase() + ']': '') }}
                 </option>
             </select>
         </div>
@@ -82,6 +82,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        configurations: {
+            type: Object,
+            default: () => {}
+        }
     },
     mounted() {
         this.filter = this.value;

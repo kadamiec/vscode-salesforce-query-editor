@@ -30,7 +30,7 @@ class SOQLEditorWebView extends WebView {
 
   constructor() {
     super();
-    this.configProperties = ['displayEditor'];
+    this.configProperties = ['displayEditor', 'showFieldType', 'showFieldTypeTable'];
     this.defaultusername;
     this.activeTextEditor = vscode.window.activeTextEditor;
     this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);

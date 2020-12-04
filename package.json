@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.8.3",
+  "version": "0.9.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -73,7 +73,17 @@
         "soqlEditor.displayEditor": {
           "type": "boolean",
           "default": true,
-          "description": "If true the editor will appear"
+          "description": "If true, the form is displayed."
+        },
+        "soqlEditor.showFieldType": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, the form displays the field type between []. For instance, Name [STRING]."
+        },
+        "soqlEditor.showFieldTypeTable": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, the query result table header displays the fields types between []. For instance, Name [STRING]."
         }
       }
     }

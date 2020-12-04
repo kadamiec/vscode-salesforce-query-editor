@@ -66,7 +66,7 @@
                       <span class="field-has-next">➤</span>
                     </label>
                     <label v-else class="form-check-label custom-checkbox-container">
-                      {{ field.value }}
+                      {{ field.value + (configurations.showFieldType && field.type ? ' [' + field.type.toUpperCase() + ']' : '')}}
                       <input
                         v-model="field.selected"
                         class="form-check-input"
@@ -90,7 +90,7 @@
                       v-for="(field, index) in sobjectFields"
                       :key="index"
                       :value="field.name"
-                    >{{ field.name }}</option>
+                    >{{ field.name + (configurations.showFieldType && field.type ? ' [' + field.type.toUpperCase() + ']': '')}}</option>
                   </select>
                 </div>
                 <div class="form-group col mr-2">
@@ -121,6 +121,7 @@
                   :index="index"
                   :show-logic="index !== filters.length - 1"
                   :s-object-fields-to-filter="sobjectFields"
+                  :configurations="configurations"
                   :object="object"
                   v-model="filters[index]"
                   @deleteEntry="onDeleteFilterEntry"
@@ -266,7 +267,7 @@
               <thead>
                 <tr>
                   <th v-if="showTableActionButtons" style="width: 30px;"/>
-                  <th v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName" scope="col">{{ field }}</th>
+                  <th v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName" scope="col">{{ field + (configurations.showFieldTypeTable && sobjectFieldsMappedByName[field].type ? ' [' + sobjectFieldsMappedByName[field].type.toUpperCase() + ']': '')}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -389,7 +390,7 @@ import '../../static/css/vscode-dark.css';
 import FilterEntry from './filter-entry.vue';
 import sqlFormatter from 'sql-formatter';
 import RelationshipSelector from './relationship-selector.vue';
-import { checkDifferences, getDifferences, removeKeys } from '../utils/objectUtils.js';
+import { checkDifferences, getDifferences, removeKeys, convertArrayToObject } from '../utils/objectUtils.js';
 import Loading from './loading.vue';
 import apiVersions from '../static/api-versions.json';
 
@@ -404,7 +405,9 @@ export default {
     data() {
         return {
             configurations: {
-                displayEditor: true
+                displayEditor: true,
+                showFieldType: true,
+                showFieldTypeTable: true
             },
             apiVersion: 'v50.0',
             apiVersions: apiVersions,
@@ -516,6 +519,9 @@ export default {
         updateableFields(){
             return this.sobjectFields.filter(field => field.updateable).map(field => field.name);
         },
+        sobjectFieldsMappedByName(){
+            return convertArrayToObject(this.sobjectFields, 'name');
+        },
         disableTextAreaActionButtons(){
             return !this.soql || this.isExecutingSOQL || this.isRetrievingSOQLPlan || this.isCommitingChanges;
         },
@@ -538,6 +544,7 @@ export default {
                         let array = [];
                         array.push({
                             value: current.name,
+                            type: current.type,
                             hasNext: false,
                             selected: false,
                         });
@@ -546,6 +553,7 @@ export default {
                             if(current.relationshipName)
                                 array.push({
                                     value: current.relationshipName,
+                                    type: current.type,
                                     reference: reference,
                                     hasNext: true,
                                     numberOfSelectedFields: 0,
@@ -556,7 +564,7 @@ export default {
                     }, []);
 
                     if(this.availableFieldsToSelect.length > 0){
-                        this.availableFieldsToSelect = [{ value: 'COUNT(Id)', hasNext: false, selected: false }, ...this.availableFieldsToSelect];
+                        this.availableFieldsToSelect = [{ value: 'COUNT(Id)', type: null, hasNext: false, selected: false }, ...this.availableFieldsToSelect];
                     }
                 }
             }
@@ -682,7 +690,7 @@ export default {
 
             if(this.commitResults.length > 0) this.$bvModal.show('commitResultModal');
         });
-        window.vscode.onReceiveConfigurations((message)=>{
+        window.vscode.onReceiveConfigurations((message) => {
             this.configurations = message.data;
         });
         window.vscode.post({ cmd: 'getConfigurations' });
