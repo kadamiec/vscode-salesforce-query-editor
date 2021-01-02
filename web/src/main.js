@@ -6,6 +6,7 @@ import Vuex from 'vuex';
 import { store } from './store'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import Clipboard from 'v-clipboard';
+import VueShortkey from 'vue-shortkey';
 import VueHighlightJS from 'vue-highlightjs';
 import 'highlight.js/styles/vs2015.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -20,8 +21,9 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueHighlightJS);
 Vue.use(Clipboard);
-Vue.use(Vuex)
-Vue.use(VueConfirmDialog)
+Vue.use(Vuex);
+Vue.use(VueConfirmDialog);
+Vue.use(VueShortkey);
 Vue.component('vue-confirm-dialog', VueConfirmDialog.default)
 
 /* eslint-disable no-new */

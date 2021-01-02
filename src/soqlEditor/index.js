@@ -1,11 +1,10 @@
 // @ts-nocheck
 const vscode = require('vscode');
 const SOQLEditorWebView = require('./soqlEditorWebView');
+const { outputChannel } = require('./soqlEditorOutputChannel');
 
 const name = 'SOQL Editor';
-
 let webview;
-
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -13,14 +12,16 @@ const activate = (context) => {
   webview = new SOQLEditorWebView();
   webview.activate(context, name, 'SFDX.soqlEditor');
   vscode.window.showInformationMessage('SOQL Editor is Activated');
+  outputChannel.appendLine('SOQL Editor is Activated');
 };
 
 const deactivate = () => {
   webview.deactivate();
+  outputChannel.dispose();
 };
 
 module.exports = {
   name,
   activate,
-  deactivate,
+  deactivate
 };

@@ -7,7 +7,9 @@
           <button
             v-if="configurations.displayEditor"
             class="btn btn-primary"
-            @click="onClickHideFormButton"
+            @click="onClickHideFormButton()"
+            v-shortkey="['ctrl', 'h']" 
+            @shortkey="onClickHideFormButton()"
           >{{ showForm ? 'Hide Form' : 'Show Form' }}</button>
         </div>
         <div class="col-auto">
@@ -17,7 +19,10 @@
               v-if="configurations.displayEditor"
               class="icon-top-bar fa fa-sync mr-2 my-auto"
               data-placement="top"
-              title="Refresh SObjects" @click="onClickRefreshObjectsButton()"
+              title="Refresh SObjects" 
+              @click="onClickRefreshObjectsButton()"
+              v-shortkey="['ctrl', 'r']" 
+              @shortkey="onClickRefreshObjectsButton()"
             />
             <a v-b-tooltip.hover target="_blank" href="https://github.com/AllanOricil/SOQL-Editor-Issues" class="mr-2 my-auto" title="Open an Issue">
               <i class="icon-top-bar fa fa-github"/>
@@ -140,24 +145,21 @@
             </div>
             <div class="col-auto">
               <div class="row">
-                <div class="col-auto" style="margin-top: 32px">
-                  <label class="form-check-label custom-checkbox-container" for="autoFormatButton">
-                    Autoformat
-                    <input
-                      id="autoFormatButton"
-                      v-model="autoFormat"
-                      class="form-check-input"
-                      type="checkbox"
-                    >
-                    <span class="checkmark"/>
-                  </label>
-                </div>
                 <div class="col-auto pl-0" style="margin-top: 26px">
-                  <button class="btn btn-primary" @click="onClickFormatQueryButton()">Click to Format</button>
+                  <button v-if="!configurations.autoFormatSOQL" 
+                          class="btn btn-primary" 
+                          @click="onClickFormatQueryButton()" 
+                          :disabled="disableTextAreaActionButtons">
+                          Format
+                  </button>
                 </div>
                 <div v-if="configurations.displayEditor && showForm" class="col-auto pl-0">
                   <label for="limit-by-input">Limit:</label>
                   <input id="limit-by-input" v-model="limitBy" type="number" class="form-control" style="width: 100px" min="0">
+                </div>
+                <div v-if="configurations.displayEditor && showForm" class="col-auto pl-0">
+                  <label for="offset-input">Offset:</label>
+                  <input id="offset-input" v-model="offset" type="number" class="form-control" style="width: 100px" min="0" max="2000">
                 </div>
                 <div class="col-auto pl-0">
                   <label for="api-version-input">API:</label>
@@ -200,7 +202,7 @@
             <div class="col-auto">
               <span v-if="showCommitButton">
                 <button :disabled="isCommitingChanges" class="btn btn-primary" @click="onClickCommitButton">
-                  Commit
+                  Save
                   <i v-if="isCommitingChanges" class="fa fa-circle-o-notch fa-spin"/>
                 </button>
               </span>
@@ -260,14 +262,19 @@
       </div>
 
       <!-- SOQL DATA -->
-      <div v-if="soqlResult && soqlResult.length > 0" class="row">
-        <div class="col">
+      <div v-if="soqlResult" class="row">
+        <div class="col-12">
+          <label class="m-auto">{{soqlResult.length}} Results</label>
+        </div>
+      </div>
+      <div v-if="isSoqlResultsNotEmpty" class="row">
+        <div class="col-12">
           <div class="table-responsive">
             <table class="table table-dark table-sm table-bordered">
               <thead>
                 <tr>
                   <th v-if="showTableActionButtons" style="width: 30px;"/>
-                  <th v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName" scope="col">{{ field + (configurations.showFieldTypeTable && sobjectFieldsMappedByName[field].type ? ' [' + sobjectFieldsMappedByName[field].type.toUpperCase() + ']': '')}}</th>
+                  <th v-for="(field, indexFieldName) in soqlResultFields" :key="indexFieldName" scope="col">{{ field + (configurations.showFieldTypeTable && sobjectFieldsMappedByName[field] && sobjectFieldsMappedByName[field].type ? ' [' + sobjectFieldsMappedByName[field].type.toUpperCase() + ']': '')}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -276,24 +283,20 @@
                     <div class="d-flex flex-column">
                       <span v-if="record.editing">
                         <button :disabled="isCommitingChanges" 
-                                class="btn btn-primary btn-sm" 
+                                class="btn btn-primary btn-sm table-button"
                                 @click="onClickCancelChangesButton(indexRecord)">
                           <span class="fa fa-times-circle fa-xs"/>
                         </button>
                       </span>
                       <span v-else>
-                        <button v-if="showEditRecordButton"
-                                :disabled="isCommitingChanges"
-                                style="width: 30px;"
-                                class="btn btn-primary btn-sm mb-1"
+                        <button :disabled="isCommitingChanges"
+                                class="btn btn-primary btn-sm table-button mb-1"
                                 @click="onClickEditRecordButton(indexRecord)">
                           <span class="fa fa-pencil fa-xs"/>
                         </button>
-                        <button v-if="false"
-                                :disabled="isCommitingChanges"
-                                class="btn btn-primary btn-sm"
-                                style="width: 30px;"
-                                @click="onClickDeleteRecordButton(indexRecord)">
+                        <button :disabled="isCommitingChanges"
+                                class="btn btn-primary btn-sm table-button"
+                                @click="onClickDeleteButton(indexRecord)">
                           <span class="fa fa-trash fa-xs"/>
                         </button>
                       </span>
@@ -302,16 +305,32 @@
                   <template v-for="(value, indexValue) in Object.values(record)">
                     <td v-if="!excludedKeys.includes(Object.keys(record)[indexValue])" :key="indexValue">
                       <pre v-if="typeof value === 'object' && value !== null">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
-                      <span v-else-if="Object.keys(record)[indexValue] === 'Id'"
+                      <span v-else-if="['id', 'reference'].includes(sobjectFieldsMappedByName[Object.keys(record)[indexValue]].type.toLowerCase())"
                             class="record-id"
                             @click="onClickRecordId(value)">
                         {{ value }}
                       </span>
                       <span v-else-if="updateableFields.includes(Object.keys(record)[indexValue])">
-                        <input v-if="record.editing"
-                               v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]"
-                               class="w-100"
-                               type="text">
+                        <template v-if="record.editing">
+                          <select v-if="sobjectFieldsMappedByName[Object.keys(record)[indexValue]].picklistValues.length"
+                                  v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]">
+                            <option v-for="(picklistValue, picklistValueIndex) in sobjectFieldsMappedByName[Object.keys(record)[indexValue]].picklistValues.filter(picklistValue => picklistValue.active)"
+                                    :key="picklistValueIndex"
+                                    :value="picklistValue.value">
+                              {{ picklistValue.label }}
+                            </option>
+                          </select>
+                          <label v-else-if="sobjectFieldsMappedByName[Object.keys(record)[indexValue]].type.toLowerCase() === 'boolean'" 
+                                 class="form-check-label custom-checkbox-container">
+                            <input v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]"
+                                   class="form-check-input"
+                                   type="checkbox">
+                            <span class="checkmark"/>
+                          </label>
+                          <input v-else
+                                 v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]"
+                                 type="text">
+                        </template>
                         <span v-else>{{ value }}</span>
                       </span>
                       <span v-else>
@@ -325,11 +344,7 @@
           </div>
         </div>
       </div>
-      <div v-else-if="soqlResult && soqlResult.length === 0" class="row">
-        <div class="col-12">
-          <label class="m-auto">0 Results</label>
-        </div>
-      </div>
+      
 
       <div v-if="error" class="row">
         <div class="col-12">
@@ -339,6 +354,8 @@
           <label class="m-auto">{{ error.message }}</label>
         </div>
       </div>
+
+      <!-- RELATIONSHIP SELECTOR -->
       <b-modal
         id="relationshipSelectorModal"
         :title="selectedReference + ': ' + selectedReferenceValue"
@@ -353,15 +370,19 @@
           :selected-relationship-fields="selectedRelationshipFields[selectedReferenceValue]"
           @removeField="onRemoveRelationshipField"
           @insertField="onInsertRelationshipField"
+          @insertAllFields="onInsertAllRelationshipFields"
+          @clearAllFields="onClearAllRelationshipFields"
         />
         <template v-slot:modal-footer="{ close }">
           <button type="button" class="btn btn-md danger" @click="close()">Close</button>
         </template>
       </b-modal>
+
+      <!-- COMMIT RESULT -->
       <b-modal
         id="commitResultModal"
         size="xl"
-        title="Commit Result Errors"
+        title="Update Errors"
         centered
         cancel-disabled>
         <ol>
@@ -378,6 +399,19 @@
           <button type="button" class="btn btn-md danger" @click="close()">Close</button>
         </template>
       </b-modal>
+
+      <!-- DELETE RESULT -->
+      <b-modal
+        id="deleteResultModal"
+        size="xl"
+        title="Delete Errors"
+        centered
+        cancel-disabled>
+        <span v-if="deleteResult">{{ deleteResult.message }}</span>
+        <template v-slot:modal-footer="{ close }">
+          <button type="button" class="btn btn-md danger" @click="close()">Close</button>
+        </template>
+      </b-modal>
     </span>
   </div>
 </template>
@@ -388,7 +422,8 @@ import 'codemirror/mode/sql/sql.js';
 import 'codemirror/lib/codemirror.css';
 import '../../static/css/vscode-dark.css';
 import FilterEntry from './filter-entry.vue';
-import sqlFormatter from 'sql-formatter';
+import sqlFormatter from '@allanoricil/sql-formatter';
+import { formatQuery } from 'soql-parser-js';
 import RelationshipSelector from './relationship-selector.vue';
 import { checkDifferences, getDifferences, removeKeys, convertArrayToObject } from '../utils/objectUtils.js';
 import Loading from './loading.vue';
@@ -403,528 +438,601 @@ export default {
         Loading
     },
     data() {
-        return {
-            configurations: {
-                displayEditor: true,
-                showFieldType: true,
-                showFieldTypeTable: true
-            },
-            apiVersion: 'v50.0',
-            apiVersions: apiVersions,
-            commitResults: [],
-            excludedKeys: ['editing', 'error', 'attributes'],
-            loading: true,
-            cmOptions: {
-                tabSize: 4,
-                mode: 'sql',
-                theme: 'vscode-dark',
-                lineNumbers: true,
-                lineWrapping: true,
-                line: true,
-            },
-            autoFormat: false,
-            soql: '',
-            soqlResult: null,
-            backupForChanges: [],
-            soqlPlan: undefined,
-            error: undefined,
-            object: undefined,
-            filters: [
-                {
-                    field: undefined,
-                    operator: undefined,
-                    logic: 'AND',
-                    value: undefined,
-                    filter: undefined,
-                },
-            ],
-            selectedReference: undefined,
-            selectedReferenceValue: undefined,
-            sobjectFields: [],
-            availableFieldsToSelect : [],
-            selectedFields: [],
-            selectedRelationshipFields: {},
-            computedRelationshipFields: '',
-            sobjectsToFetchFields: [],
-            orderByField: undefined,
-            orderByDirection: 'ASC',
-            nullsOrder: 'NULLS FIRST',
-            limitBy: undefined,
-            showForm: true,
-            isExecutingSOQL: false,
-            isRetrievingSOQLPlan: false,
-            isCommitingChanges: false,
-            recordsToUpdate: [],
-            recordsToDelete: {},
-            isExportingData: false
-        };
+      return {
+          configurations: {
+              displayEditor: true,
+              showFieldType: false,
+              showFieldTypeTable: false,
+              autoFormatSOQL: false
+          },
+          soqlParser: {
+            format: {
+              fieldMaxLineLength: 1,
+              fieldSubqueryParensOnOwnLine: true,
+              whereClauseOperatorsIndented: true
+            }
+          },
+          apiVersion: 'v50.0',
+          apiVersions: apiVersions,
+          commitResults: [],
+          deleteResult: undefined,
+          excludedKeys: ['editing', 'error', 'attributes'],
+          loading: true,
+          cmOptions: {
+              tabSize: 4,
+              mode: 'text/x-mysql',
+              theme: 'vscode-dark',
+              lineNumbers: true,
+              lineWrapping: true,
+              line: true,
+          },
+          soql: '',
+          soqlResult: null,
+          backupForChanges: [],
+          soqlPlan: undefined,
+          error: undefined,
+          object: undefined,
+          filters: [
+              {
+                  field: undefined,
+                  operator: undefined,
+                  logic: 'AND',
+                  value: undefined,
+                  filter: undefined,
+              },
+          ],
+          selectedReference: undefined,
+          selectedReferenceValue: undefined,
+          sobjectFields: [],
+          availableFieldsToSelect : [],
+          selectedFields: [],
+          selectedRelationshipFields: {},
+          computedRelationshipFields: '',
+          sobjectsToFetchFields: [],
+          orderByField: undefined,
+          orderByDirection: 'ASC',
+          nullsOrder: 'NULLS FIRST',
+          limitBy: undefined,
+          offset: undefined,
+          showForm: true,
+          isExecutingSOQL: false,
+          isRetrievingSOQLPlan: false,
+          isCommitingChanges: false,
+          recordsToUpdate: [],
+          recordIndexToDelete: undefined,
+          isExportingData: false
+      };
     },
     computed: {
-        objects() {
-            return this.$store.getters['sobjects/referenceableObjects'];
-        },
-        computedSelectedFields(){
-            const selectedObjectFields = this.selectedFields.reduce((previous, current, index) => {
-                return previous + (index !== 0 ? ', ' : '') + current.value;
-            }, '');
+      objects() {
+        return this.$store.getters['sobjects/referenceableObjects'];
+      },
+      computedSelectedFields(){
+        const selectedObjectFields = this.selectedFields.reduce((previous, current, index) => {
+            return previous + (index !== 0 ? ', ' : '') + current.value;
+        }, '');
 
-            return [selectedObjectFields, this.computedRelationshipFields].filter(Boolean).join(', ');
-        },
-        computedFilters() {
-            return this.filters.length !== 0 && this.filters[0].filter
-                ? this.filters.reduce((previous, current, index) => {
-                    const previousLogic =
-                            index > 0 && this.filters[index - 1].logic
-                                ? this.filters[index - 1].logic + ' '
-                                : '';
+        return [selectedObjectFields, this.computedRelationshipFields].filter(Boolean).join(', ');
+      },
+      computedFilters() {
+        return this.filters.length !== 0 && this.filters[0].filter
+            ? this.filters.reduce((previous, current, index) => {
+                const previousLogic =
+                        index > 0 && this.filters[index - 1].logic
+                            ? this.filters[index - 1].logic + ' '
+                            : '';
 
-                    return previous + ' ' + previousLogic + (current.filter || '');
-                }, ' WHERE')
-                : '';
-        },
-        computedOrderBy() {
-            return this.orderByField
-                ? ` ORDER BY ${this.orderByField} ${this.orderByDirection} ${this.nullsOrder}`
-                : '';
-        },
-        computedLimitBy() {
-            return this.limitBy ? ` LIMIT ${this.limitBy}` : '';
-        },
-        soqlResultFields() {
-            return this.soqlResult && this.soqlResult.length > 0
-                ? Object.keys(this.soqlResult[0]).filter(
-                    (key) => !this.excludedKeys.includes(key)
-                )
-                : [];
-        },
-        computedSObjectName(){
-            const soqlTokens = this.soql ? this.soql.toLowerCase().replace(/\s+/g, ' ').split(' ') : [];
-            const fromTokenIndex = soqlTokens.lastIndexOf('from');
-            if(fromTokenIndex === -1) return '';
-            else return soqlTokens[fromTokenIndex + 1];
-        },
-        showCommitButton(){
-            return (this.recordsToUpdate && this.recordsToUpdate.length > 0) ||
-                 (this.recordsToDelete && Object.keys(this.recordsToDelete).length > 0);
-        },
-        showTableActionButtons(){
-            return this.soqlResultFields.includes('Id') && this.showEditRecordButton ;
-        },
-        showEditRecordButton(){
-            return this.soqlResultFields.find(field => this.updateableFields.includes(field));
-        },
-        showExportDataButton(){
-            return this.soql && this.soqlResult && this.soqlResult.length > 0;
-        },
-        updateableFields(){
-            return this.sobjectFields.filter(field => field.updateable).map(field => field.name);
-        },
-        sobjectFieldsMappedByName(){
-            return convertArrayToObject(this.sobjectFields, 'name');
-        },
-        disableTextAreaActionButtons(){
-            return !this.soql || this.isExecutingSOQL || this.isRetrievingSOQLPlan || this.isCommitingChanges;
-        },
+                return previous + ' ' + previousLogic + (current.filter || '');
+            }, ' WHERE')
+            : '';
+      },
+      computedOrderBy() {
+        return this.orderByField
+            ? ` ORDER BY ${this.orderByField} ${this.orderByDirection} ${this.nullsOrder}`
+            : '';
+      },
+      computedLimitBy() {
+        return this.limitBy ? ` LIMIT ${this.limitBy}` : '';
+      },
+      computedOffset(){
+        return this.offset ? ` OFFSET ${this.offset}` : '';
+      },
+      soqlResultFields() {
+        return this.isSoqlResultsNotEmpty
+            ? Object.keys(this.soqlResult[0]).filter(
+                (key) => !this.excludedKeys.includes(key)
+            )
+            : [];
+      },
+      computedSObjectName(){
+        if(this.object) return this.object;
+        else{
+          const soqlTokens = this.soql ? this.soql.toLowerCase().replace(/\s+/g, ' ').split(' ') : [];
+          const fromTokenIndex = soqlTokens.lastIndexOf('from');
+          if(fromTokenIndex === -1) return '';
+          else return soqlTokens[fromTokenIndex + 1];
+        }
+      },
+      showCommitButton(){
+        return this.recordsToUpdate && this.recordsToUpdate.length > 0;
+      },
+      showTableActionButtons(){
+        return this.soqlResultFields.includes('Id') && this.soqlResultFields.find(field => this.updateableFields.includes(field));
+      },
+      showExportDataButton(){
+        return this.soql && this.isSoqlResultsNotEmpty;
+      },
+      updateableFields(){
+        return this.sobjectFields.filter(field => field.updateable).map(field => field.name);
+      },
+      sobjectFieldsMappedByName(){
+        return convertArrayToObject(this.sobjectFields, 'name');
+      },
+      disableTextAreaActionButtons(){
+        return !this.soql || this.isExecutingSOQL || this.isRetrievingSOQLPlan || this.isCommitingChanges;
+      },
+      isSoqlResultsNotEmpty(){
+        return this.soqlResult && this.soqlResult.length;
+      }
     },
     watch: {
-        object(newValue) {
-            this.resetData();
-            const sObjectFields = this.$store.getters['sobjects/getSObjectFields'](this.object);
-            if (sObjectFields.length === 0) {
-                this.$store.dispatch('sobjects/getSObjectDescribe', newValue);
-            }else{
-                this.sobjectFields = sObjectFields;
-            }
-        },
-        sobjectFields: {
-            deep: true,
-            handler(newValues){
-                if(this.availableFieldsToSelect.length === 0){
-                    this.availableFieldsToSelect = newValues.reduce((previous, current) => {
-                        let array = [];
-                        array.push({
-                            value: current.name,
-                            type: current.type,
-                            hasNext: false,
-                            selected: false,
-                        });
+      object(newValue){
+        if(newValue){
+          this.resetData();
+          this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](newValue);
+          if(!this.sobjectFields.length){
+            this.$store.dispatch('sobjects/getSObjectDescribe', newValue);
+          }
+        }
+      },
+      sobjectFields: {
+        deep: true,
+        handler(newValues){
+            if(this.availableFieldsToSelect.length === 0){
+                this.availableFieldsToSelect = newValues.reduce((previous, current) => {
+                    let array = [];
+                    array.push({
+                        value: current.name,
+                        type: current.type,
+                        hasNext: false,
+                        selected: false,
+                    });
 
-                        current.referenceTo.forEach((reference) => {
-                            if(current.relationshipName)
-                                array.push({
-                                    value: current.relationshipName,
-                                    type: current.type,
-                                    reference: reference,
-                                    hasNext: true,
-                                    numberOfSelectedFields: 0,
-                                });
-                        });
+                    current.referenceTo.forEach((reference) => {
+                        if(current.relationshipName)
+                            array.push({
+                                value: current.relationshipName,
+                                type: current.type,
+                                reference: reference,
+                                hasNext: true,
+                                numberOfSelectedFields: 0,
+                            });
+                    });
 
-                        return previous.concat(array);
-                    }, []);
+                    return previous.concat(array);
+                }, []);
 
-                    if(this.availableFieldsToSelect.length > 0){
-                        this.availableFieldsToSelect = [{ value: 'COUNT(Id)', type: null, hasNext: false, selected: false }, ...this.availableFieldsToSelect];
-                    }
+                if(this.availableFieldsToSelect.length > 0){
+                    this.availableFieldsToSelect = [{ value: 'COUNT(Id)', type: null, hasNext: false, selected: false }, ...this.availableFieldsToSelect];
                 }
             }
-        },
-        computedSelectedFields(){
-            this.createSOQL();
-        },
-        computedFilters(){
-            this.createSOQL();
-        },
-        orderByDirection() {
-            this.createSOQL();
-        },
-        orderByField() {
-            this.createSOQL();
-        },
-        nullsOrder() {
-            this.createSOQL();
-        },
-        limitBy() {
-            this.createSOQL();
-        },
-        autoFormat(newValue) {
-            if (newValue) this.onClickFormatQueryButton();
-        },
-        soqlResult: {
-            deep: true,
-            handler(){
-                this.getRecordsToUpdate();
-            }
-        },
-        isExecutingSOQL(newValue){
-            if(newValue){
-                this.soqlPlan = undefined;
-                this.soqlResult = undefined;
-                this.error = undefined;
-                this.recordsToUpdate = [];
-                this.recordsToDelete = {};
-            }
-        },
-        isRetrievingSOQLPlan(newValue){
-            if(newValue){
-                this.soqlPlan = undefined;
-                this.soqlResult = undefined;
-                this.error = undefined;
-                this.recordsToUpdate = [];
-                this.recordsToDelete = {};
-            }
         }
+      },
+      computedSelectedFields(){
+        this.createSOQL();
+      },
+      computedFilters(){
+        this.createSOQL();
+      },
+      orderByDirection() {
+        this.createSOQL();
+      },
+      orderByField() {
+        this.createSOQL();
+      },
+      nullsOrder() {
+        this.createSOQL();
+      },
+      limitBy() {
+        this.createSOQL();
+      },
+      offset(){
+        this.createSOQL();
+      },
+      soqlResult: {
+        deep: true,
+        handler(){
+            this.getRecordsToUpdate();
+        }
+      },
+      isExecutingSOQL(newValue){
+        if(newValue){
+          this.soqlPlan = undefined;
+          this.soqlResult = undefined;
+          this.error = undefined;
+          this.recordsToUpdate = [];
+          this.recordIndexToDelete = undefined;
+        }
+      },
+      isRetrievingSOQLPlan(newValue){
+        if(newValue){
+          this.soqlPlan = undefined;
+          this.soqlResult = undefined;
+          this.error = undefined;
+          this.recordsToUpdate = [];
+          this.recordIndexToDelete = undefined;
+        }
+      }
     },
     beforeMount() {
-        window.vscode.onLoading(()=>{
-            this.loading = true;
-        });
-        window.vscode.onReceiveObjects((message) => {
-            this.object = undefined;
-            this.$store.commit('sobjects/setSObjects', message.data);
-            this.loading = false;
-        });
-        window.vscode.onReceiveSObjectDescription((message) => {
-            if (message.data) {
-                const objectApiName = message.data.name;
-                this.$store.commit('sobjects/setSObject', message.data);
-                if(objectApiName === this.object){
-                    this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](objectApiName);
-                }
+      window.vscode.onLoading(()=>{
+          this.loading = true;
+      });
+      window.vscode.onReceiveObjects((message) => {
+          this.$store.commit('sobjects/setSObjects', message.data);
+          this.loading = false;
+      });
+      window.vscode.onReceiveSObjectDescription((message) => {
+        if (message.data) {
+            const objectApiName = message.data.name;
+            this.$store.commit('sobjects/setSObject', message.data);
+            if(objectApiName === this.computedSObjectName){
+                this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](objectApiName);
+            }
 
-                this.sobjectFields.forEach(field => {
-                    field.referenceTo.forEach((reference) => {
-                        if (this.$store.getters['sobjects/getSObjectFields'](reference).length === 0 && !this.sobjectsToFetchFields.includes(reference)) {
-                            this.sobjectsToFetchFields.push(reference);
-                            this.$store.dispatch(
-                                'sobjects/getSObjectDescribe',
-                                reference
-                            );
-                        }
-                    });
+            this.sobjectFields.forEach(field => {
+                field.referenceTo.forEach((reference) => {
+                    if (this.$store.getters['sobjects/getSObjectFields'](reference).length === 0 && !this.sobjectsToFetchFields.includes(reference)) {
+                        this.sobjectsToFetchFields.push(reference);
+                        this.$store.dispatch(
+                            'sobjects/getSObjectDescribe',
+                            reference
+                        );
+                    }
                 });
-            }
-        });
-        window.vscode.onReceiveSOQLResult((message) => {
-            this.isExecutingSOQL = false;
-            let response = message.data;
-            if (response.errorCode) {
-                this.error = response;
-                this.soqlResult = [];
-            } else {
-                response.forEach((record) => removeKeys(record, ['attributes', 'done', 'totalSize']));
-                this.soqlResult = [...response];
-                this.backupForChanges = [...response];
-            }
-        });
-        window.vscode.onReceiveSOQLPlan((message) => {
-            this.isRetrievingSOQLPlan = false;
-            let response = message.data;
-            if (response.errorCode) {
-                this.error = response;
-            } else {
-                this.soqlPlan = response;
-            }
-        });
-        window.vscode.onReceiveCommitResult((message) => {
-            this.isCommitingChanges = false;
+            });
+        }
+      });
+      window.vscode.onReceiveSOQLResult((message) => {
+        this.isExecutingSOQL = false;
+        let response = message.data;
+        if (response.errorCode) {
+            this.error = response;
+            this.soqlResult = [];
+        } else {
+            response.forEach((record) => removeKeys(record, ['attributes', 'done', 'totalSize']));
+            this.soqlResult = [...response];
+            this.backupForChanges = [...response];
+        }
+      });
+      window.vscode.onReceiveSOQLResultAndSObjectDescribe((message) => {
+        this.isExecutingSOQL = false;
+        const sobjectDescribeResponse = message.data[0].result;
+        const sobjectName = sobjectDescribeResponse.name;
+        this.$store.commit('sobjects/setSObject', sobjectDescribeResponse);
+        if(sobjectName.toLowerCase() === this.computedSObjectName.toLowerCase()){
+            this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](sobjectName);
+        }
 
-            message.data.forEach((commitResult, indexCommitResult) => {
-                if(!commitResult.success){
-                    this.commitResults.push({...commitResult, Id: this.recordsToUpdate[indexCommitResult].Id});
+        this.sobjectFields.forEach(field => {
+            field.referenceTo.forEach((reference) => {
+                if (this.$store.getters['sobjects/getSObjectFields'](reference).length === 0 && !this.sobjectsToFetchFields.includes(reference)) {
+                    this.sobjectsToFetchFields.push(reference);
+                    this.$store.dispatch(
+                        'sobjects/getSObjectDescribe',
+                        reference
+                    );
                 }
             });
+        });
+        
+        const soqlResultResponse = message.data[1];
+        if(soqlResultResponse.result.records) {
+            soqlResultResponse.result.records.forEach((record) => removeKeys(record, ['attributes', 'done', 'totalSize']));
+            this.soqlResult = [...soqlResultResponse.result.records];
+            this.backupForChanges = [...soqlResultResponse.result.records];
+        }else {
+            this.error = soqlResultResponse.result[0];
+            this.soqlResult = [];
+        }
+      });
+      window.vscode.onReceiveSOQLPlan((message) => {
+          this.isRetrievingSOQLPlan = false;
+          let response = message.data;
+          if (response.errorCode) {
+              this.error = response;
+          } else {
+              this.soqlPlan = response;
+          }
+      });
+      window.vscode.onReceiveCommitResult((message) => {
+        this.isCommitingChanges = false;
 
-            message.data.forEach((commitResult, indexCommitResult) => {
-                if(commitResult.success){
-                    for(let i = 0 ; i < this.soqlResult.length; i++){
-                        if(this.soqlResult[i].Id === commitResult.id){
-                            this.soqlResult[i].editing = false;
-                            this.backupForChanges.splice(i, 1, this.soqlResult[i]);
-                            this.recordsToUpdate.splice(indexCommitResult, 1);
-                            break;
-                        }
+        message.data.forEach((commitResult, indexCommitResult) => {
+            if(!commitResult.success){
+                this.commitResults.push({...commitResult, Id: this.recordsToUpdate[indexCommitResult].Id});
+            }
+        });
+
+        message.data.forEach((commitResult, indexCommitResult) => {
+            if(commitResult.success){
+                for(let i = 0 ; i < this.soqlResult.length; i++){
+                    if(this.soqlResult[i].Id === commitResult.id){
+                        this.soqlResult[i].editing = false;
+                        this.backupForChanges.splice(i, 1, this.soqlResult[i]);
+                        this.recordsToUpdate.splice(indexCommitResult, 1);
+                        break;
                     }
                 }
-            });
+            }
+        });
 
-            if(this.commitResults.length > 0) this.$bvModal.show('commitResultModal');
-        });
-        window.vscode.onReceiveConfigurations((message) => {
-            this.configurations = message.data;
-        });
-        window.vscode.post({ cmd: 'getConfigurations' });
+        if(this.commitResults.length > 0) this.$bvModal.show('commitResultModal');
+      });
+      window.vscode.onReceiveDeleteResult((message) => {
+        if(message.data.errorCode){
+          this.deleteResult = message.data;
+          this.$bvModal.show('deleteResultModal');
+        }else{
+          const recordId = this.soqlResult[this.recordIndexToDelete].Id;
+          this.$delete(this.soqlResult, this.recordIndexToDelete);
+          this.backupForChanges.splice(this.recordIndexToDelete, 1);
+          this.recordIndexToDelete = undefined;
+          
+          this.$bvToast.toast(`The Record [${recordId}] has been deleted.`, {
+            toaster: 'b-toaster-top-full',
+            solid: true,
+            appendToast: true,
+            noCloseButton: true
+          });
+        }
+      });
+      window.vscode.onReceiveConfigurations((message) => {
+        this.configurations = message.data;
+      });
+      window.vscode.post({ cmd: 'getConfigurations' });
     },
     mounted() {
-        this.$store.dispatch('sobjects/getAvailableSObjects');
+      this.$store.dispatch('sobjects/getAvailableSObjects');
     },
     methods: {
-        onClickRefreshObjectsButton() {
+      onClickRefreshObjectsButton() {
+        this.resetData();
+        this.object = undefined;
+        this.loading = true;
+        window.vscode.post({
+            cmd: 'refreshSObjects',
+        });
+      },
+      onClickAddFilterButton() {
+          this.filters.push({
+              field: undefined,
+              operator: undefined,
+              value: undefined,
+              filter: undefined,
+              logic: undefined,
+          });
+      },
+      onClickExecuteQueryButton() {
+          this.isExecutingSOQL = true;
+          window.vscode.post({
+              cmd: 'executeSOQL2',
+              args: {
+                  soql: this.soql,
+                  sObjectName: this.computedSObjectName,
+                  apiVersion: this.apiVersion
+              }
+          });
+      },
+      onClickQueryPlanButton() {
+          this.isRetrievingSOQLPlan = true;
+          window.vscode.post({
+              cmd: 'getSOQLPlan',
+              args: {
+                  soql: this.soql,
+                  apiVersion: this.apiVersion
+              }
+          });
+      },
+      onClickAddToApexButton() {
+          window.vscode.post({
+              cmd: 'addToApex',
+              args: this.soql,
+          });
+      },
+      createSOQL() {
+          if(this.computedSelectedFields){
+              const soql =
+                'SELECT ' +
+                this.computedSelectedFields +
+                ' FROM ' + this.computedSObjectName +
+                this.computedFilters +
+                this.computedOrderBy +
+                this.computedLimitBy + 
+                this.computedOffset;
+              this.soql = this.configurations.autoFormatSOQL ? sqlFormatter.format(soql) : soql;
+          }else{
+              this.soql = '';
+          }
+      },
+      onClickFormatQueryButton() {
+          this.soql = sqlFormatter.format(this.soql);
+      },
+      onCodeMirrorReady(cm) {
+          cm.setSize(null, 200);
+      },
+      onDeleteFilterEntry(index) {
+          this.filters.splice(index, 1);
+      },
+      onClickFieldReference(field){
+          this.selectedReferenceValue = field.value;
+          this.selectedReference = field.reference;
+          this.$bvModal.show('relationshipSelectorModal');
+      },
+      resetData() {
+          this.soql = '';
+          this.soqlResult = undefined;
+          this.soqlPlan = undefined;
+          this.error = undefined;
+          this.selectedFields = [];
+          this.commitResults = [];
+          this.deleteResult = undefined;
+          this.filters = [
+              {
+                  field: undefined,
+                  operator: undefined,
+                  logic: 'AND',
+                  value: undefined,
+                  filter: undefined,
+              },
+          ],
+          this.selectedReference = undefined;
+          this.selectedReferenceValue = undefined;
+          this.sobjectFields = [];
+          this.availableFieldsToSelect = [];
+          this.selectedRelationshipFields = {};
+          this.computedRelationshipFields = '';
+          this.sobjectsToFetchFields = [];
+          this.orderByField = undefined;
+          this.orderByDirection = 'ASC';
+          this.nullsOrder = 'NULLS FIRST';
+          this.limitBy = undefined;
+          this.offset = undefined;
+          this.isExecutingSOQL = false;
+          this.isRetrievingSOQLPlan = false;
+          this.isCommitingChanges = false;
+          this.recordsToUpdate = [];
+          this.recordIndexToDelete = undefined;
+          this.showExportDataButton = false;
+          this.isExportingData = false;
+      },
+      onClickHideFormButton(){
+          this.showForm = !this.showForm;
+      },
+      onClickRecordId(id){
+          window.vscode.post({
+              cmd: 'openRecordDetailPage',
+              args: id
+          });
+      },
+      onClickEditRecordButton(indexRow){
+          this.soqlResult[indexRow].editing = true;
+          this.backupForChanges[indexRow] = {...this.soqlResult[indexRow]};
+          this.$forceUpdate();
+      },
+      onClickCancelChangesButton(indexRow){
+          this.soqlResult.splice(indexRow, 1, {...this.backupForChanges[indexRow]});
+          this.soqlResult[indexRow].editing = false;
+          this.getRecordsToUpdate();
+          this.$forceUpdate();
+      },
+      onClickDeleteButton(indexRow){
+        this.$bvModal.msgBoxConfirm('Are you sure you want to delete this record?', {
+          centered: true
+        })
+        .then(value => {
+          if(value === true){
+            this.recordIndexToDelete = indexRow;
             window.vscode.post({
-                cmd: 'refreshSObjects',
+              cmd: 'deleteRecord',
+              args: {
+                sObjectName: this.computedSObjectName,
+                recordId: this.soqlResult[indexRow].Id,
+                apiVersion: this.apiVersion
+              }
             });
-            this.loading = true;
-        },
-        onClickAddFilterButton() {
-            this.filters.push({
-                field: undefined,
-                operator: undefined,
-                value: undefined,
-                filter: undefined,
-                logic: undefined,
-            });
-        },
-        onClickExecuteQueryButton() {
-            this.isExecutingSOQL = true;
-            window.vscode.post({
-                cmd: 'executeSOQL',
-                args: {
-                    soql: this.soql,
-                    apiVersion: this.apiVersion
-                }
-            });
-        },
-        onClickQueryPlanButton() {
-            this.isRetrievingSOQLPlan = true;
-            window.vscode.post({
-                cmd: 'getSOQLPlan',
-                args: {
-                    soql: this.soql,
-                    apiVersion: this.apiVersion
-                }
-            });
-        },
-        onClickAddToApexButton() {
-            window.vscode.post({
-                cmd: 'addToApex',
-                args: this.soql,
-            });
-        },
-        createSOQL() {
-            if(this.computedSelectedFields){
-                const soql =
-                  'SELECT ' +
-                  this.computedSelectedFields +
-                  ' FROM ' + this.object +
-                  this.computedFilters +
-                  this.computedOrderBy +
-                  this.computedLimitBy;
-                this.soql = this.autoFormat ? sqlFormatter.format(soql) : soql;
-            }else{
-                this.soql = '';
-            }
-        },
-        onClickFormatQueryButton() {
-            this.soql = sqlFormatter.format(this.soql);
-        },
-        onCodeMirrorReady(cm) {
-            cm.setSize(null, 200);
-        },
-        onDeleteFilterEntry(index) {
-            this.filters.splice(index, 1);
-        },
-        onClickFieldReference(field){
-            this.selectedReferenceValue = field.value;
-            this.selectedReference = field.reference;
-            this.$bvModal.show('relationshipSelectorModal');
-        },
-        resetData() {
-            this.autoFormat = false;
-            this.soql = '';
-            this.soqlResult = undefined;
-            this.soqlPlan = undefined;
-            this.error = undefined;
-            this.selectedFields = [];
-            this.filters = [
-                {
-                    field: undefined,
-                    operator: undefined,
-                    logic: 'AND',
-                    value: undefined,
-                    filter: undefined,
-                },
-            ],
-            this.selectedReference = undefined;
-            this.selectedReferenceValue = undefined;
-            this.sobjectFields = [];
-            this.availableFieldsToSelect = [];
-            this.selectedRelationshipFields = {};
-            this.computedRelationshipFields = '';
-            this.sobjectsToFetchFields = [];
-            this.orderByField = undefined;
-            this.orderByDirection = 'ASC';
-            this.nullsOrder = 'NULLS FIRST';
-            this.limitBy = undefined;
-            this.isExecutingSOQL = false;
-            this.isRetrievingSOQLPlan = false;
-            this.isCommitingChanges = false;
-            this.recordsToUpdate = [];
-            this.recordsToDelete = {};
-            this.showExportDataButton = false;
-            this.isExportingData = false;
-        },
-        onClickHideFormButton(){
-            this.showForm = !this.showForm;
-        },
-        onClickRecordId(id){
-            window.vscode.post({
-                cmd: 'openRecordDetailPage',
-                args: id
-            });
-        },
-        onClickEditRecordButton(indexRow){
-            this.soqlResult[indexRow].editing = true;
-            this.backupForChanges[indexRow] = {...this.soqlResult[indexRow]};
-            this.$forceUpdate();
-        },
-        onClickCancelChangesButton(indexRow){
-            this.soqlResult.splice(indexRow, 1, {...this.backupForChanges[indexRow]});
-            this.soqlResult[indexRow].editing = false;
-            this.getRecordsToUpdate();
-            this.$forceUpdate();
-        },
-        onClickDeleteRecordButton(indexRow){
-            this.$confirm(
-                {
-                    message: `Are you sure you want to delete this record?`,
-                    button: {
-                        no: 'No',
-                        yes: 'Yes'
-                    },
-                    callback: confirm => {
-                        if (confirm) {
-                            this.recordsToDelete[Object.keys(this.recordsToDelete).length] = {...this.soqlResult[indexRow]};
-                            this.soqlResult.splice(indexRow, 1);
-                            this.$forceUpdate();
-                        }
-                    }
-                }
-            );
-        },
-        onClickCommitButton(){
-            this.commitResults = [];
+          }
+        })
+      },
+      onClickCommitButton(){
+          this.commitResults = [];
 
-            this.soqlResult.forEach((soqlResultRecord) => {
-                const recordToUpdate = this.recordsToUpdate.find(recordToUpdate => recordToUpdate.Id === soqlResultRecord.Id);
-                if(!recordToUpdate) soqlResultRecord.editing = false;
-            });
+          this.soqlResult.forEach((soqlResultRecord) => {
+              const recordToUpdate = this.recordsToUpdate.find(recordToUpdate => recordToUpdate.Id === soqlResultRecord.Id);
+              if(!recordToUpdate) soqlResultRecord.editing = false;
+          });
 
-            window.vscode.post({
-                cmd: 'commitChanges',
-                args: {
-                    sobject: this.computedSObjectName,
-                    recordsToUpdate: this.recordsToUpdate,
-                    recordsToDelete: this.recordsToDelete
-                }
-            });
+          window.vscode.post({
+              cmd: 'commitChanges',
+              args: {
+                  sobject: this.computedSObjectName,
+                  recordsToUpdate: this.recordsToUpdate
+              }
+          });
 
-            this.isCommitingChanges = true;
-        },
-        getRecordsToUpdate(){
-            this.recordsToUpdate = [];
-            if(this.soqlResult && this.soqlResult.length && this.backupForChanges && this.backupForChanges.length){
-                this.soqlResult.forEach((record, index) => {
-                    const recordChanges = getDifferences(record, this.backupForChanges[index], this.excludedKeys);
-                    if(Object.keys(recordChanges).length){
-                        const recordToUpdate = {...recordChanges, Id: record.Id};
-                        this.excludedKeys.forEach(key => {
-                            delete recordToUpdate[key];
-                        });
-                        this.recordsToUpdate.push(recordToUpdate);
-                    }
-                });
-            }
-        },
-        onClickFieldCheckbox(field){
-            if(field.selected){
-                this.selectedFields.push(field);
-            }else{
-                const indexOf = this.selectedFields.findIndex( f => field.value === f.value );
-                this.selectedFields.splice(indexOf, 1);
-            }
+          this.isCommitingChanges = true;
+      },
+      getRecordsToUpdate(){
+          this.recordsToUpdate = [];
+          if(this.soqlResult && this.soqlResult.length && this.backupForChanges && this.backupForChanges.length){
+              this.soqlResult.forEach((record, index) => {
+                  const recordChanges = getDifferences(record, this.backupForChanges[index], this.excludedKeys);
+                  if(Object.keys(recordChanges).length){
+                      const recordToUpdate = {...recordChanges, Id: record.Id};
+                      this.excludedKeys.forEach(key => {
+                          delete recordToUpdate[key];
+                      });
+                      this.recordsToUpdate.push(recordToUpdate);
+                  }
+              });
+          }
+      },
+      onClickFieldCheckbox(field){
+          if(field.selected){
+              this.selectedFields.push(field);
+          }else{
+              const indexOf = this.selectedFields.findIndex( f => field.value === f.value );
+              this.selectedFields.splice(indexOf, 1);
+          }
 
-        },
-        updateNumberOfSelectedFields(parentRelationshipName){
-            this.availableFieldsToSelect.forEach(availableFieldToSelect => {
-                if(availableFieldToSelect.value === parentRelationshipName){
-                    if(this.selectedRelationshipFields[parentRelationshipName].length)
-                        availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[parentRelationshipName].length;
-                    else
-                        availableFieldToSelect.numberOfSelectedFields = 0;
-                }
-            });
-        },
-        computeRelationshipFields(){
-            this.computedRelationshipFields = [].concat(...Object.values(this.selectedRelationshipFields)).join(', ');
-            this.createSOQL();
-        },
-        onRemoveRelationshipField(field){
-            const parentRelationshipName = field.split('.')[0];
-            const relationshipFieldIndex = this.selectedRelationshipFields[parentRelationshipName].findIndex(relationshipField => relationshipField === field);
-            this.selectedRelationshipFields[parentRelationshipName].splice(relationshipFieldIndex, 1);
-            this.computeRelationshipFields();
-            this.updateNumberOfSelectedFields(parentRelationshipName);
-        },
-        onInsertRelationshipField(field){
-            const parentRelationshipName = field.split('.')[0];
-            if(!this.selectedRelationshipFields[parentRelationshipName])  this.selectedRelationshipFields[parentRelationshipName]  = [];
-            const relationshipFieldIndex = this.selectedRelationshipFields[parentRelationshipName].findIndex(relationshipField => relationshipField === field);
-            if(relationshipFieldIndex === -1){
-                this.selectedRelationshipFields[parentRelationshipName].push(field);
-                this.computeRelationshipFields();
-                this.updateNumberOfSelectedFields(parentRelationshipName);
-            }
-        },
-        onClickExportAsSourceTree(){
-            this.isExportingData = true;
-            window.vscode.post({
-                cmd: 'exportSourceTree',
-                args: {
-                    soql: this.soql,
-                    apiVersion: this.apiVersion
-                }
-            }).then(result => this.isExportingData = false);
-        }
+      },
+      updateNumberOfSelectedFields(parentRelationshipName){
+          this.availableFieldsToSelect.forEach(availableFieldToSelect => {
+              if(availableFieldToSelect.value === parentRelationshipName){
+                  if(this.selectedRelationshipFields[parentRelationshipName].length)
+                      availableFieldToSelect.numberOfSelectedFields = this.selectedRelationshipFields[parentRelationshipName].length;
+                  else
+                      availableFieldToSelect.numberOfSelectedFields = 0;
+              }
+          });
+      },
+      computeRelationshipFields(){
+          this.computedRelationshipFields = [].concat(...Object.values(this.selectedRelationshipFields)).join(', ');
+          this.createSOQL();
+      },
+      onRemoveRelationshipField({ parentRelationshipName, field }){
+          const relationshipFieldIndex = this.selectedRelationshipFields[parentRelationshipName].findIndex(relationshipField => relationshipField === field);
+          this.selectedRelationshipFields[parentRelationshipName].splice(relationshipFieldIndex, 1);
+          this.computeRelationshipFields();
+          this.updateNumberOfSelectedFields(parentRelationshipName);
+      },
+      onInsertRelationshipField({ parentRelationshipName, field }){
+          if(!this.selectedRelationshipFields[parentRelationshipName])  this.selectedRelationshipFields[parentRelationshipName]  = [];
+          this.selectedRelationshipFields[parentRelationshipName].push(field);
+          this.computeRelationshipFields();
+          this.updateNumberOfSelectedFields(parentRelationshipName);
+      },
+      onInsertAllRelationshipFields({ parentRelationshipName, fields }){
+          if(!this.selectedRelationshipFields[parentRelationshipName])  this.selectedRelationshipFields[parentRelationshipName]  = [];
+          this.selectedRelationshipFields[parentRelationshipName].push(...fields);
+          this.computeRelationshipFields();
+          this.updateNumberOfSelectedFields(parentRelationshipName);
+      },
+      onClearAllRelationshipFields(parentRelationshipName){
+        this.selectedRelationshipFields[parentRelationshipName]  = [];
+        this.computeRelationshipFields();
+        this.updateNumberOfSelectedFields(parentRelationshipName);
+      },
+      onClickExportAsSourceTree(){
+          this.isExportingData = true;
+          window.vscode.post({
+              cmd: 'exportSourceTree',
+              args: {
+                  soql: this.soql,
+                  apiVersion: this.apiVersion
+              }
+          }).then(result => this.isExportingData = false);
+      }
     },
 };
 </script>
@@ -956,5 +1064,9 @@ export default {
 
 .field-has-next:hover{
   color: var(--vscode-button-background) !important;
+}
+
+.table-button{
+  width: 30px;
 }
 </style>

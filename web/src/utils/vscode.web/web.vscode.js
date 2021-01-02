@@ -54,8 +54,6 @@ class Vscode {
                                 console.error(e.message);
                             } */
                             console.log("Not Found: 'acquireVsCodeApi'");
-                        } else if (msg === 'customObjectCreated') {
-                            alert('oiii');
                         } else {
                             console.log("Not Found: 'acquireVsCodeApi'");
                         }

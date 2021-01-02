@@ -23,6 +23,10 @@ class SoqlEditorExtensionApi extends Vscode {
         this.on('soqlResult', callback, 0);
     }
 
+    onReceiveSOQLResultAndSObjectDescribe(callback){
+        this.on('soqlResultAndSObjectDescribe', callback, 0);
+    }
+
     onReceiveSOQLPlan(callback) {
         this.on('soqlPlan', callback, 0);
     }
@@ -31,9 +35,15 @@ class SoqlEditorExtensionApi extends Vscode {
         this.on('commitResult', callback, 0);
     }
 
+    onReceiveDeleteResult(callback) {
+        this.on('deleteResult', callback, 0);
+    }
+
     onReceiveConfigurations(callback) {
         this.on('configurations', callback, 0);
     }
+
+    
 }
 
 export default SoqlEditorExtensionApi;

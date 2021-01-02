@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "0.9.1",
+  "version": "0.10.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -73,17 +73,22 @@
         "soqlEditor.displayEditor": {
           "type": "boolean",
           "default": true,
-          "description": "If true, the form is displayed."
+          "description": "If checked, the form will be displayed."
+        },
+        "soqlEditor.autoFormatSOQL": {
+          "type": "boolean",
+          "default": false,
+          "description": "If checked, the SOQL created using the Form is formatted automatically."
         },
         "soqlEditor.showFieldType": {
           "type": "boolean",
           "default": false,
-          "description": "If true, the form displays the field type between []. For instance, Name [STRING]."
+          "description": "If checked, the form will display the field type between []. For instance, Name [STRING]."
         },
         "soqlEditor.showFieldTypeTable": {
           "type": "boolean",
           "default": false,
-          "description": "If true, the query result table header displays the fields types between []. For instance, Name [STRING]."
+          "description": "If checked, the table header will display the field type between []. For instance, Name [STRING]."
         }
       }
     }
@@ -112,6 +117,7 @@
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "fs-extra": "^9.0.1",
-    "objects-to-csv": "^1.3.6"
+    "objects-to-csv": "^1.3.6",
+    "qs": "^6.9.4"
   }
 }

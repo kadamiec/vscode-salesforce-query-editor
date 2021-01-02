@@ -105,6 +105,10 @@
         /* Firefox */
     }
 
+    :focus {
+        outline: none !important;
+    }
+
     label {
         color: var(--vscode-menu-foreground) !important;
         font-family: var(--vscode-font-family) !important;
@@ -141,6 +145,7 @@
         border: none !important;
         background-color: var(--vscode-button-hoverBackground) !important;
         box-shadow: none !important;
+        outline: none !important;
     }
 
     p{
@@ -148,8 +153,11 @@
     }
 
     table input,
-    table input:focus{
+    table input:focus,
+    table select,
+    table select:focus {
         border: 3px solid var(--vscode-inputOption-activeBackground) !important;
+        width: 100%;
     }
 
     .custom-checkbox-container {
@@ -224,6 +232,14 @@
         border-radius: 0 !important;
     }
 
+    .toast-body {
+        background-color: var(--vscode-editor-background) !important;
+        border-radius: 0 !important;
+        font-family: var(--vscode-font-family)!important;
+        font-weight: var(--vscode-font-weight)!important;
+        font-size: var(--vscode-font-size)!important;
+    }
+
     .modal-header {
         border-bottom: none !important;
         padding-bottom: 0 !important;
@@ -243,6 +259,12 @@
 
     .modal-footer {
         border-top: none !important;
+    }
+
+    @media (min-width: 576px){
+        .modal-dialog {
+            max-width: 750px !important;
+        }
     }
 
     .table-dark th,

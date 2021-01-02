@@ -51,8 +51,6 @@ class WebView {
      */
     this.onDidReceiveMessage = undefined;
 
-    this.channel = undefined;
-
     this.sfdxConfig = undefined;
   }
   get name() {
@@ -183,7 +181,6 @@ class WebView {
    */
   activate(context, name, cmdName, htmlPath = undefined) {
     // activate WebviewApi
-    this.channel = vscode.window.createOutputChannel(name);
     WebviewApi.activate(context, name, this.bridgeData);
     htmlPath ||
       (htmlPath = path.join(
@@ -216,16 +213,6 @@ class WebView {
       cmd: message,
       data: data,
     });
-  }
-
-  showErrorMessage(message, error){
-    this.channel.appendLine(error);
-    vscode.window.showErrorMessage(message, 'Show Output')
-      .then((selection) => {
-        if (selection === 'Show Output') {
-          this.channel.show();
-        }
-      });
   }
 
   showInformationMessage(message){
