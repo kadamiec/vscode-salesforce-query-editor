@@ -127,6 +127,26 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+### 0.10.0
+
+- It introduces the "Add All" and "Clear All" buttons on the relationship fields modal. This enables the users to quickly pick up all the fields of a certain relationship instead of adding one by one. If the user clicks on "Add All" it will add all the fields shown in the last displayed picklist.
+
+- It changes the name of the commit changes button to "save".
+
+- It makes the relationship fields picklists container to translate to left automatically. Before this it was necessary to manually scroll horizontally.
+
+- It improves output messages. 
+
+- It adds shortcut keys for the refresh objects and hide/show form buttons. To use these shortcuts it is necessary to focus on the SOQL Editor.
+  
+  <b>CTRL + R</b>: Refresh the SObjects list
+  
+  <b>CTRL + H</b>: Hide/Show the form
+ 
+- It adds new input types on the soql results table when the user is edditing a record.
+
+- It enables the Delete Record button.
+
 ### 0.9.0
 
 - Now users can choose to display the field type in the form and in the query table header. These properties are off by default because they don't look that good yet. I will properly format it later.
