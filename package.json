@@ -73,22 +73,22 @@
         "soqlEditor.displayEditor": {
           "type": "boolean",
           "default": true,
-          "description": "If checked, the form will be displayed."
+          "description": "If checked, the form is displayed."
         },
         "soqlEditor.autoFormatSOQL": {
           "type": "boolean",
           "default": false,
-          "description": "If checked, the SOQL created using the Form is formatted automatically."
+          "description": "If checked, the SOQL is formatted automatically when created using the form inputs."
         },
         "soqlEditor.showFieldType": {
           "type": "boolean",
           "default": false,
-          "description": "If checked, the form will display the field type between []. For instance, Name [STRING]."
+          "description": "If checked, the form displays the field type between []. For instance, Name [STRING]."
         },
         "soqlEditor.showFieldTypeTable": {
           "type": "boolean",
           "default": false,
-          "description": "If checked, the table header will display the field type between []. For instance, Name [STRING]."
+          "description": "If checked, the table header displays the field type between []. For instance, Name [STRING]."
         }
       }
     }
