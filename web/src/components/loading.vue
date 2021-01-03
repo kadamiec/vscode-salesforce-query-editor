@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-center h-100">
         <div class="m-auto">
             <div class="d-flex flex-column">
-                <h2 class="mx-auto mb-3">Buy me a coffe if you liked it!</h2>
+                <h2 class="mx-auto mb-3">Buy me a coffee if you liked it!</h2>
                 <div class="d-flex flex-column">
                     <a
                         class="mx-auto"
