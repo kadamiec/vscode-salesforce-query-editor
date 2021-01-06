@@ -278,57 +278,57 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(record, indexRecord) in soqlResult" :key="indexRecord">
+                <tr v-for="(record, recordIndex) in soqlResult" :key="recordIndex">
                   <td v-if="showTableActionButtons">
                     <div class="d-flex flex-column">
                       <span v-if="record.editing">
                         <button :disabled="isCommitingChanges" 
                                 class="btn btn-primary btn-sm table-button"
-                                @click="onClickCancelChangesButton(indexRecord)">
+                                @click="onClickCancelChangesButton(recordIndex)">
                           <span class="fa fa-times-circle fa-xs"/>
                         </button>
                       </span>
                       <span v-else>
                         <button :disabled="isCommitingChanges"
                                 class="btn btn-primary btn-sm table-button mb-1"
-                                @click="onClickEditRecordButton(indexRecord)">
+                                @click="onClickEditRecordButton(recordIndex)">
                           <span class="fa fa-pencil fa-xs"/>
                         </button>
                         <button :disabled="isCommitingChanges"
                                 class="btn btn-primary btn-sm table-button"
-                                @click="onClickDeleteButton(indexRecord)">
+                                @click="onClickDeleteButton(recordIndex)">
                           <span class="fa fa-trash fa-xs"/>
                         </button>
                       </span>
                     </div>
                   </td>
-                  <template v-for="(value, indexValue) in Object.values(record)">
-                    <td v-if="!excludedKeys.includes(Object.keys(record)[indexValue])" :key="indexValue">
+                  <template v-for="(value, fieldName, valueIndex) in record">
+                    <td v-if="!excludedKeys.includes(fieldName)" :key="valueIndex">
                       <pre v-if="typeof value === 'object' && value !== null">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
-                      <span v-else-if="['id', 'reference'].includes(sobjectFieldsMappedByName[Object.keys(record)[indexValue]].type.toLowerCase())"
+                      <span v-else-if="sobjectFieldsMappedByName[fieldName] && ['id', 'reference'].includes(sobjectFieldsMappedByName[fieldName].type.toLowerCase())"
                             class="record-id"
                             @click="onClickRecordId(value)">
                         {{ value }}
                       </span>
-                      <span v-else-if="updateableFields.includes(Object.keys(record)[indexValue])">
+                      <span v-else-if="updateableFields.includes(fieldName)">
                         <template v-if="record.editing">
-                          <select v-if="sobjectFieldsMappedByName[Object.keys(record)[indexValue]].picklistValues.length"
-                                  v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]">
-                            <option v-for="(picklistValue, picklistValueIndex) in sobjectFieldsMappedByName[Object.keys(record)[indexValue]].picklistValues.filter(picklistValue => picklistValue.active)"
+                          <select v-if="sobjectFieldsMappedByName[fieldName].picklistValues.length"
+                                  v-model="soqlResult[recordIndex][fieldName]">
+                            <option v-for="(picklistValue, picklistValueIndex) in sobjectFieldsMappedByName[fieldName].picklistValues.filter(picklistValue => picklistValue.active)"
                                     :key="picklistValueIndex"
                                     :value="picklistValue.value">
                               {{ picklistValue.label }}
                             </option>
                           </select>
-                          <label v-else-if="sobjectFieldsMappedByName[Object.keys(record)[indexValue]].type.toLowerCase() === 'boolean'" 
+                          <label v-else-if="sobjectFieldsMappedByName[fieldName].type.toLowerCase() === 'boolean'" 
                                  class="form-check-label custom-checkbox-container">
-                            <input v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]"
+                            <input v-model="soqlResult[recordIndex][fieldName]"
                                    class="form-check-input"
                                    type="checkbox">
                             <span class="checkmark"/>
                           </label>
                           <input v-else
-                                 v-model="soqlResult[indexRecord][Object.keys(record)[indexValue]]"
+                                 v-model="soqlResult[recordIndex][fieldName]"
                                  type="text">
                         </template>
                         <span v-else>{{ value }}</span>
