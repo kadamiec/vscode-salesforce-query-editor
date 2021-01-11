@@ -89,6 +89,11 @@
           "type": "boolean",
           "default": false,
           "description": "If checked, the table header displays the field type between []. For instance, Name [STRING]."
+        },
+        "soqlEditor.styleJSON":{
+          "type": "boolean",
+          "default": false,
+          "description": "If checked, it applies styles to JSON results. This feature makes everything slow when quering a lot of records and columns, so use it with care. Also, be aware that the Theme Colors you are using will not be applied because the VSCode API does not provide a way to programatically access it yet."
         }
       }
     }

@@ -1,6 +1,6 @@
 export const getters = {
     getSObjectByName: (state) => (apiName) => {
-        return state.sobjectsWithDetails[apiName];
+        return state.sobjects[apiName.toLowerCase()];
     },
     referenceableObjects: (state) => {
         return Object.values(state.sobjects)
@@ -12,8 +12,8 @@ export const getters = {
             });
     },
     getSObjectFields: (state) => (apiName) => {
-        if (state.sobjectsWithDetails[apiName]) {
-            return state.sobjectsWithDetails[apiName].fields.sort((a, b) =>
+        if (state.sobjectsWithDetails[apiName.toLowerCase()]) {
+            return state.sobjectsWithDetails[apiName.toLowerCase()].fields.sort((a, b) =>
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             );
         } else {

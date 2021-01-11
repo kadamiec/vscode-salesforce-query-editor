@@ -152,11 +152,18 @@
         margin-bottom: 0px;
     }
 
+    table td.fit,
+    table th.fit {
+        white-space: nowrap;
+        width: 1%;
+    }
+
     table input,
     table input:focus,
     table select,
     table select:focus {
         border: 3px solid var(--vscode-inputOption-activeBackground) !important;
+        height: 27px;
         width: 100%;
     }
 
@@ -321,6 +328,105 @@
     ::-webkit-scrollbar-thumb {
         background-color: var(--vscode-scrollbarSlider-background);
         outline: 1px solid slategrey;
+    }
+
+    .json-viewer-vscode-theme .jv-key {
+        color: var(--vscode-input-foreground) !important;
+        padding-right: 5px !important;
+    }
+
+    .json-viewer-vscode-theme {
+        background: var(--vscode-input-background);
+        white-space: nowrap;
+        color: var(--vscode-input-foreground);
+        font-size: 14px;
+        font-family: var(--vscode-font-family);
+    }
+
+    .json-viewer-vscode-theme .jv-ellipsis {
+        color: #999;
+        background-color: transparent;
+        display: inline-block;
+        line-height: 0.9;
+        font-size: 0.9em;
+        padding: 0px 4px 2px 4px;
+        border-radius: 3px;
+        vertical-align: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .json-viewer-vscode-theme .jv-button {
+        color: var(--vscode-button-background);
+    }
+
+    .json-viewer-vscode-theme .jv-button,
+    .json-viewer-vscode-theme .jv-button:disabled {
+        background-color: var(--vscode-button-background) !important;
+        color: var(--vscode-button-foreground) !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    .json-viewer-vscode-theme .jv-button:focus,
+    .json-viewer-vscode-theme .jv-button:hover,
+    .json-viewer-vscode-theme .jv-button:hover:disabled,
+    .json-viewer-vscode-theme .jv-button:active {
+        border: none !important;
+        background-color: var(--vscode-button-hoverBackground) !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-array {
+        color: var(--vscode-input-foreground);
+    }
+    .json-viewer-vscode-theme .jv-item.jv-boolean {
+        color: var(--vscode-input-foreground);
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-function {
+        color: var(--vscode-input-foreground);
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-number {
+        color:var(--vscode-input-foreground);
+    }
+    .json-viewer-vscode-theme .jv-item.jv-number-float {
+        color:var(--vscode-input-foreground);
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-number-integer {
+        color: var(--vscode-input-foreground);
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-object {
+        color: var(--vscode-input-foreground);
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-undefined {
+        color: var(--vscode-input-foreground);
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-string {
+        color: var(--vscode-input-foreground);
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    .json-viewer-vscode-theme .jv-item.jv-string a {
+        color: var(--vscode-textLink-foreground) !important;
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    .json-viewer-vscode-theme .jv-code .jv-toggle::before {
+        padding: 0px 2px;
+        border-radius: 2px;
+    }
+
+    .json-viewer-vscode-theme .jv-code .jv-toggle:hover::before {
+        background: var(--vscode-button-background);
     }
 </style>
 

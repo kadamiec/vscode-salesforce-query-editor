@@ -43,6 +43,10 @@ class SoqlEditorExtensionApi extends Vscode {
         this.on('configurations', callback, 0);
     }
 
+    onReceiveEditingSOQL(callback){
+        this.on('editingSOQL', callback, 0);
+    }
+
     
 }
 

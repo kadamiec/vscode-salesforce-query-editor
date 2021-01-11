@@ -32,9 +32,14 @@ class SOQLEditorWebView extends WebView {
 
   constructor() {
     super();
-    this.configProperties = ['displayEditor', 'showFieldType', 'showFieldTypeTable', 'autoFormatSOQL'];
+    this.configProperties = ['displayEditor', 'showFieldType', 'showFieldTypeTable', 'autoFormatSOQL', 'styleJSON'];
     this.defaultusername;
     this.activeTextEditor = vscode.window.activeTextEditor;
+    this.editingSOQL = {
+      start: 0,
+      end: 0,
+      soql: null
+    };
     this.fileSystemWatcher = vscode.workspace.createFileSystemWatcher(`**/.sfdx/sfdx-config.json`, true, false, true);
     this.fileSystemWatcher.onDidChange(() => {
       if(this.panel){
@@ -66,6 +71,10 @@ class SOQLEditorWebView extends WebView {
 
     this.onDidPose = () => {
       setDefaultusername();
+      this.editingSOQL = findEditingSOQL(this.activeTextEditor);
+      if(this.editingSOQL.start && this.editingSOQL.end){
+        this.postMessage('editingSOQL', this.editingSOQL);
+      }
     };
 
     this.didChangeViewState = () => {
@@ -74,6 +83,7 @@ class SOQLEditorWebView extends WebView {
         const fileName = editor.document.fileName.split(/\/|\\/).pop();
         if(fileName.includes('.cls')){
           this.activeTextEditor = editor;
+          this.editingSOQL = findEditingSOQL(this.activeTextEditor);
         }
       }
     };
@@ -126,12 +136,29 @@ class SOQLEditorWebView extends WebView {
           }
         });
       },
-      addToApex: (soql) => {
-        if(this.activeTextEditor && this.activeTextEditor.selection.isEmpty) {
-          const position = this.activeTextEditor.selection.active;
-          this.activeTextEditor.edit((editBuilder) => {
-            editBuilder.insert(position, `[${soql.replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ')}]`);
-          });
+      getEditingSOQL: () => {
+        this.editingSOQL = findEditingSOQL(this.activeTextEditor);
+        if(this.editingSOQL.start && this.editingSOQL.end){
+          this.postMessage('editingSOQL', this.editingSOQL);
+        }
+      },
+      setDocumentSOQL: ({ soql, isUpdate } ) => {
+        soql = `[${soql.replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ')}]`;
+        if(!isUpdate){
+          if(this.activeTextEditor && this.activeTextEditor.selection.isEmpty) {
+            this.activeTextEditor.edit((editBuilder) => {
+              editBuilder.insert(this.activeTextEditor.selection.active, soql);
+            });
+          }
+        }else{
+          this.editingSOQL = findEditingSOQL(this.activeTextEditor);
+          if(this.editingSOQL.start && this.editingSOQL.end){
+            const soqlRange = new vscode.Range(this.activeTextEditor.document.positionAt(this.editingSOQL.start), 
+                                               this.activeTextEditor.document.positionAt(this.editingSOQL.end));
+            this.activeTextEditor.edit((editBuilder) => {
+              editBuilder.replace(soqlRange, soql);
+            });
+          }
         }
       },
       commitChanges: async (changes) => {
@@ -238,6 +265,28 @@ const showErrorMessage = (message, error) => {
       outputChannel.show();
     }
   });
+}
+
+const findEditingSOQL = (activeTextEditor) => {
+  const position = { start: 0, end: 0, soql: null };
+  if(!activeTextEditor) return position;
+  const text = activeTextEditor.document.getText();
+  const anchorPosition = activeTextEditor.document.offsetAt(activeTextEditor.selection.start);
+  const soqlRegex = /\[(.+?)\]/gims;
+  let match = soqlRegex.exec(text);
+  while (match != null) {
+    const start = match.index;
+    const end = match.index + match[0].length;
+    if(anchorPosition >= start && anchorPosition <= end){
+      position.start = start;
+      position.end = end;
+      position.soql = match[0];
+      break;
+    }else{
+      match = soqlRegex.exec(text);
+    }
+  }
+  return position;
 }
 
 module.exports = SOQLEditorWebView;

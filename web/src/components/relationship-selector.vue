@@ -13,8 +13,8 @@
           v-for="(option, optionIndex) in picklist.options"
           :key="index + '' + optionIndex"
           :value="JSON.stringify(option)"
-          @click="option.hasNext ? addPicklist($event, index) : removeNext(index)"
-        >{{ option.label + (option.hasNext ? ' ➤' : '') }}</option>
+          @click="option.reference ? addPicklist($event, index) : removeNext(index)"
+        >{{ option.value + (option.reference ? ' ➤' : '') }}</option>
       </select>
     </div>
 
@@ -105,30 +105,45 @@ export default {
                 options: [],
                 selected: undefined,
             };
-                
-            this.$store.getters['sobjects/getSObjectFields'](reference)
-            .forEach((field) => {
-                field.referenceTo.forEach((reference) => {
-                    if (this.$store.getters['sobjects/getSObjectFields'](reference).length === 0) {
-                        this.$store.dispatch('sobjects/getSObjectDescribe', reference);
-                    }
-                    
-                    if(field.relationshipName && this.picklists.length <= 3)
-                        newPicklist.options.push({
-                            label: field.label,
-                            value: field.relationshipName,
-                            reference: reference,
-                            isVisible: true,
-                            hasNext: true,
-                        });
+            
+            this.$store.getters['sobjects/getSObjectFields'](reference).forEach((field) => {
+                newPicklist.options.push({
+                    value: field.name
                 });
 
-                newPicklist.options.push({
-                    label: field.label,
-                    value: field.name,
-                    isVisible: true,
-                    hasNext: false,
+                if(field.referenceTo.length === 1 && field.relationshipName && this.picklists.length <= 3){
+                    newPicklist.options.push({
+                        value: field.relationshipName,
+                        reference: field.referenceTo[0]
+                    });
+                }
+
+                field.referenceTo.forEach((referenceTo) =>{
+                    const referenceToFields = this.$store.getters['sobjects/getSObjectFields'](referenceTo);
+                    if (!referenceToFields.length) {
+                        this.$store.dispatch('sobjects/getSObjectDescribe', referenceTo);
+                    }
                 });
+
+                if(field.namePointing){
+                    if(field.relationshipName){
+                        newPicklist.options.push({
+                            value: field.relationshipName + '.Type'
+                        });
+                        newPicklist.options.push({
+                            value: field.relationshipName + '.Name'
+                        });
+                    }
+
+                    if(field.referenceTo.includes('User')){
+                        newPicklist.options.push({
+                            value: field.relationshipName + '.FirstName'
+                        });
+                        newPicklist.options.push({
+                            value: field.relationshipName + '.LastName'
+                        });
+                    }   
+                }
             });
             this.picklists.push(newPicklist);
         },
@@ -155,7 +170,7 @@ export default {
 
             const newFields = [];
             this.picklists[this.picklists.length - 1].options.forEach(picklistOption => {
-                if(!picklistOption.hasNext){
+                if(!picklistOption.reference){
                     const fieldToInsert = prefix + picklistOption.value;
                     if(this.selectedRelationshipFieldsData.findIndex(field => field === fieldToInsert) === -1){
                         newFields.push(fieldToInsert);
