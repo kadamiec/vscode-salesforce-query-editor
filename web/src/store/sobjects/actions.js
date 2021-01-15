@@ -4,10 +4,5 @@ export const actions = {
             cmd: 'getSObjectDescribe',
             args: sobject
         });
-    },
-    getAvailableSObjects(context) {
-        window.vscode.post({
-            cmd: 'getAllObjectNames'
-        });
     }
 };

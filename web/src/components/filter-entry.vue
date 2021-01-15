@@ -1,28 +1,22 @@
 <template>
     <div class="col-12 form-row align-items-center">
         <div class="form-group col-md-5 mr-2">
-            <select
-                ref="fieldname"
-                class="form-control"
-                v-model="value.field"
-                @input="changed"
-            >
-                <option
-                    v-for="(field, index) in sObjectFieldsToFilter"
-                    :key="index"
-                    :value="field.name"
-                >
-                    {{ field.name + (configurations.showFieldType && field.type ? ' [' + field.type.toUpperCase() + ']': '') }}
+            <select ref="fieldname"
+                    class="form-control"
+                    v-model="value.field"
+                    @input="changed">
+                <option v-for="(field, index) in sObjectFieldsToFilter"
+                        :key="index"
+                        :value="field.name">
+                    {{ field.name + (configurations.fieldType.form && field.type ? ' [' + field.type.toUpperCase() + ']': '') }}
                 </option>
             </select>
         </div>
         <div class="form-group col mr-2">
-            <select
-                ref="operator"
-                class="form-control"
-                v-model="value.operator"
-                @input="changed"
-            >
+            <select ref="operator"
+                    class="form-control"
+                    v-model="value.operator"
+                    @input="changed">
                 <option value="=">=</option>
                 <option value="!=">!=</option>
                 <option value="<"><</option>
@@ -39,21 +33,17 @@
             </select>
         </div>
         <div class="form-group col mr-2">
-            <input
-                ref="value"
-                type="text"
-                class="form-control"
-                v-model="value.value"
-                @input="changed"
-            />
+            <input ref="value"
+                   type="text"
+                   class="form-control"
+                   v-model="value.value"
+                   @input="changed"/>
         </div>
         <div v-if="showLogic" class="form-group col mr-2">
-            <select
-                ref="logic"
-                class="form-control"
-                v-model="value.logic"
-                @input="changed"
-            >
+            <select ref="logic"
+                    class="form-control"
+                    v-model="value.logic"
+                    @input="changed">
                 <option value="AND">AND</option>
                 <option value="OR">OR</option>
             </select>

@@ -40,30 +40,22 @@
             <div class="row mb-3">
               <div class="col">
                 <label for="fieldRelatedTo">Object</label>
-                <select id="fieldRelatedTo" v-model="object" class="form-control" @change="onSelectSObjectName">
-                  <option
-                    v-for="(object) in objects"
-                    :key="object.name"
-                    :value="object.name"
-                  >{{ object.name }}</option>
+                <select id="fieldRelatedTo" v-model="object" class="form-control" @change="onSelectSObjectName()">
+                  <option v-for="(object) in objects"
+                          :key="object.name"
+                          :value="object.name">
+                    {{ object.name }}
+                  </option>
                 </select>
               </div>
             </div>
             <div class="row">
               <div class="col">
-                <div class="d-flex flex-column"
-                     style="height: 352px;
-                            border: 1px solid var(--vscode-inputOption-activeBackground) !important;
-                            border-radius: 0 !important;
-                            background-color: var(--vscode-input-background) !important;
-                            color: var(--vscode-input-foreground) !important;
-                            overflow-y: auto;">
-                  <div
-                    v-for="(field) in availableFieldsToSelect"
-                    :key="field.value"
-                    class="p-1"
-                    style="width: 100%"
-                  >
+                <div id="available-fields-to-select-container" class="d-flex flex-column">
+                  <div v-for="(field) in availableFieldsToSelect"
+                       :key="field.value"
+                       class="p-1"
+                       style="width: 100%">
                     <label v-if="field.reference" 
                            class="form-check-label custom-checkbox-container"
                            @click="onClickFieldReference(field)">
@@ -71,7 +63,7 @@
                       <span class="field-has-next">➤</span>
                     </label>
                     <label v-else class="form-check-label custom-checkbox-container">
-                      {{ field.value + (configurations.showFieldType && field.type ? ' [' + field.type.toUpperCase() + ']' : '')}}
+                      {{ field.value + (configurations.fieldType.form && field.type ? ' [' + field.type.toUpperCase() + ']' : '')}}
                       <input v-model="field.selected"
                              class="form-check-input"
                              type="checkbox"
@@ -89,11 +81,11 @@
                 <div class="form-group col-md-5 mr-2">
                   <label for="orderByField">Order by:</label>
                   <select id="orderByField" v-model="orderByField" class="form-control">
-                    <option
-                      v-for="(field) in sobjectFields"
-                      :key="field.name"
-                      :value="field.name"
-                    >{{ field.name + (configurations.showFieldType && field.type ? ' [' + field.type.toUpperCase() + ']': '')}}</option>
+                    <option v-for="(field) in sobjectFields"
+                            :key="field.name"
+                            :value="field.name">
+                      {{ getFieldName(field.name) }}
+                    </option>
                   </select>
                 </div>
                 <div class="form-group col mr-2">
@@ -127,7 +119,7 @@
                   :configurations="configurations"
                   :object="object"
                   v-model="filters[index]"
-                  @deleteEntry="onDeleteFilterEntry"
+                  @deleteEntry="onDeleteFilterEntry()"
                 />
               </div>
             </div>
@@ -144,7 +136,7 @@
             <div class="col-auto">
               <div class="row">
                 <div class="col-auto pl-0" style="margin-top: 26px">
-                  <button v-if="!configurations.autoFormatSOQL" 
+                  <button v-if="!configurations.format.automatically" 
                           class="btn btn-primary" 
                           @click="onClickFormatQueryButton()" 
                           :disabled="disableTextAreaActionButtons">
@@ -185,8 +177,11 @@
           </div>
           <div class="row mt-2 justify-content-between">
             <div class="col-auto">
-              <button :disabled="disableTextAreaActionButtons" class="btn btn-primary" @click="onClickExecuteQueryButton()">
-                Execute
+              <button class="btn btn-primary"
+                      v-shortkey="isExecutingSOQL ? ['ctrl', 'c'] : ['ctrl', 'r']"
+                      @shortkey="isExecutingSOQL ? onClickCancel() : onClickExecuteQueryButton()"
+                      @click="isExecutingSOQL ? onClickCancel() : onClickExecuteQueryButton()">
+                {{ isExecutingSOQL ? 'Cancel' : 'Execute' }}
                 <i v-if="isExecutingSOQL" class="fa fa-circle-o-notch fa-spin"/>
               </button>
               <button :disabled="disableTextAreaActionButtons" class="btn btn-primary" @click="onClickQueryPlanButton()">
@@ -207,18 +202,24 @@
               </button>
             </div>
             <div class="col-auto">
-              <span v-if="showCommitButton">
-                <button :disabled="isCommitingChanges" class="btn btn-primary" @click="onClickCommitButton">
-                  Save
-                  <i v-if="isCommitingChanges" class="fa fa-circle-o-notch fa-spin"/>
-                </button>
-              </span>
-              <span v-if="showExportDataButton">
-                <button :disabled="isExportingData" class="btn btn-primary" @click="onClickExportAsSourceTree">
-                  Export
-                  <i v-if="isExportingData" class="fa fa-circle-o-notch fa-spin"/>
-                </button>
-              </span>
+              <button v-if="showSaveChangesButton"
+                      :disabled="isCommitingChanges" 
+                      class="btn btn-primary" 
+                      @click="onClickCommitButton()"
+                      v-shortkey="['ctrl', 's']"
+                      @shortkey="showSaveChangesButton && !isCommitingChanges ? onClickCommitButton() : null">
+                Save
+                <i v-if="isCommitingChanges" class="fa fa-circle-o-notch fa-spin"/>
+              </button>
+              <button v-if="showExportDataButton" 
+                      :disabled="isExportingData" 
+                      class="btn btn-primary"
+                      v-shortkey="['ctrl', 'e']"
+                      @shortkey="showExportDataButton && !isExportingData ? onClickExportAsSourceTree() : null"
+                      @click="showExportDataButton && !isExportingData ? onClickExportAsSourceTree() : null">
+                Export
+                <i v-if="isExportingData" class="fa fa-circle-o-notch fa-spin"/>
+              </button>
             </div>
           </div>
         </div>
@@ -268,69 +269,77 @@
         </div>
       </div>
 
-      <!-- SOQL DATA -->
+      <!-- # RESULTS -->
       <div v-if="soqlResult" class="row">
         <div class="col-12">
           <label class="m-auto">{{soqlResult.length}} Results</label>
         </div>
       </div>
 
-      <div v-if="isSoqlResultsNotEmpty" class="row">
+      <!-- SOQL DATA -->
+      <div v-if="isSoqlResultsNotEmpty" class="row" style="max-height: 500px; overflow: scroll">
         <div class="col-12">
           <div class="table-responsive">
-            <table class="table table-dark table-sm table-bordered">
+            <table ref="table" class="table table-dark table-sm table-bordered">
               <thead>
                 <tr>
-                  <th v-if="showTableActionButtons" style="width: 30px;"/>
+                  <th v-if="showTableActionButtons" style="width: 25px; max-width: 25px;"/>
                   <th v-for="(field) in soqlResultFields" 
                       :key="field"
-                      class="fit"
                       scope="col">
-                      {{ field + (configurations.showFieldTypeTable && sobjectFieldsMappedByName[field] && sobjectFieldsMappedByName[field].type ? ' [' + sobjectFieldsMappedByName[field].type.toUpperCase() + ']': '')}}
+                      {{ getFieldName(field) }}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(record, recordIndex) in soqlResult" :key="recordIndex">
-                  <td v-if="showTableActionButtons">
+                  <td v-if="showTableActionButtons" style="width: 40px; max-width: 40px;">
                     <div class="d-flex flex-column">
-                      <span v-if="record.editing">
+                      <span v-if="editingRecords[record.Id]">
                         <button :disabled="isCommitingChanges" 
                                 class="btn btn-primary btn-sm table-button"
-                                @click="onClickCancelChangesButton(recordIndex)">
+                                @click="onClickCancelChangesButton(record.Id, recordIndex)">
                           <span class="fa fa-times-circle fa-xs"/>
                         </button>
                       </span>
                       <span v-else>
-                        <button :disabled="isCommitingChanges"
+                        <!--<button :disabled="isCommitingChanges"
                                 class="btn btn-primary btn-sm table-button mb-1"
-                                @click="onClickEditRecordButton(recordIndex)">
+                                @click="onClickEditRecordButton(record.Id, recordIndex)">
                           <span class="fa fa-pencil fa-xs"/>
-                        </button>
+                        </button>-->
                         <button :disabled="isCommitingChanges"
                                 class="btn btn-primary btn-sm table-button"
-                                @click="onClickDeleteButton(recordIndex)">
+                                @click="onClickDeleteButton(record.Id, recordIndex)">
                           <span class="fa fa-trash fa-xs"/>
                         </button>
                       </span>
                     </div>
                   </td>
                   <template v-for="(value, fieldName, valueIndex) in record">
-                    <td v-if="!excludedKeys.includes(fieldName)" :key="valueIndex" class="fit">
-                      <vue-json-pretty v-if="configurations.styleJSON && typeof value === 'object' && value !== null"  
-                                       :data="value" 
-                                       :showLine="false" 
-                                      :deep="1"></vue-json-pretty>
-                      <pre v-else-if="typeof value === 'object' && value !== null">{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
+                    <td :key="valueIndex"
+                        class="fit"
+                        :class="{'soql-result-table-cell' : sobjectFieldsMappedByName[fieldName] && sobjectFieldsMappedByName[fieldName].updateable}"
+                        @dblclick="record.Id && sobjectFieldsMappedByName[fieldName] && sobjectFieldsMappedByName[fieldName].updateable ? onClickEditRecordButton(record.Id, recordIndex) : null">
+                      <template v-if="typeof value === 'object' && value !== null">
+                        <vue-json-pretty v-if="configurations.nestedResults.style"  
+                                         :data="value" 
+                                         :showLine="false" 
+                                         :deep="configurations.nestedResults.expanded ? (configurations.nestedResults.depth ? configurations.nestedResults.depth : 1) : 0">
+                        </vue-json-pretty>
+                        <pre v-else>{{ JSON.stringify(value, undefined, 2).replace(/^\s*/g, '') }}</pre>
+                      </template>
                       <span v-else-if="sobjectFieldsMappedByName[fieldName] && ['id', 'reference'].includes(sobjectFieldsMappedByName[fieldName].type.toLowerCase())"
                             class="record-id"
                             @click="onClickRecordId(value)">
                         {{ value }}
                       </span>
-                      <span v-else-if="updateableFields.includes(fieldName)">
-                        <template v-if="record.editing">
+                      <span v-else-if="sobjectFieldsMappedByName[fieldName] && sobjectFieldsMappedByName[fieldName].updateable">
+                        <template v-if="editingRecords[record.Id]">
                           <select v-if="sobjectFieldsMappedByName[fieldName].picklistValues.length"
-                                  v-model="soqlResult[recordIndex][fieldName]">
+                                  v-model="soqlResult[recordIndex][fieldName]"
+                                  @change="onSOQLResultValueChange(record.Id, recordIndex, fieldName)">
+                            <option value=""></option>
                             <option v-for="(picklistValue, picklistValueIndex) in sobjectFieldsMappedByName[fieldName].picklistValues.filter(picklistValue => picklistValue.active)"
                                     :key="picklistValueIndex"
                                     :value="picklistValue.value">
@@ -338,21 +347,24 @@
                             </option>
                           </select>
                           <label v-else-if="sobjectFieldsMappedByName[fieldName].type.toLowerCase() === 'boolean'" 
-                                 class="form-check-label custom-checkbox-container">
+                                class="form-check-label custom-checkbox-container">
                             <input v-model="soqlResult[recordIndex][fieldName]"
-                                   class="form-check-input"
-                                   type="checkbox">
+                                  @change="onSOQLResultValueChange(record.Id, recordIndex, fieldName)"
+                                  class="form-check-input"
+                                  type="checkbox">
                             <span class="checkmark"/>
                           </label>
                           <input v-else
-                                 v-model="soqlResult[recordIndex][fieldName]"
-                                 type="text">
+                                v-model="soqlResult[recordIndex][fieldName]"
+                                @keyup="onSOQLResultValueChange(record.Id, recordIndex, fieldName)"
+                                type="text">
                         </template>
                         <span v-else>{{ value }}</span>
                       </span>
                       <span v-else>
                         {{ value }}
                       </span>
+                      <div v-if="!editingRecords[record.Id] && sobjectFieldsMappedByName[fieldName] && sobjectFieldsMappedByName[fieldName].updateable"></div>
                     </td>
                   </template>
                 </tr>
@@ -463,10 +475,18 @@ export default {
       return {
           configurations: {
               displayEditor: true,
-              showFieldType: false,
-              showFieldTypeTable: false,
-              autoFormatSOQL: false,
-              styleJSON: false
+              fieldType: {
+                form: false,
+                table: false
+              },
+              format: {
+                automatically: false
+              },
+              nestedResults: {
+                style: true,
+                expanded: true,
+                depth: 1
+              }
           },
           soqlParser: {
             format: {
@@ -481,7 +501,7 @@ export default {
           apiVersions: apiVersions,
           commitResults: [],
           deleteResult: undefined,
-          excludedKeys: ['editing', 'error', 'attributes'],
+          excludedKeys: ['error', 'attributes'],
           loading: true,
           cmOptions: {
               tabSize: 4,
@@ -493,7 +513,6 @@ export default {
           },
           soql: '',
           soqlResult: null,
-          backupForChanges: [],
           soqlPlan: undefined,
           errors: [],
           object: undefined,
@@ -509,6 +528,7 @@ export default {
           selectedReference: undefined,
           selectedReferenceValue: undefined,
           sobjectFields: [],
+          sobjectFieldsMappedByName: {},
           availableFieldsToSelect : [],
           selectedFields: [],
           selectedRelationshipFields: {},
@@ -523,9 +543,9 @@ export default {
           isExecutingSOQL: false,
           isRetrievingSOQLPlan: false,
           isCommitingChanges: false,
-          recordsToUpdate: [],
-          recordIndexToDelete: undefined,
-          isExportingData: false
+          isExportingData: false,
+          editingRecords: {},
+          showSaveChangesButton: false,
       };
     },
     computed: {
@@ -572,20 +592,23 @@ export default {
       getSObjectByName(){
         return this.$store.getters['sobjects/getSObjectByName'];
       },
-      showCommitButton(){
-        return this.recordsToUpdate && this.recordsToUpdate.length > 0;
-      },
       showTableActionButtons(){
-        return this.soqlResultFields.includes('Id') && this.soqlResultFields.find(field => this.updateableFields.includes(field));
+        if(!this.soqlResultFields.includes('Id')) return false;
+        let isThereAnUpdateableField = false;
+        for(const fieldIndex in this.soqlResultFields){
+          const fieldName = this.soqlResultFields[fieldIndex];
+          if(this.sobjectFieldsMappedByName[fieldName] && this.sobjectFieldsMappedByName[fieldName].updateable){
+            isThereAnUpdateableField = true;
+            break;
+          }
+        }
+        return this.soqlResultFields.includes('Id') && isThereAnUpdateableField;
       },
       showExportDataButton(){
         return this.soql && this.isSoqlResultsNotEmpty;
       },
       updateableFields(){
         return this.sobjectFields.filter(field => field.updateable).map(field => field.name);
-      },
-      sobjectFieldsMappedByName(){
-        return convertArrayToObject(this.sobjectFields, 'name');
       },
       disableTextAreaActionButtons(){
         return !this.soql || this.isExecutingSOQL || this.isRetrievingSOQLPlan || this.isCommitingChanges;
@@ -601,62 +624,61 @@ export default {
       object(newValue){
         if(newValue) this.resetData();
       },
-      sobjectFields: {
-        deep: true,
-        handler(newValues){
-          if(this.availableFieldsToSelect.length === 0){
-            this.availableFieldsToSelect = newValues.reduce((previous, current) => {
-              let array = [];
-              array.push({
-                  value: current.name,
-                  type: current.type,
-                  selected: false,
-              });
+      sobjectFields(newValues){
+        if(this.availableFieldsToSelect.length === 0){
+          this.availableFieldsToSelect = newValues.reduce((previous, current) => {
+            let array = [];
+            array.push({
+                value: current.name,
+                type: current.type,
+                selected: false,
+            });
 
-              if(current.referenceTo.length === 1 && current.relationshipName){
+            if(current.referenceTo.length === 1 && current.relationshipName){
+              array.push({
+                value: current.relationshipName || current.name.replace('Id', ''),
+                reference: current.referenceTo[0],
+                numberOfSelectedFields: 0,
+              });
+            }
+
+            if(current.namePointing){
+              if(current.relationshipName){
                 array.push({
-                  value: current.relationshipName || current.name.replace('Id', ''),
-                  reference: current.referenceTo[0],
-                  numberOfSelectedFields: 0,
+                  value: current.relationshipName + '.Type',
+                  type: 'String',
+                  selected: false
+                });
+                array.push({
+                  value: current.relationshipName + '.Name',
+                  type: 'String',
+                  selected: false
                 });
               }
 
-              if(current.namePointing){
-                if(current.relationshipName){
-                  array.push({
-                    value: current.relationshipName + '.Type',
-                    type: 'String',
-                    selected: false
-                  });
-                  array.push({
-                    value: current.relationshipName + '.Name',
-                    type: 'String',
-                    selected: false
-                  });
-                }
-
-                if(current.referenceTo.includes('User')){
-                  array.push({
-                    value: current.relationshipName + '.FirstName',
-                    type: 'String',
-                    selected: false
-                  });
-                  array.push({
-                    value: current.relationshipName + '.LastName',
-                    type: 'String',
-                    selected: false
-                  });
-                }
+              if(current.referenceTo.includes('User')){
+                array.push({
+                  value: current.relationshipName + '.FirstName',
+                  type: 'String',
+                  selected: false
+                });
+                array.push({
+                  value: current.relationshipName + '.LastName',
+                  type: 'String',
+                  selected: false
+                });
               }
-
-              return previous.concat(array);
-            }, []);
-
-            if(this.availableFieldsToSelect.length > 0){
-              this.availableFieldsToSelect = [{ value: 'COUNT(Id)', type: null, selected: false }, ...this.availableFieldsToSelect];
             }
+
+            return previous.concat(array);
+          }, []);
+
+          if(this.availableFieldsToSelect.length > 0){
+            this.availableFieldsToSelect = [{ value: 'COUNT(Id)', type: null, selected: false }, ...this.availableFieldsToSelect];
           }
         }
+
+        this.sobjectFieldsMappedByName = convertArrayToObject(newValues, 'name');
       },
       computedSelectedFields(){
         this.createSOQL();
@@ -679,19 +701,12 @@ export default {
       offset(){
         this.createSOQL();
       },
-      soqlResult: {
-        deep: true,
-        handler(){
-            this.getRecordsToUpdate();
-        }
-      },
       isExecutingSOQL(newValue){
         if(newValue){
           this.soqlPlan = undefined;
           this.soqlResult = undefined;
           this.errors = [];
-          this.recordsToUpdate = [];
-          this.recordIndexToDelete = undefined;
+          this.editingRecords = {};
         }
       },
       isRetrievingSOQLPlan(newValue){
@@ -699,10 +714,9 @@ export default {
           this.soqlPlan = undefined;
           this.soqlResult = undefined;
           this.errors = [];
-          this.recordsToUpdate = [];
-          this.recordIndexToDelete = undefined;
+          this.editingRecords = {};
         }
-      }
+      },
     },
     beforeMount() {
       window.vscode.post({ cmd: 'getConfigurations' });
@@ -747,7 +761,6 @@ export default {
         } else {
             response.forEach((record) => removeKeys(record, ['attributes', 'done', 'totalSize']));
             this.soqlResult = [...response];
-            this.backupForChanges = [...response];
         }
       });
       window.vscode.onReceiveSOQLResultAndSObjectDescribe((message) => {
@@ -778,7 +791,6 @@ export default {
         if(soqlResultResponse.result.records) {
             soqlResultResponse.result.records.forEach((record) => removeKeys(record, ['attributes', 'done', 'totalSize']));
             this.soqlResult = [...soqlResultResponse.result.records];
-            this.backupForChanges = [...soqlResultResponse.result.records];
         }else {
             this.errors.push({ message: decode(soqlResultResponse.result[0].message) });
             this.soqlResult = [];
@@ -794,41 +806,27 @@ export default {
           }
       });
       window.vscode.onReceiveCommitResult((message) => {
-        this.isCommitingChanges = false;
-
-        message.data.forEach((commitResult, indexCommitResult) => {
+        const commitResultResponse = message.data;
+        commitResultResponse.forEach((commitResult, commitResultIndex) => {
           if(!commitResult.success){
-              this.commitResults.push({...commitResult, Id: this.recordsToUpdate[indexCommitResult].Id});
+            this.commitResults.push({...commitResult, Id: this.soqlResult[commitResultIndex].Id});
+          }else{
+            delete this.editingRecords[commitResult.id];
           }
         });
-
-        message.data.forEach((commitResult, indexCommitResult) => {
-          if(commitResult.success){
-            for(let i = 0 ; i < this.soqlResult.length; i++){
-              if(this.soqlResult[i].Id === commitResult.id){
-                  this.soqlResult[i].editing = false;
-                  this.backupForChanges.splice(i, 1, this.soqlResult[i]);
-                  this.recordsToUpdate.splice(indexCommitResult, 1);
-                  break;
-              }
-            }
-          }
-        });
-
-        if(this.commitResults.length > 0) this.$bvModal.show('commitResultModal');
+        this.isCommitingChanges = false;
+        this.showSaveChangesButton = this.getShowSaveChangesButtonValue();
+        if(this.commitResults.length) this.$bvModal.show('commitResultModal');
       });
       window.vscode.onReceiveDeleteResult((message) => {
-        if(message.data.errorCode){
-          this.deleteResult = message.data;
+        const deleteResponse = message.data;
+        if(deleteResponse.errorCode){
+          this.deleteResult = deleteResponse;
           this.$bvModal.show('deleteResultModal');
         }else{
-          const recordId = this.soqlResult[this.recordIndexToDelete].Id;
-          this.$delete(this.soqlResult, this.recordIndexToDelete);
-          this.backupForChanges.splice(this.recordIndexToDelete, 1);
-          this.recordIndexToDelete = undefined;
-          
-          this.$bvToast.toast(`The Record [${recordId}] has been deleted.`, {
-            toaster: 'b-toaster-top-full',
+          this.$delete(this.soqlResult, deleteResponse.recordIndex);
+          this.$bvToast.toast(`The Record [${deleteResponse.recordId}] has been deleted.`, {
+            toaster: 'b-toaster-bottom-right',
             solid: true,
             appendToast: true,
             noCloseButton: true
@@ -840,21 +838,22 @@ export default {
       });
       window.vscode.onReceiveEditingSOQL((message) => {
         this.editingQuery = message.data;
-        this.soql = this.editingQuery.soql.replace('[', '').replace(']', '').replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ');
-        this.parsedSOQL = parseQuery(this.soql);
-        this.object = this.parsedSOQL.sObject;
-        this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](this.object);
-        if(!this.sobjectFields.length && !this.dispatchedSObjectsDescribeRequests.includes(this.object)){
-          this.$store.dispatch('sobjects/getSObjectDescribe', this.object);
-        }
+        if(this.editingQuery.soql){
+          this.soql = this.editingQuery.soql.replace('[', '').replace(']', '').replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ');
+          if(this.configurations.format.automatically) sqlFormatter.format(this.soql);
+          this.soqlResult = null;
+          this.parsedSOQL = parseQuery(this.soql);
+          this.object = this.parsedSOQL.sObject;
+          this.sobjectFields = this.$store.getters['sobjects/getSObjectFields'](this.object);
+          if(!this.sobjectFields.length && !this.dispatchedSObjectsDescribeRequests.includes(this.object)){
+            this.$store.dispatch('sobjects/getSObjectDescribe', this.object);
+          }
 
-        if(this.soql && this.object) {
-          this.onClickExecuteQueryButton();
+          if(this.soql && this.object) {
+            this.onClickExecuteQueryButton();
+          }
         }
       });
-    },
-    mounted() {
-      this.$store.dispatch('sobjects/getAvailableSObjects');
     },
     methods: {
       onSelectSObjectName(event){
@@ -887,18 +886,19 @@ export default {
       },
       onClickExecuteQueryButton() {
         if(!this.isExecutingSOQL){
-          this.$nextTick(()=>{
-            this.isExecutingSOQL = true;
-          })
+          this.$nextTick(() => this.isExecutingSOQL = true);
           window.vscode.post({
-              cmd: 'executeSOQL2',
-              args: {
-                  soql: this.soql,
-                  sObjectName: this.object,
-                  apiVersion: this.apiVersion
-              }
+            cmd: 'executeSOQL2',
+            args: {
+              soql: this.soql,
+              sObjectName: this.object,
+              apiVersion: this.apiVersion
+            }
           });
         }
+      },
+      onClickCancel(){
+        window.vscode.post({ cmd: 'cancelSOQLRequest' });
       },
       onClickQueryPlanButton() {
         this.isRetrievingSOQLPlan = true;
@@ -929,7 +929,7 @@ export default {
             this.computedOrderBy +
             this.computedLimitBy + 
             this.computedOffset;
-          this.soql = this.configurations.autoFormatSOQL ? sqlFormatter.format(soql) : soql;
+          this.soql = this.configurations.format.automatically ? sqlFormatter.format(soql) : soql;
         }else{
           this.soql = '';
         }
@@ -977,8 +977,7 @@ export default {
         this.isExecutingSOQL = false;
         this.isRetrievingSOQLPlan = false;
         this.isCommitingChanges = false;
-        this.recordsToUpdate = [];
-        this.recordIndexToDelete = undefined;
+        this.recordIdToDelete = undefined;
         this.showExportDataButton = false;
         this.isExportingData = false;
       },
@@ -991,29 +990,28 @@ export default {
           args: id
         });
       },
-      onClickEditRecordButton(indexRow){
-        this.soqlResult[indexRow].editing = true;
-        this.backupForChanges[indexRow] = {...this.soqlResult[indexRow]};
+      onClickEditRecordButton(recordId, rowIndex){
+        this.editingRecords[recordId] = { record: {...this.soqlResult[rowIndex]}, rowIndex , differences: {}};
         this.$forceUpdate();
       },
-      onClickCancelChangesButton(indexRow){
-        this.soqlResult.splice(indexRow, 1, {...this.backupForChanges[indexRow]});
-        this.soqlResult[indexRow].editing = false;
-        this.getRecordsToUpdate();
+      onClickCancelChangesButton(recordId, rowIndex){
+        this.soqlResult.splice(rowIndex, 1, this.editingRecords[recordId].record);
+        delete this.editingRecords[recordId];
+        this.showSaveChangesButton = this.getShowSaveChangesButtonValue();
         this.$forceUpdate();
       },
-      onClickDeleteButton(indexRow){
+      onClickDeleteButton(recordId, rowIndex){
         this.$bvModal.msgBoxConfirm('Are you sure you want to delete this record?', {
           centered: true
         })
         .then(value => {
           if(value === true){
-            this.recordIndexToDelete = indexRow;
             window.vscode.post({
               cmd: 'deleteRecord',
               args: {
                 sObjectName: this.object,
-                recordId: this.soqlResult[indexRow].Id,
+                recordId,
+                rowIndex,
                 apiVersion: this.apiVersion
               }
             });
@@ -1022,36 +1020,32 @@ export default {
       },
       onClickCommitButton(){
         this.commitResults = [];
-
-        this.soqlResult.forEach((soqlResultRecord) => {
-          const recordToUpdate = this.recordsToUpdate.find(recordToUpdate => recordToUpdate.Id === soqlResultRecord.Id);
-          if(!recordToUpdate) soqlResultRecord.editing = false;
-        });
+        const recordsToUpdate = [];
+        for (const recordId in this.editingRecords) {
+          const editingRecordDifferences = this.editingRecords[recordId].differences;
+          if(Object.keys(editingRecordDifferences).length){
+            recordsToUpdate.push({...editingRecordDifferences, id: recordId, attributes: { type: this.object }});
+          }
+        };
 
         window.vscode.post({
           cmd: 'commitChanges',
           args: {
-              sobject: this.object,
-              recordsToUpdate: this.recordsToUpdate
+              recordsToUpdate
           }
         });
 
         this.isCommitingChanges = true;
       },
-      getRecordsToUpdate(){
-        this.recordsToUpdate = [];
-        if(this.soqlResult && this.soqlResult.length && this.backupForChanges && this.backupForChanges.length){
-          this.soqlResult.forEach((record, index) => {
-            const recordChanges = getDifferences(record, this.backupForChanges[index], this.excludedKeys);
-            if(Object.keys(recordChanges).length){
-                const recordToUpdate = {...recordChanges, Id: record.Id};
-                this.excludedKeys.forEach(key => {
-                    delete recordToUpdate[key];
-                });
-                this.recordsToUpdate.push(recordToUpdate);
-            }
-          });
+      onSOQLResultValueChange(recordId, recordIndex, fieldName){
+        if((this.editingRecords[recordId].record[fieldName] && this.editingRecords[recordId].record[fieldName] !== this.soqlResult[recordIndex][fieldName]) || 
+           (this.soqlResult[recordIndex][fieldName] && this.editingRecords[recordId].record[fieldName] !== this.soqlResult[recordIndex][fieldName])){
+          this.editingRecords[recordId].differences[fieldName] = this.soqlResult[recordIndex][fieldName];
+        }else{
+          delete this.editingRecords[recordId].differences[fieldName];
         }
+
+        this.showSaveChangesButton = this.getShowSaveChangesButtonValue();
       },
       onClickFieldCheckbox(field){
         if(field.selected){
@@ -1108,12 +1102,32 @@ export default {
               apiVersion: this.apiVersion
           }
         }).then(result => this.isExportingData = false);
+      },
+      getShowSaveChangesButtonValue(){
+        for (const recordId in this.editingRecords) {
+          const editingRecord = this.editingRecords[recordId];
+          const differences = editingRecord.differences;
+          if(Object.keys(differences).length) return true;
+        };
+        return false;
+      },
+      getFieldName(field){
+        return field + (this.configurations.fieldType.table && this.sobjectFieldsMappedByName[field] && this.sobjectFieldsMappedByName[field].type ? ' [' + this.sobjectFieldsMappedByName[field].type.toUpperCase() + ']': '');
       }
     },
 };
 </script>
 
 <style scoped>
+#available-fields-to-select-container{
+  height: 352px;
+  border: 1px solid var(--vscode-inputOption-activeBackground) !important;
+  border-radius: 0 !important;
+  background-color: var(--vscode-input-background) !important;
+  color: var(--vscode-input-foreground) !important;
+  overflow-y: auto;
+}
+
 .record-id{
   color: var(--vscode-textLink-foreground);
   cursor: pointer;
@@ -1148,5 +1162,29 @@ export default {
 
 .table-button{
   width: 30px;
+}
+
+.soql-result-table-cell{
+  cursor: pointer;
+  position: relative;
+}
+
+.soql-result-table-cell:hover{
+  background-color: rgba(var(--vscode-input-background), 0.8);
+}
+
+.soql-result-table-cell > div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  display: table;
+}
+
+.soql-result-table-cell > div:hover{
+  opacity: 0.05;
+  background-color: var(--vscode-menu-foreground);
 }
 </style>
