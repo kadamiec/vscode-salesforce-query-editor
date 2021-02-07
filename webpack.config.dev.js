@@ -4,8 +4,6 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
-
-/**@type {import('webpack').Configuration}*/
 const config = {
   target: 'node',
   entry: './src/extension.js',
@@ -26,6 +24,6 @@ const config = {
   plugins:[
     new CleanWebpackPlugin(),
     new Dotenv()
-  ]
+  ],
 };
 module.exports = config;

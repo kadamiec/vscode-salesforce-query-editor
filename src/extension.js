@@ -1,18 +1,17 @@
 const soqlEditor = require('./soqlEditor');
+const { startServer } = require('./server');
+const Keygen = require('./keygen');
 
-/**
- * Called when the extension is activated
- * @param {import('vscode').ExtensionContext} context
- */
-function activate(context) {
+const activate = async (context) => {
     soqlEditor.activate(context);
-}
-exports.activate = activate;
 
-/**
- * Called when the extension is deactivated
- */
-function deactivate() {
+    const keygen = new Keygen(soqlEditor.licenseStorage);
+    await keygen.validate();
+
+    startServer(soqlEditor.logsStorage.path, keygen);
+}
+
+const deactivate = () => {
     soqlEditor.deactivate();
 }
 

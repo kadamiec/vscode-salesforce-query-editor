@@ -175,28 +175,20 @@ class WebView {
    * @param {import('vscode').ExtensionContext} context vscode extension context
    * @param {string} name webview name
    * @param {string} cmdName cmd name
-   * @param {string} [htmlPath=path.join(context.extensionPath, 'web', 'dist', 'index.html')] html path
    * @returns {this}
    * @memberof WebView
    */
-  activate(context, name, cmdName, htmlPath = undefined) {
-    // activate WebviewApi
+  activate(context, name, cmdName) {
     WebviewApi.activate(context, name, this.bridgeData);
-    htmlPath ||
-      (htmlPath = path.join(
-        context.extensionPath,
-        'web',
-        'dist',
-        'index.html'
-      ));
+    const htmlPath = path.join( context.extensionPath, 'web', 'dist', 'index.html');
     context.subscriptions.push(
       vscode.commands.registerCommand(cmdName, (uri) => {
           this._uri = uri;
           this.showPanel(context, htmlPath);
           this.bridgeData.updateItems({
               extensionPath: context.extensionPath,
-              rootPath: vscode.workspace.rootPath,
-              startPath: uri ? uri.path : vscode.workspace.rootPath
+              rootPath: vscode.workspace.workspaceFolders[0],
+              startPath: uri ? uri.path : vscode.workspace.workspaceFolders[0]
             },
             false
           );
@@ -236,7 +228,7 @@ class WebView {
     html = html.replace(/(href=|src=)(.+?)(\ |>)/g, (m, $1, $2, $3) => {
       let uri = $2;
       uri = uri.replace('"', '').replace("'", '');
-      uri.indexOf('/static') === 0 && (uri = `.${uri}`);
+      uri.indexOf('/_nuxt') === 0 && (uri = `.${uri}`);
       if (uri.substring(0, 1) == '.') {
         const resourceUriOnDisk = vscode.Uri.file(path.resolve(dirPath, uri));
         const resourceUri = this.panel.webview.asWebviewUri(resourceUriOnDisk);

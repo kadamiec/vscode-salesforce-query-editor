@@ -5,7 +5,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
-/**@type {import('webpack').Configuration}*/
 const config = {
   target: 'node',
   entry: './src/extension.js',
@@ -33,6 +32,6 @@ const config = {
         mangle: true
       }
     })]
-  }
+  },
 };
 module.exports = config;
