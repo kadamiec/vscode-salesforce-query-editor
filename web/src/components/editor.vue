@@ -351,7 +351,7 @@
           <label class="m-auto">{{ error.errorCode }}</label>
         </div>
         <div class="col-12">
-          <label class="m-auto">{{ error.message }}</label>
+          <label class="m-auto">{{ decodeMessage(error.message) }}</label>
         </div>
       </div>
 
@@ -428,6 +428,7 @@ import RelationshipSelector from './relationship-selector.vue';
 import { checkDifferences, getDifferences, removeKeys, convertArrayToObject } from '../utils/objectUtils.js';
 import Loading from './loading.vue';
 import apiVersions from '../static/api-versions.json';
+import { decode } from 'html-entities';
 
 export default {
     name: 'Editor',
@@ -796,6 +797,9 @@ export default {
       this.$store.dispatch('sobjects/getAvailableSObjects');
     },
     methods: {
+      decodeMessage(message){
+        return decode(message);
+      },
       onClickRefreshObjectsButton() {
         this.resetData();
         this.object = undefined;

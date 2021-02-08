@@ -114,7 +114,7 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Update Records
 
-- Query an Id field and at least one `updatabe` field to show the Edit and Delete buttons.
+- Query the Id field and at least one `updateable` field to show the Edit and Delete buttons.
 
 - Click on the Edit button to change a particular record. 
 

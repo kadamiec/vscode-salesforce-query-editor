@@ -2,6 +2,7 @@
 const axios = require('axios');
 const { outputChannel }  = require('../soqlEditor/soqlEditorOutputChannel');
 
+
 axios.interceptors.response.use(
     function (response){
         outputChannel.appendLine('Status Code: ' + response.status);
@@ -30,14 +31,14 @@ axios.interceptors.request.use(
 
 const buildQueryParams = (params) => {
     return Object.keys(params)
-        .map(key => `${key}=${params[key]}`)
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
         .join('&');
 };
 
 const createAxiosCall = (method, service, apiVersion, queryParams, data, defaultOrg) => {
     return axios({
         method,
-        url: encodeURI(`${defaultOrg.instanceUrl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/${service}/${queryParams ? buildQueryParams(queryParams) : ''}`),
+        url: `${defaultOrg.instanceUrl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/${service}/${queryParams ? ('?' + buildQueryParams(queryParams)) : ''}`,
         data,
         headers: {
             Authorization: `Bearer ${defaultOrg.accessToken}`
@@ -50,11 +51,11 @@ const getGlobalDescribe = (defaultOrg) => {
 };
   
 const getSOQLPlan = (soql, apiVersion, defaultOrg) => {
-    return createAxiosCall('get', 'query', apiVersion, {'?explain' : soql.replace(/\s+/g, '+')}, null, defaultOrg);
+    return createAxiosCall('get', 'query', apiVersion, {'explain' : soql}, null, defaultOrg);
 };
 
 const getSOQLData = (soql, apiVersion, defaultOrg) => {
-    return createAxiosCall('get', 'query', apiVersion, {'?q' : soql.replace(/\s+/g, '+')}, null, defaultOrg);
+    return createAxiosCall('get', 'query', apiVersion, {'q' : soql}, null, defaultOrg);
 };
 
 const getSObjectDescribe = (sObjectName, defaultOrg) => {
@@ -78,7 +79,7 @@ const getSOQLDataAndSObjectDescribe= (soql, sObjectName, apiVersion, defaultOrg)
             },
             {
                 "method" : "GET",
-                "url" : `${apiVersion}/query?q=${soql.replace(/\s+/g, '+')}`
+                "url" : `${apiVersion}/query?q=${encodeURIComponent(soql)}`
             }
         ]
     };
