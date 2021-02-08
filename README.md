@@ -127,39 +127,29 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+## 0.10.3
+
+- It fixes a bug that was preventing running queries with DateTime with timezones, like `SELECT COUNT(Id) FROM Account WHERE CreatedDate > 2020-03-17T21:04:32.000+0000`
+
 ### 0.10.0
 
-- It introduces the "Add All" and "Clear All" buttons on the relationship fields modal. This enables users to quickly pick up all the fields of a certain relationship instead of adding one by one. If the user clicks on "Add All" it will add all the fields shown in the last displayed picklist.
-
-<img src="https://drive.google.com/uc?id=1GSqK2J7cSD8kpLf1My2VhO8jjN5i0GO5" width="800px"></img>
-
-- It adds the Offset input.
-
-<img src="https://drive.google.com/uc?id=1DnWQJbr0nQvJucrlLRsbcGTA6Uou2nUx" width="400px"></img>
+- It introduces the "Add All" and "Clear All" buttons on the relationship fields modal. This enables the users to quickly pick up all the fields of a certain relationship instead of adding one by one. If the user clicks on "Add All" it will add all the fields shown in the last displayed picklist.
 
 - It changes the name of the commit changes button to "save".
-- It adds new input types on the soql results table when the user is edditing a record. Now when the user queries a picklist field, the table displays a picklist selector with only the <b>"active"</b> picklist <b>"labels"</b>. And when the user queries a boolean field, the table displays a checkbox input.
 
-<img src="https://drive.google.com/uc?id=1BNXHBD4qbOtKGTIzkxwU4ptuP_y7VF5M" width="800px"></img>
- 
-- It enables the Delete Record button.
-- It adds the number of results retrieved in the top left corner of the results table.
-
-<img src="https://drive.google.com/uc?id=1jTCwLat_ZbA0NlB2eJvfF1TCeW4clm1f" width="800px"></img>
-
-- It turns the Auto Format SOQL checkbox into a VSCode workspace/user property.
-
-<img src="https://drive.google.com/uc?id=12TY_uO1_qMYmQQf4Y0BoMe16-zEoo7m_" width="800px"></img>
-
-- It automatically translates the relationship fields picklists container to the left for every new level the user selects.
+- It makes the relationship fields picklists container to translate to left automatically. Before this it was necessary to manually scroll horizontally.
 
 - It improves output messages. 
 
 - It adds shortcut keys for the refresh objects and hide/show form buttons. To use these shortcuts it is necessary to focus on the SOQL Editor.
   
   <b>CTRL + R</b>: Refresh the SObjects list
-
+  
   <b>CTRL + H</b>: Hide/Show the form
+ 
+- It adds new input types on the soql results table when the user is edditing a record.
+
+- It enables the Delete Record button.
 
 ### 0.9.0
 
