@@ -28,7 +28,7 @@ const executeSFDXCommand = function(command){
 };
 
 const getOrgDisplay = function(username){
-  return executeSFDXCommand(`sfdx force:org:display -u ${username}`);
+  return executeSFDXCommand(`sfdx force:org:display -u "${username}"`);
 };
 
 const openRecordDetailPage = function(recordId){

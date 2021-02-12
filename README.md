@@ -127,6 +127,9 @@ You can also write your query in the Query Editor and run it without using any o
 
 ## Release Notes
 
+## 0.10.4
+- It fixes this [bug](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/12). Now users can use the extension with environments that have aliases with space characters, like "My Org".
+
 ## 0.10.3
 
 - It fixes a bug that was preventing running queries with DateTime with timezones, like `SELECT COUNT(Id) FROM Account WHERE CreatedDate > 2020-03-17T21:04:32.000+0000`
