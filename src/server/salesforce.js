@@ -9,7 +9,7 @@ routes.get("/:apiVersion/sobjects", async (req, res) => {
     const authorization = req.headers.authorization;
     const instanceurl = req.headers.instanceurl;
     const apiVersion = req.params.apiVersion;
-    const endpoint = encodeURI(`${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/sobjects`);
+    const endpoint = `${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/sobjects`;
     console.log(endpoint);
     try{
         const response = await axios.get(endpoint, {
@@ -34,7 +34,7 @@ routes.get("/:apiVersion/sobjects/:sobjectName", async (req, res) => {
     const instanceurl = req.headers.instanceurl;
     const apiVersion = req.params.apiVersion; 
     const sobjectName = req.params.sobjectName;
-    const endpoint = encodeURI(`${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/sobjects/${sobjectName}/describe`);
+    const endpoint = `${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/sobjects/${sobjectName}/describe`;
     console.log(endpoint);
 
     try{
@@ -60,7 +60,7 @@ routes.post("/:apiVersion/composite/batch", async (req, res) => {
     const authorization = req.headers.authorization;
     const instanceurl = req.headers.instanceurl;
     const apiVersion = req.params.apiVersion;
-    const endpoint = encodeURI(`${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/composite/batch`);
+    const endpoint = `${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/composite/batch`;
     const options = {
         cancelToken: new CancelToken(function executor(c) { cancel = c }),
         headers: {
@@ -72,7 +72,7 @@ routes.post("/:apiVersion/composite/batch", async (req, res) => {
     var i,j,batchRequestSlice,chunk = 25;
     for (i = 0, j = batchRequests.length; i < j; i += chunk) {
         batchRequestSlice = batchRequests.slice(i, i+chunk);
-        batchRequestSlice.forEach((batchRequest) => batchRequest.url = encodeURI(batchRequest.url))
+        batchRequestSlice.forEach((batchRequest) => batchRequest.url = batchRequest.url)
         const requestBody = {
             batchRequests: batchRequestSlice
         }
@@ -102,7 +102,7 @@ routes.patch("/:apiVersion/composite/sobjects", async (req, res) => {
     const authorization = req.headers.authorization;
     const instanceurl = req.headers.instanceurl;
     const apiVersion = req.params.apiVersion;
-    const endpoint = encodeURI(`${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/composite/sobjects`);
+    const endpoint = `${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/composite/sobjects`;
     const options = {
         headers: {
             Authorization: authorization
@@ -144,7 +144,7 @@ routes.delete("/:apiVersion/sobjects/:sobjectName/:recordId", async (req, res) =
     const apiVersion = req.params.apiVersion;
     const sobjectName = req.params.sobjectName;
     const recordId = req.params.recordId;
-    const endpoint = encodeURI(`${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/sobjects/${sobjectName}/${recordId}`);
+    const endpoint = `${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/sobjects/${sobjectName}/${recordId}`;
     console.log(endpoint);
     try{
         const response = await axios.delete(endpoint, {
@@ -169,8 +169,8 @@ routes.post("/:apiVersion/query", async (req, res) => {
     const instanceurl = req.headers.instanceurl;
     const apiVersion = req.params.apiVersion;
     const isExplain = req.query.explain || false;
-    const soql = req.body.soql;
-    const endpoint = encodeURI(`${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/query?${isExplain ? 'explain=' : 'q='}${soql}`);
+    const soql = encodeURIComponent(req.body.soql);
+    const endpoint = `${instanceurl}/services/data/${apiVersion || process.env.SALESFORCE_API_VERSION}/query?${isExplain ? 'explain=' : 'q='}${soql}`;
     try{
         const response = await axios.get(endpoint, {
             cancelToken: new CancelToken(function executor(c) { cancel = c }),
@@ -205,5 +205,5 @@ routes.get("/cancel", async(req, res) => {
         }
     }
 });
-
+    
 module.exports = routes;

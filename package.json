@@ -154,6 +154,7 @@
     "applicationinsights": "^1.8.2",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
+    "dateformat": "^4.5.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",

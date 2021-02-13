@@ -27,6 +27,7 @@ module.exports = {
     'no-undef': 'off',
     'no-prototype-builtins': 'off',
     'vue/no-mutating-props': 'off',
-    'no-unused-vars' : 'off'
+    'no-unused-vars' : 'off',
+    'no-useless-escape': 'off'
   },
 }

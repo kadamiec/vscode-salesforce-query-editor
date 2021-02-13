@@ -1,14 +1,13 @@
 // @ts-nocheck
 const routes = require('express').Router();
-const crypto  = require('crypto');
-const { machineIdSync } = require('node-machine-id');
-const { licenseStorage } = require('../soqlEditor');
-const { webview, editor, configuration } = require('../soqlEditor');
+const { licenseStorage, loginStorage } = require('../soql-editor');
+const { webview, editor, configuration } = require('../soql-editor');
+const { fingerprint } = require('../utilities/fingerprint');
 
 routes.get("/fingerprint", (req, res) => {
     try{
         res.status(200).send({
-            fingerprint: crypto.createHash('sha512').update(machineIdSync({ original: true })).digest('hex')
+            fingerprint
         })
     }catch(error){
         console.error(error);
@@ -46,19 +45,19 @@ routes.get("/editor", (req, res) => {
     }
 })
 
-routes.post("/editor", (req, res) => {
+routes.post("/editor", async(req, res) => {
     const soql = req.body.editingSOQL;
-    editor.setSOQL(`[${soql.replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ')}]`)
-    .then(() => {
+    try { 
+        await editor.setSOQL(`[${soql.replace(/\s\s+|(\r\n)+|\r+|\n+|\t+/gm, ' ')}]`)
         res.status(200).send({
             message: 'SOQL updated.'
         });
-    })
-    .catch(() => {
+    }catch(error){
+        console.error(error);
         res.status(400).send({
             message: 'Could not set the SOQL in the document.'
         });
-    })
+    }
 });
 
 routes.get("/license", async (req, res) => {
@@ -76,9 +75,8 @@ routes.get("/license", async (req, res) => {
 })
 
 routes.post("/license", async (req, res) => {
-    const key = req.body.key;
     try{
-        await licenseStorage.writeFile('key.txt', key);
+        await licenseStorage.writeFile('key.txt', JSON.stringify(req.body.key));
         res.status(200).send({
             message: 'Key saved with Success.' 
         })
@@ -89,6 +87,48 @@ routes.post("/license", async (req, res) => {
         })
     }
 })
+
+routes.get("/login", async (req, res) => {
+    try{
+        const login = await loginStorage.readFile('login.txt');
+        res.status(200).send({
+            login: JSON.parse(login)
+        })
+    }catch(error){
+        console.error(error);
+        res.status(400).send({
+            message: 'Could not read login credentials from the storage.'
+        })
+    }
+})
+
+routes.post("/login", async (req, res) => {
+    try{
+        await loginStorage.writeFile('login.txt', JSON.stringify(req.body.login));
+        res.status(200).send({
+            message: 'Login saved with Success.' 
+        })
+    }catch(error){
+        console.error(error);
+        res.status(400).send({
+            message: 'Could not save login credentials in the storage.'
+        })
+    }
+})
+
+routes.delete("/license", async(req, res) => {
+    try{
+        await licenseStorage.deleteFile('key.txt');
+        res.status(200).send({
+            message: 'Key deleted with Success.' 
+        })
+    }catch(error){
+        console.error(error);
+        res.status(400).send({
+            message: 'Could not delete the key in the storage.'
+        })
+    }
+});
 
 routes.post("/notification/:event", (req, res) => {
     const message = req.body;

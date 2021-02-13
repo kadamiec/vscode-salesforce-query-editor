@@ -1,3 +1,8 @@
+:root{
+    --tabs-height: 35px;
+    --side-bar-size: 50px;
+    --tab-border-bottom-size: 0.5px;
+}
 html,
 body,
 #app {
@@ -11,6 +16,10 @@ body,
     position: relative;
     float: left;
     width: 100%;
+}
+
+.vh-100 {
+    height: calc(100vh - 1px) !important;
 }
 
 pre {
@@ -61,11 +70,10 @@ pre {
 }
 
 input,
-textarea,
 select {
     border: 1px solid var(--vscode-inputOption-activeBackground) !important;
     border-radius: 0 !important;
-    background-color: var(--vscode-input-background) !important;
+    background-color: var(--vscode-editor-background) !important;
     color: var(--vscode-input-foreground) !important;
     font-family: var(--vscode-font-family) !important;
     font-weight: var(--vscode-font-weight) !important;
@@ -77,7 +85,6 @@ select {
 }
 
 input:focus,
-textarea:focus,
 select:focus {
     outline: none;
     border: 1px solid var(--vscode-focusBorder) !important;
@@ -141,6 +148,11 @@ button {
     font-weight: var(--vscode-font-weight) !important;
     font-size: var(--vscode-font-size) !important;
     white-space: nowrap !important;
+}
+
+i.fa-close:hover {
+    cursor: pointer;
+    color: var(--vscode-button-foreground);
 }
 
 .nav-link{
@@ -224,19 +236,23 @@ input[type='checkbox'] {
     width: 0 !important;
 }
 
-.CodeMirror{
-    resize: vertical;
+.editor-widget.suggest-widget{
+    display: none !important;
 }
 
 /* Create a custom checkbox */
 .checkmark {
     position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    left: 0px !important;
     height: 20px !important;
     width: 20px !important;
     border: 1px solid var(--vscode-inputOption-activeBackground) !important;
     background-color: var(--vscode-input-background) !important;
+}
+
+.custom-checkbox-container:hover input:disabled~.checkmark {
+    background-color: var(--vscode-input-background) !important;
+    cursor: default;
 }
 
 /* On mouse-over, add a grey background color */
@@ -280,7 +296,7 @@ input[type='checkbox'] {
 }
 
 .toast-body {
-    background-color: var(--vscode-editor-background) !important;
+    background-color: var(--vscode-activityBar-background) !important;
     border-radius: 0 !important;
     font-family: var(--vscode-font-family)!important;
     font-weight: var(--vscode-font-weight)!important;
@@ -309,28 +325,11 @@ input[type='checkbox'] {
     border-top: none !important;
 }
 
-@media (min-width: 576px){
-    .modal-dialog {
-        max-width: 750px !important;
-    }
-}
-
 .close {
     color: var(--vscode-titleBar-activeForeground) !important;
 }
 .close:hover{
     color: var(--vscode-titleBar-activeForeground) !important;
-}
-
-.table-dark th,
-.table-dark td,
-.table-dark thead th {
-    border-color: var(--vscode-badge-background) !important;
-}
-
-.table-dark {
-    background-color: var(--vscode-input-background) !important;
-    color: var(--vscode-input-foreground) !important;
 }
 
 .bmc-button img {
@@ -364,21 +363,39 @@ input[type='checkbox'] {
     color: #ffffff !important;
 }
 
+.clickable-icon {
+    color: var(--vscode-menu-separatorBackground);
+}
+  
+.clickable-icon:hover {
+    color: var(--vscode-badge-foreground);
+    cursor: pointer;
+}
+
 a:focus,
 i:focus{
     outline: none !important;
 }
 
 ::-webkit-scrollbar {
-    width: 0.5em;
-    height: 0.5em;
+    width: 0.35em;
+    height: 0.35em;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: var(--vscode-scrollbarSlider-background);
-    outline: 1px solid slategrey;
+    outline: 1px solid transparent;
 }
 
+::-webkit-scrollbar-thumb:hover{
+    background-color: var(--vscode-scrollbarSlider-hoverBackground);
+}
+
+::-webkit-scrollbar-corner{
+    background-color: transparent;
+    width: 0;
+    height: 0;
+}
 .json-viewer-vscode-theme .jv-key {
     color: var(--vscode-input-foreground) !important;
     padding-right: 5px !important;
@@ -498,8 +515,12 @@ i:focus{
     padding: 4px 40px 0 8px !important;
     border-radius: 0 !important;
     border: 1px solid var(--vscode-inputOption-activeBackground) !important;
-    background-color: var(--vscode-input-background) !important;
+    background-color: var(--vscode-editor-background) !important;
     font-size: var(--vscode-font-family) !important;
+}
+
+.multiselect input{
+    background-color: var(--vscode-editor-background) !important;
 }
 
 .multiselect__tags input:focus{
@@ -534,7 +555,7 @@ i:focus{
 }
 
 .multiselect__input, .multiselect__single{
-    background-color: var(--vscode-input-background) !important;
+    background-color: var(--vscode-editor-background) !important;
 }
 
 .multiselect__option--highlight {
@@ -557,19 +578,14 @@ i:focus{
 }
 
 .multiselect__content-wrapper {
-    background-color: var(--vscode-input-background) !important;
+    background-color: var(--vscode-editor-background) !important;
     border: thin solid var(--vscode-inputOption-activeBackground) !important;
     border-radius: 0 !important;
 }
 
-.noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
+.multiselect__tags input::placeholder {
+    color: transparent !important;
+}  
 
 .cursor-move{
     cursor: move !important;
@@ -577,4 +593,216 @@ i:focus{
 
 .cursor-pointer{
     cursor: pointer !important;
+}
+
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+  
+.form-group.required.control-label:before {
+    color: red;
+    content: '*';
+    position: absolute;
+    margin-left: -10px;
+}
+
+.error {
+    color: red;
+}
+
+.overflow-scroll{
+    overflow: scroll !important;
+}
+
+.page-enter-active,
+.page-leave-active,
+.layout-enter-active, 
+.layout-leave-active {
+  transition: opacity .5s
+}
+
+.page-enter,
+.page-leave-active,
+.layout-enter, 
+.layout-leave-active {
+  opacity: 0
+}
+
+@media (min-width: 576px) {
+.w-sm-100 {
+width:100%!important;
+}
+.w-sm-75 {
+width:75%!important;
+}
+.w-sm-50 {
+width:50%!important;
+}
+.w-sm-25 {
+width:25%!important;
+}
+.h-sm-100 {
+height:100%!important;
+}
+.h-sm-75 {
+height:75%!important;
+}
+.h-sm-50 {
+height:50%!important;
+}
+.h-sm-25 {
+height:25%!important;
+}
+}
+
+/* Medium devices (tablets, 768px and up)*/
+@media (min-width: 768px) {
+.w-md-100 {
+width:100%!important;
+}
+.w-md-75 {
+width:75%!important;
+}
+.w-md-50 {
+width:50%!important;
+}
+.w-md-25 {
+width:25%!important;
+}
+.h-md-100 {
+height:100%!important;
+}
+.h-md-75 {
+height:75%!important;
+}
+.h-md-50 {
+height:50%!important;
+}
+.h-md-25 {
+height:25%!important;
+}
+}
+
+/* Large devices (desktops, 992px and up)*/
+@media (min-width: 992px) {
+.w-lg-100 {
+width:100%!important;
+}
+.w-lg-75 {
+width:75%!important;
+}
+.w-lg-50 {
+width:50%!important;
+}
+.w-lg-25 {
+width:25%!important;
+}
+.h-lg-100 {
+height:100%!important;
+}
+.h-lg-75 {
+height:75%!important;
+}
+.h-lg-50 {
+height:50%!important;
+}
+.h-lg-25 {
+height:25%!important;
+}
+}
+
+/* Extra large devices (large desktops, 1200px and up)*/
+@media (min-width: 1200px) {
+.w-xl-100 {
+width:100%!important;
+}
+.w-xl-75 {
+width:75%!important;
+}
+.w-xl-50 {
+width:50%!important;
+}
+.w-xl-25 {
+width:25%!important;
+}
+.h-xl-100 {
+height:100%!important;
+}
+.h-xl-75 {
+height:75%!important;
+}
+.h-xl-50 {
+height:50%!important;
+}
+.h-xl-25 {
+height:25%!important;
+}
+    }
+
+.no-wrap{
+    white-space: nowrap !important;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 30px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-input {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: thin solid var(--vscode-inputOption-activeBackground);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider-input:before {
+    position: absolute;
+    content: "";
+    height: 23px;
+    width: 23px;
+    top: 2px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--vscode-input-foreground);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider-input {
+    background-color: var(--vscode-button-background);
+}
+
+input:checked + .slider-input:before {
+    -webkit-transform: translateX(19px);
+    -ms-transform: translateX(19px);
+    transform: translateX(19px);
+}
+
+/* Rounded slider-inputs */
+.slider-input.round {
+    border-radius: 34px;
+}
+
+.slider-input.round:before {
+    border-radius: 50%;
 }

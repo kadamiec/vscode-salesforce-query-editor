@@ -9,7 +9,8 @@ const cors = require('cors');
 const sfdxRoutes = require('./sfdx');
 const vscodeRoutes = require('./vscode');
 const salesforceRoutes = require('./salesforce');
-
+const dateFormat = require('dateformat');
+const { outputChannel } = require('../soql-editor');
 
 if(process.env.NODE_ENV !== 'production'){
     dotenv.config();
@@ -39,6 +40,7 @@ axios.interceptors.request.use(
   }
 );
 
+
 const startServer = async(logsStoragePath, keygen) => {
     const app = express();
     app.use(cors());
@@ -60,18 +62,33 @@ const startServer = async(logsStoragePath, keygen) => {
 
     const http = require('http').Server(app);
 
-    if(keygen.isValid){
-        const io = require('socket.io')(http, {
-            serveClient: false,
-            cors: {
-                origins: 'vscode-webview://*'
-            }
-        });
-        io.on('connect', () => {
-            console.log('connected');
-        });
-        app.set('io', io);
-    }      
+    //if(keygen.isValid){
+    const io = require('socket.io')(http, {
+        serveClient: false,
+        cors: {
+            origins: 'vscode-webview://*'
+        }
+    });
+    io.on('connect', () => {
+        console.log('connected');
+    });
+    app.set('io', io);
+    //}
+    app.use((req, res, next) => {
+        outputChannel.appendLine(`${dateFormat(new Date(), "yyyy-mm-dd h:MM:ss")} : [${req.method}] ${req.originalUrl}`);
+        if(Object.keys(req.body) && Object.keys(req.body).length) outputChannel.appendLine(JSON.stringify(req.body));
+        let oldSend = res.send
+        res.send = function(data){
+            new Promise((resolve) => {
+                outputChannel.appendLine(`${dateFormat(new Date(), "yyyy-mm-dd h:MM:ss")} : ${JSON.stringify(data)}`);
+                resolve();
+            })
+            res.send = oldSend;
+            return res.send(data);
+        }
+        next();
+    });
+
     app.use('/salesforce', salesforceRoutes);
     app.use('/vscode', vscodeRoutes);
     app.use('/sfdx', sfdxRoutes);

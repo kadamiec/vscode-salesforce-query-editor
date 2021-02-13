@@ -1,13 +1,13 @@
 <template>
-  <section
+  <div
     v-show="isActive"
     :id="computedId"
     :aria-hidden="!isActive"
-    class="tabs-component-panel"
+    class="tab-content"
     role="tabpanel"
   >
-    <slot />
-  </section>
+    <transition name="fade"><slot></slot></transition>
+  </div>
 </template>
 
 <script>
@@ -15,11 +15,11 @@ export default {
   props: {
     id: { default: null },
     name: { required: true },
-    label: { required: true},
+    label: { required: true },
     prefix: { default: '' },
     suffix: { default: '' },
     isDisabled: { default: false },
-    isActive: { default: false},
+    isActive: { default: false },
   },
   computed: {
     header() {
@@ -37,3 +37,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.tab-content {
+  overflow-y: auto;
+  width: 100%;
+  height: calc(100vh - var(--tabs-height) - 1px);
+}
+</style>

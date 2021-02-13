@@ -7,7 +7,7 @@ const {
     getConfig,
     exportSourceTree,
     openRecordDetailPage
-} =  require('../utilities/sfdx-commands');
+} =  require('../utilities/sfdx');
 
 routes.get("/defaultusername", (req, res) => {
     getDefaultusername()
@@ -78,7 +78,7 @@ routes.get("/open/record/:recordId", (req, res) => {
     .catch((error) => {
         console.error(error);
         res.status(500).send({
-            error: 'Could not export as Source Tree'
+            error: 'Could not open the record id'
         })
     })
 });

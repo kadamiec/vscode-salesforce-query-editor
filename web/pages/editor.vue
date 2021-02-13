@@ -1,7 +1,7 @@
 <template>
   <div>
-    <loading v-if="editors && editors['editor-0'].loading" />
-    <template v-else>
+    <loading v-if="!isDataReady" />
+    <template v-show="isDataReady">
       <tabs
         v-if="isLicenseValid()"
         :value="activeEditor.name"
@@ -16,10 +16,14 @@
           :label="editor.label"
           :is-active="activeEditor.name === editor.name"
         >
-          <editor :name="editor.name" :editing-s-o-q-l="editingSOQL"></editor>
+          <editor :name="editor.name" class="px-2 pt-2"></editor>
         </tab>
       </tabs>
-      <editor v-else :editing-s-o-q-l="editingSOQL"></editor>
+      <editor
+        v-else
+        name="editor-0"
+        class="vh-100 px-2 pt-2"
+      ></editor>
     </template>
   </div>
 </template>
@@ -41,16 +45,14 @@ export default {
     Tab,
     Loading,
   },
-  middleware: ['validate-keygen-license'],
-  data: () => {
-    return {
-      editingSOQL: null,
-    }
-  },
+  layout: 'loggedin',
+  middleware: ['auth', 'validate-keygen-license', 'menu'],
   computed: {
     ...mapState({
       configuration: (state) => state.user.configuration,
       editors: (state) => state.salesforce.editors,
+      environments: (state) => state.salesforce.environments,
+      defaultusername: (state) => state.salesforce.defaultusername,
     }),
     ...mapGetters({
       isLicenseValid: 'user/isLicenseValid',
@@ -59,34 +61,28 @@ export default {
     activeEditor() {
       return this.getActiveEditor()
     },
+    isDataReady() {
+      return this.editors && !this.editors[this.activeEditor.name].loading
+    },
   },
-  beforeMount() {
-    this.$axios
-      .get(`${process.env.SALESFORCE_API_ENDPOINT}/vscode/editor`)
-      .then((response) => {
-        console.log('editing soql')
-        console.log(response.data)
-        this.editingSOQL = response.data
+  mounted() {
+    this.fetchConfiguration()
+    if (!this.isDataReady) {
+      this.fetchSfdxData({ editorName: this.activeEditor.name }).catch(() => {
+        return this.$nuxt.error({ message: 'Could not fetch sfdx data' })
       })
-      .catch((error) => {
-        console.error(error)
-      })
+    }
   },
   sockets: {
-    connect() {
-      console.log('connected')
-    },
     defaultusername(data) {
       console.log(data)
-    },
-    editingsoql(editingSOQL) {
-      console.log(editingSOQL)
-      if (editingSOQL?.soql) this.editingSOQL = editingSOQL
     },
   },
   methods: {
     ...mapActions({
+      fetchSfdxData: 'salesforce/fetchSfdxData',
       sendActiveEditor: 'salesforce/sendActiveEditor',
+      fetchConfiguration: 'user/fetchConfiguration'
     }),
     ...mapMutations({
       addEditor: 'salesforce/addEditor',

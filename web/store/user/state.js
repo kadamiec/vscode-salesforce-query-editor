@@ -2,10 +2,11 @@ export default () => ({
   auth: {},
   license: {
     meta: {
-      valid: false
-    }
+      valid: false,
+    },
   },
-  licenses: [],
+  user: {},
+  subscriptions: [],
   fingerprint: null,
   configuration: {
     displayEditor: true,
@@ -23,4 +24,5 @@ export default () => ({
     },
     groupSelectedFields: true,
   },
+  activeMenu: null,
 })

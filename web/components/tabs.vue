@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex flex-column vh-100 vw-100">
-    <div class="tab-header d-flex w-100 flex-wrap">
+  <div>
+    <div class="tab-header d-flex">
       <div
         v-for="(tab, tabIndex) in tabs"
         :key="tab.name"
@@ -13,6 +13,7 @@
           </div>
         </div>
         <button
+          v-if="Object.keys(tabs).length > 1"
           class="tab-close-button my-auto"
           @click.prevent="onClickRemoveTab({ name: tab.name, index: tabIndex })"
         >
@@ -38,22 +39,22 @@ export default {
   data: () => {
     return {
       tabs: {},
-      counter: 0
+      counter: 0,
     }
   },
-  created(){
-    this.tabs = this.$children;
+  created() {
+    this.tabs = this.$children
   },
   methods: {
     onClickNewTab() {
-      this.counter++;
-      this.$emit('newTab', { name: 'editor-' + this.counter, label: 'Editor'});
+      this.counter++
+      this.$emit('newTab', { name: 'editor-' + this.counter, label: 'Editor' })
     },
-    onClickRemoveTab({name, index}) {
-      this.$emit('removeTab', {name, index});
+    onClickRemoveTab({ name, index }) {
+      this.$emit('removeTab', { name, index })
     },
     onClickTab(name) {
-      this.$emit('activate', name);
+      this.$emit('activate', name)
     },
   },
 }
@@ -61,18 +62,20 @@ export default {
 
 <style scopped>
 .tab-header {
-  border-bottom: 1px solid var(--vscode-input-background) !important;
-  height: 35px;
+  height: var(--tabs-height);
+  overflow-x: auto;
 }
 
 .tab {
-  width: 90px;
+  min-width: 90px;
   cursor: pointer;
   padding: 0px;
   border: none;
   border-radius: 0 !important;
-  background-color: var(--vscode-input-background) !important;
-  color: var(--vscode-input-foreground) !important;
+  border-bottom: var(--tab-border-bottom-size) solid
+    var(--vscode-tab-inactiveBackground) !important;
+  background-color: var(--vscode-tab-inactiveBackground) !important;
+  color: var(--vscode-tab-inactiveForeground) !important;
   height: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -81,32 +84,40 @@ export default {
 .tab .tab-name {
   padding-left: 10px;
   width: 100%;
+  color: var(--var-tab-inactiveForeground);
 }
 
-.tab.active,
-.tab:hover {
-  border-color: transparent !important;
-  background-color: var(--vscode-button-background) !important;
-  color: var(--vscode-button-foreground) !important;
+.tab.active {
+  border-bottom: var(--tab-border-bottom-size) solid
+    var(--vscode-tab-activeBackground) !important;
+  color: var(--vscode-tab-activeForeground) !important;
 }
 
 .tab button {
   padding-right: 10px;
   background-color: transparent;
-  color: var(--vscode-input-foreground) !important;
   border: none;
+}
+
+.tab:hover .tab-close-button {
+  opacity: 1;
 }
 
 .tab-close-button {
+  opacity: 0;
   border: none;
   background-color: transparent;
-}
-
-.tab-close-button:hover {
-  color: var(--vscode-button-foreground) !important;
+  color: var(--vscode-tab-inactiveForeground) !important;
 }
 
 .add-tab-button {
   width: 40px;
+  min-width: 40px !important;
+}
+
+.add-tab-button:hover {
+  color: var(--vscode-tab-activeForeground) !important;
+  border-bottom: var(--tab-border-bottom-size) solid
+    var(--vscode-tab-inactiveBackground) !important;
 }
 </style>

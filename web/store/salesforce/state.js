@@ -10,7 +10,7 @@ export default () => ({
       loading: true,
     },
   },
-  queries : [],
+  queries: [],
   defaultusername: {},
   editingSOQL: {},
   environments: {},

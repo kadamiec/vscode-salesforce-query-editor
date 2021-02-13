@@ -1,10 +1,11 @@
 <template>
-  <div class="d-flex flex-column vw-100 vh-100">
+  <div class="d-flex flex-column vh-100">
     <form class="m-auto" style="width: 300px">
-      <div class="form-group required control-label mt-2">
+      <div class="form-group control-label mt-2">
         <label for="email" class="form-label">E-mail</label>
         <input
           id="email"
+          v-on:keyup.enter="onClickSignIn"
           v-model="$v.user.email.$model"
           class="form-control"
           type="text"
@@ -15,60 +16,86 @@
         </template>
       </div>
 
-      <div class="form-group required control-label mt-2">
+      <div class="form-group control-label mt-2 mb-2">
         <label for="password" class="form-label">Password</label>
         <input
           id="password"
+          v-on:keyup.enter="onClickSignIn"
           v-model="$v.user.password.$model"
           class="form-control"
           type="password"
           placeholder="Enter your password"
         />
+        <template v-if="$v.user.password.$error">
+          <div class="error form-text">Password is required</div>
+        </template>
       </div>
 
+      <div class="d-flex">
+        <label class="form-check-label custom-checkbox-container">
+          Keep me Signed in
+          <input
+            v-model="keepLoggedIn"
+            class="form-check-input"
+            type="checkbox"
+          />
+          <span class="checkmark" />
+        </label>
+        <div class="d-flex ml-auto my-auto">
+          <NuxtLink to="/forgot-password">Forgot Password</NuxtLink>
+        </div>
+      </div>
+    
       <button
+        id="signin"
         type="reset"
         variant="primary"
-        class="vscode-button btn mt-4 btn-block"
-        @click.prevent="submit()"
+        class="vscode-button btn mt-3 btn-block"
+        :disabled="isLoggingIn"
+        @click="onClickSignIn"
       >
-        Login
         <i v-if="isLoggingIn" class="fa fa-circle-o-notch fa-spin" />
+        <p v-else>Sign In</p>
       </button>
 
-      <div v-if="errors" class="error text-center">
-        <div v-for="error in errors" :key="error">
-          <div v-if="error.showCode">Code: {{ error.code }}</div>
-          <div>Error Message: {{ error.message }}</div>
-        </div>
+      <button
+        id="signup"
+        type="reset"
+        variant="primary"
+        class="vscode-button btn btn-block"
+        :disabled="isLoggingIn"
+        @click.prevent="onClickSignUp"
+      >
+        Sign Up
+      </button>
+
+      <div v-if="error" class="error text-center">
+        <div>{{ error }}</div>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import { required, email, helpers } from 'vuelidate/lib/validators'
+import { required, email } from 'vuelidate/lib/validators'
 import { mapActions } from 'vuex'
-
-const passwordValidator = helpers.regex(
-  'alpha',
-  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
-)
+import { MD5 } from 'object-hash'
+import ShowToastMessage from '@/mixins/show-toast-message'
 
 export default {
-  name: 'SignUp',
+  middleware: ['auth'],
+  mixins: [ShowToastMessage],
   data: () => {
     return {
       user: {
-        email: null,
-        password: null,
-        passwordConfirmation: null,
+        email: 'allanoricilcos2@outlook.com',
+        password: '07021994aA@',
       },
-      errors: [],
+      error: null,
       isLoggingIn: false,
+      keepLoggedIn: false
     }
   },
-  // @ts-ignore
   validations: {
     user: {
       email: {
@@ -77,50 +104,63 @@ export default {
       },
       password: {
         required,
-        passwordValidator,
       },
     },
   },
   methods: {
     ...mapActions({
       login: 'user/login',
+      fetchKeygenUser: 'user/fetchKeygenUser'
     }),
-    submit() {
-      this.errors = []
+    onClickSignIn() {
+      this.error = null
       this.isLoggingIn = true
       this.$v.$touch()
       if (this.$v.$invalid) {
-        console.log('Error')
+        this.isLoggingIn = false
       } else {
+        const password = MD5(this.user.password);
         this.login({
           email: this.user.email,
-          password: this.user.password,
+          password,
         })
-        .then(()=> {
-          this.$router.push({ name: 'editor' })
-        })
-        .catch (() => {
-          this.errors.push({
-            message: 'Could not Login',
-            code: null,
-            showCode: false,
+        .then(() => {
+          if(this.keepLoggedIn){
+            this.$axios.post(`${process.env.SALESFORCE_SERVER}/vscode/login`, 
+              {
+                login: {
+                  email: this.user.email,
+                  password
+                }
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/vnd.api+json',
+                  Accept: 'application/vnd.api+json',
+                },
+              }
+            )
+            .catch(() => this.showToastMessage('Could not save user credentials on the storage'))
+          }
+          
+          this.fetchKeygenUser()
+          .then(() => {
+            this.$router.push({name: 'editor'})
           })
+          .catch(() => this.error = 'Could not fetch User information')
+          .finally(() => this.isLoggingIn = false)
+        })
+        .catch(() => {
+          this.error = 'Wrong password or e-mail'
+          this.isLoggingIn = false
         })
       }
+    },
+    onClickSignUp() {
+      this.$router.push({ name: 'signup' })
     },
   },
 }
 </script>
 
-<style scoped>
-.form-group.required.control-label:before {
-  color: red;
-  content: '*';
-  position: absolute;
-  margin-left: -10px;
-}
-
-.error {
-  color: red;
-}
-</style>
+<style></style>

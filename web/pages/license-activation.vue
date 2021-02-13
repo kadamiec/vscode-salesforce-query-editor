@@ -4,7 +4,10 @@
       <div class="d-flex flex-column m-auto">
         <i class="fas fa-10x mx-auto fa-check-circle"></i>
         <div style="font-size: 50px">License was Successfully Activated</div>
-        <redirect-button redirect-to="/"></redirect-button>
+        <redirect-button
+          page-name="editor"
+          page-label="Editor"
+        ></redirect-button>
       </div>
     </template>
     <div v-else-if="license && license.status === 'invalid'">
@@ -18,17 +21,13 @@
       </template>
       <button
         class="vscode-button btn mt-2"
-        :disabled="$v.key.$invalid"
+        :disabled="$v.key.$invalid || isActivating"
         @click="onClickActivate()"
       >
         Activate
+        <i v-if="isActivating" class="fa fa-circle-o-notch fa-spin" />
       </button>
-      <div v-if="errors" class="error text-center">
-        <div v-for="(error, errorIndex) in errors" :key="errorIndex">
-          <div v-if="error.showCode">Code: {{ error.code }}</div>
-          <div>{{ error.message }}</div>
-        </div>
-      </div>
+      <div v-if="error" class="error text-center">{{ error }}</div>
     </div>
   </div>
 </template>
@@ -45,48 +44,44 @@ export default {
   data: () => {
     return {
       key: null,
-      errors: [],
+      error: null,
+      isActivating: false,
     }
   },
-  // @ts-ignore
   validations: {
     key: {
       required,
     },
   },
-  beforeMount() {
-    this.fetchMachineFingerprint()
-  },
   computed: {
     ...mapState({
       auth: (state) => state.user.auth,
       license: (state) => state.user.license,
-      fingerprint: (state) => state.user.fingerprint,
     }),
   },
   methods: {
     ...mapActions({
       validateLicense: 'user/validateLicense',
-      fetchMachineFingerprint: 'user/fetchMachineFingerprint',
-      activateMachine: 'user/activateMachine',
-      saveLicense: 'user/saveLicense'
+      activateMachineUsingKey: 'user/activateMachineUsingKey',
+      saveLicense: 'user/saveLicense',
     }),
     onClickActivate() {
-      this.errors = []
+      this.error = null
       this.$v.$touch()
       if (this.$v.$invalid) {
         console.log('Form is Invalid.')
       } else {
-        this.activateMachine({ key: this.key })
-        .then(() => {
-          this.validateLicense({ key: this.key })
+        this.isActivating = true
+        this.activateMachineUsingKey({ key: this.key })
           .then(() => {
-            this.saveLicense({ key: this.key })
+            this.$router.push({ name: 'account' })
           })
-        })
-        .catch((error) => {
-          this.errors.push({ message: error.response.data.error });
-        })
+          .catch((error) => {
+            this.error = error.response.data.error
+          })
+          .finally(() => {
+            this.isActivating = false
+          })
       }
     },
   },

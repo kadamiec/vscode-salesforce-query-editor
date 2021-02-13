@@ -1,22 +1,25 @@
 import webpack from 'webpack';
+import WebpackObfuscator from 'webpack-obfuscator';
+import MonacoEditorPlugin from 'monaco-editor-webpack-plugin';
 
 export default {
   target: 'static',
   ssr: false,
   env: {
-    WEBHOOKS_SERVER: process.env.WEBHOOKS_SERVER || 'https://ed3m5t2ji5.execute-api.eu-west-1.amazonaws.com/Prod',
+    WEBHOOKS_SERVER: process.env.WEBHOOKS_SERVER || 'http://localhost:9090',
     IP_STACK_ACCESS_KEY: process.env.IP_STACK_ACCESS_KEY || '44db5c8179fd4ef094a74e6467b170c0',
     KEYGEN_ACCOUNT_ID: process.env.KEYGEN_ACCOUNT_ID || '78edb4be-f034-4809-9ea9-b29b0dff113e',
     STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_51HJP5dGES2qDPBojjEaDhVwhbPgJ1W3lN5H24uMvlUqPgA9KxEJGdTyA2DIzi8lywEjsSLOW4rOLINW4oHwXfquo00Syg6gw0d',
     STRIPE_PRODUCT_KEY: process.env.STRIPE_PRODUCT_KEY || 'prod_IlXQl78y4QXvKS',
     SALESFORCE_API_VERSION: process.env.SALESFORCE_API_VERSION || 'v50.0',
-    SALESFORCE_API_ENDPOINT: process.env.SALESFORCE_API_ENDPOINT || 'http://127.0.0.1:5000',
+    SALESFORCE_SERVER: process.env.SALESFORCE_SERVER || 'http://127.0.0.1:5000',
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'salesforce-query-editor',
     htmlAttrs: {
       lang: 'en',
+      ...(process.env === 'dev' && {oncontextmenu: 'return false'})
     },
     meta: [
       { charset: 'utf-8' },
@@ -35,7 +38,6 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/css/googleCookieFont.css',
-    '~/assets/css/highligthjs.min.css',
     '~/assets/css/vscode-dark.css',
     '~/assets/css/vscode-light.css',
     '~/assets/css/vscode.css',
@@ -52,16 +54,20 @@ export default {
     { src: '~plugins/vue-json-viewer.js' , ssr: false },
     { src: '~plugins/vue-shortkey.js' , ssr: false },
     { src: '~plugins/vue-inline-svg.js' , ssr: false },
-    { src: '~plugins/vue-codemirror.js', ssr: false },
     { src: '~plugins/fontawesome.js', ssr: false },
-    { src: '~plugins/vue-socket.io.js', ssr: false }
+    { src: '~plugins/vue-socket.io.js', ssr: false },
+    { src: '~plugins/mirage.js', ssr: false }
   ],
 
   components: true,
 
+  generate: {
+    fallback: '404.html'
+  },
+
   buildModules: [
     ['@nuxtjs/eslint-module', { fix: true, quiet: true }],
-    "@nuxtjs/svg",
+    "@nuxtjs/svg"
   ],
 
   loading: {
@@ -108,9 +114,28 @@ export default {
         config.optimization.splitChunks.cacheGroups.default = false;
         config.optimization.runtimeChunk = false;
       }
+
+      if (!ctx.isDev && ctx.isClient && config.plugins) {
+        config.plugins.push(
+          new WebpackObfuscator({
+            compact: true,
+            identifierNamesGenerator: 'mangled',
+            selfDefending: true,
+            stringArray: true,
+            rotateStringArray: true,
+            shuffleStringArray: true,
+            stringArrayThreshold: 0.8,
+            rotateStringArray: true
+          }, [])
+        );
+      }
     },
 
     plugins: [
+      new MonacoEditorPlugin({
+        languages: ['java'],
+        features: ['!gotoSymbol'],
+      }),
       new webpack.optimize.LimitChunkCountPlugin({
         maxChunks: 1
       }),
