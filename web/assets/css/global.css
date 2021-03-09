@@ -3,6 +3,7 @@
     --side-bar-size: 50px;
     --tab-border-bottom-size: 0.5px;
 }
+
 html,
 body,
 #app {
@@ -80,10 +81,6 @@ select {
     font-size: var(--vscode-font-size) !important;
 }
 
-.vue-codemirror {
-    border: 1px solid var(--vscode-inputOption-activeBackground) !important;
-}
-
 input:focus,
 select:focus {
     outline: none;
@@ -150,9 +147,29 @@ button {
     white-space: nowrap !important;
 }
 
-i.fa-close:hover {
+i {
     cursor: pointer;
-    color: var(--vscode-button-foreground);
+}
+
+
+@media (max-width: 992px){
+    .modal-dialog {
+        max-width: 100% !important;
+    }
+}
+
+.modal-dialog i.fa-close:hover {
+    color: var(--vscode-activityBar-foreground);
+}
+
+.clickable-icon,
+.modal-dialog i.fa-close {
+    color: var(--vscode-activityBar-inactiveForeground);
+}
+  
+.clickable-icon:hover {
+    color: var(--vscode-activityBar-foreground);
+    cursor: pointer;
 }
 
 .nav-link{
@@ -296,11 +313,14 @@ input[type='checkbox'] {
 }
 
 .toast-body {
-    background-color: var(--vscode-activityBar-background) !important;
+    color: var(--vscode-input-foreground);
+    box-shadow: -2px -2px 5px var(--vscode-activityBar-background);
+    background: var(--vscode-editor-background) !important;
+    border: thin solid var(--vscode-activityBar-background) !important;
     border-radius: 0 !important;
     font-family: var(--vscode-font-family)!important;
     font-weight: var(--vscode-font-weight)!important;
-    font-size: var(--vscode-font-size)!important;
+    font-size: 13px !important;
 }
 
 .modal-header {
@@ -361,15 +381,6 @@ input[type='checkbox'] {
     text-decoration: none !important;
     opacity: 0.85 !important;
     color: #ffffff !important;
-}
-
-.clickable-icon {
-    color: var(--vscode-menu-separatorBackground);
-}
-  
-.clickable-icon:hover {
-    color: var(--vscode-badge-foreground);
-    cursor: pointer;
 }
 
 a:focus,
@@ -771,11 +782,11 @@ height:25%!important;
     right: 0;
     bottom: 0;
     border: thin solid var(--vscode-inputOption-activeBackground);
-    -webkit-transition: .4s;
-    transition: .4s;
+    -webkit-transition: .2s;
+    transition: .2s;
 }
 
-.slider-input:before {
+.slider-input:before{
     position: absolute;
     content: "";
     height: 23px;
@@ -783,9 +794,9 @@ height:25%!important;
     top: 2px;
     left: 4px;
     bottom: 4px;
-    background-color: var(--vscode-input-foreground);
-    -webkit-transition: .4s;
-    transition: .4s;
+    background-color: var(--vscode-button-background);
+    -webkit-transition: .2s;
+    transition: .2s;
 }
 
 input:checked + .slider-input {
@@ -793,6 +804,7 @@ input:checked + .slider-input {
 }
 
 input:checked + .slider-input:before {
+    background-color: var(--vscode-button-foreground);
     -webkit-transform: translateX(19px);
     -ms-transform: translateX(19px);
     transform: translateX(19px);
@@ -805,4 +817,25 @@ input:checked + .slider-input:before {
 
 .slider-input.round:before {
     border-radius: 50%;
+}
+
+
+.VuePagination .page-link{
+    background-color: var(--vscode-button-background);
+    border-color: var(--vscode-activityBar-border);
+    color: var(--vscode-button-foreground);
+    cursor: pointer;
+}
+
+.VuePagination .page-link.active,
+.VuePagination .page-link:hover {
+    background-color: var(--vscode-button-hoverBackground);
+    border-color: var(--vscode-activityBar-border);
+    color: var(--vscode-button-foreground);
+}
+
+.VuePagination .page-item.disabled .page-link {
+    background-color: var(--vscode-button-background);
+    border-color: var(--vscode-activityBar-border);
+    color: var(--vscode-button-foreground);
 }

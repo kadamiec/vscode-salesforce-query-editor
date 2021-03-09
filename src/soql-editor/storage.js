@@ -1,5 +1,6 @@
 // @ts-nocheck
 const vscode = require('vscode');
+const fs = require('fs');
 
 class Storage {
 
@@ -24,15 +25,13 @@ class Storage {
     }
 
     writeFile(fileName, content){
-        const filePathUri = vscode.Uri.joinPath(this._extensionDirectoryUri, fileName);
-        return vscode.workspace.fs.writeFile(filePathUri, new TextEncoder("utf-8").encode(content));
+        return vscode.workspace.fs.writeFile(this.filePathUri(fileName), new TextEncoder("utf-8").encode(content));
     }
 
     readFile(fileName){
-        const filePathUri = vscode.Uri.joinPath(this._extensionDirectoryUri, fileName);
         return new Promise(async(resolve, reject) => {
             try{
-                const encodedContent = await vscode.workspace.fs.readFile(filePathUri);
+                const encodedContent = await vscode.workspace.fs.readFile(this.filePathUri(fileName));
                 resolve(new TextDecoder("utf-8").decode(encodedContent));
             }catch(error){
                 reject(error);
@@ -40,16 +39,23 @@ class Storage {
         })
     }
 
+    fileExists(fileName){
+        return fs.existsSync(this.filePathUri(fileName));
+    }
+
     deleteFile(fileName){
-        const filePathUri = vscode.Uri.joinPath(this._extensionDirectoryUri, fileName);
         return new Promise(async(resolve, reject) => {
             try{
-                await vscode.workspace.fs.delete(filePathUri);
+                await vscode.workspace.fs.delete(this.filePathUri(fileName));
                 resolve();
             }catch(error){
                 reject(error);
             }
         })
+    }
+
+    filePathUri(fileName){
+        return vscode.Uri.joinPath(this._extensionDirectoryUri, fileName);
     }
 }
 

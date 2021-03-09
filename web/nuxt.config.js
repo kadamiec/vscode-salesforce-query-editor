@@ -7,7 +7,6 @@ export default {
   ssr: false,
   env: {
     WEBHOOKS_SERVER: process.env.WEBHOOKS_SERVER || 'http://localhost:9090',
-    IP_STACK_ACCESS_KEY: process.env.IP_STACK_ACCESS_KEY || '44db5c8179fd4ef094a74e6467b170c0',
     KEYGEN_ACCOUNT_ID: process.env.KEYGEN_ACCOUNT_ID || '78edb4be-f034-4809-9ea9-b29b0dff113e',
     STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_51HJP5dGES2qDPBojjEaDhVwhbPgJ1W3lN5H24uMvlUqPgA9KxEJGdTyA2DIzi8lywEjsSLOW4rOLINW4oHwXfquo00Syg6gw0d',
     STRIPE_PRODUCT_KEY: process.env.STRIPE_PRODUCT_KEY || 'prod_IlXQl78y4QXvKS',
@@ -38,10 +37,8 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/css/googleCookieFont.css',
-    '~/assets/css/vscode-dark.css',
-    '~/assets/css/vscode-light.css',
-    '~/assets/css/vscode.css',
-    '~/assets/css/global.css'
+    '~/assets/css/global.css',
+    '~/assets/css/vscode-dark.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -49,14 +46,15 @@ export default {
     { src: '~plugins/vuelidate.js' , ssr: false },
     { src: '~plugins/confirm-dialog.js' , ssr: false },
     { src: '~plugins/vue-multiselect.js' , ssr: false },
-    { src: '~plugins/clipboard.js' , ssr: false },
+    { src: '~plugins/vue-clipboard2.js' , ssr: false },
     { src: '~plugins/vue-drag-drop.js' , ssr: false },
     { src: '~plugins/vue-json-viewer.js' , ssr: false },
     { src: '~plugins/vue-shortkey.js' , ssr: false },
     { src: '~plugins/vue-inline-svg.js' , ssr: false },
     { src: '~plugins/fontawesome.js', ssr: false },
     { src: '~plugins/vue-socket.io.js', ssr: false },
-    { src: '~plugins/mirage.js', ssr: false }
+    { src: '~plugins/vue-infinite-loading.js', ssr: false },
+    { src: '~plugins/vue-columns-resizable.js', ssr: false}
   ],
 
   components: true,
@@ -77,10 +75,7 @@ export default {
   modules: [
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
-    ['@nuxtjs/google-adsense', {
-      id: 'ca-pub-2402391224743305'
-    }]
+    '@nuxtjs/pwa'
   ],
 
   axios: {},
@@ -90,7 +85,7 @@ export default {
       short_name: 'SOQL',
       name: 'Salesforce Query Editor',
       description:
-        'This Web App helps Salesforce Developers to write Queries.',
+        'This Web App helps Salesforce Developers to write Queries and manage Salesforce data while using VSCode.',
       start_url: '/',
       theme_color: '#ffffff',
       background_color: '#ffffff',
@@ -124,11 +119,21 @@ export default {
             stringArray: true,
             rotateStringArray: true,
             shuffleStringArray: true,
-            stringArrayThreshold: 0.8,
-            rotateStringArray: true
+            stringArrayThreshold: 0.8
           }, [])
         );
       }
+      
+      const nuxtFontLoaderIndex = config.module.rules.findIndex((rule) => String(rule.test) == String(/\.(woff2?|eot|ttf|otf)(\?.*)?$/i));
+
+      const newFontLoader = {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+        use: 'base64-inline-loader?limit=1000&name=[name].[ext]'
+      }
+
+      config.module.rules.splice(nuxtFontLoaderIndex, 1, newFontLoader);
+
+      console.log(config.module.rules);
     },
 
     plugins: [

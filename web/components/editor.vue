@@ -1,331 +1,370 @@
 <template>
-  <div :ref="name" class="editor">
-    <div class="d-flex flex-column">
-      <!-- ENVIRONMENTS -->
-      <div
-        v-if="environments && environments.length"
-        class="pb-2"
-        :class="!isDataTableExpanded ? 'd-block' : 'd-none'"
-      >
-        <multiselect
-          v-model="selectedEnvironment"
-          class="environment mb-1"
-          :options="environments"
-          label="username"
-          track-by="username"
-          searcheable
-          :max-height="400"
-          select-label=""
-          deselect-label=""
-          placeholder="Select Environment"
-          hide-selected
-          @select="onSelectEnvironment"
+  <div>
+    <loading v-if="isLoadingData"></loading>
+    <div v-show="!isLoadingData" :ref="name" class="editor px-2 pt-2">
+      <div class="d-flex flex-column">
+        <button
+          v-if="!isLicenseValid()"
+          class="golden-btn ml-auto mb-2"
+          @click="onClickBuyProButton"
         >
-          <template slot="singleLabel" slot-scope="{ option }">
-            {{ option.username + (option.alias ? ' - ' + option.alias : '') }}
-          </template>
-          <template slot="option" slot-scope="{ option }">
-            {{ option.username + (option.alias ? ' - ' + option.alias : '') }}
-          </template>
-          <span slot="noResult">Could not find Environment</span>
-        </multiselect>
-      </div>
-
-      <!-- QUERY BUILDER -->
-      <div
-        :class="showForm && !isDataTableExpanded ? 'd-block' : 'd-none'"
-        style="height: 395px"
-      >
-        <div class="row h-100 m-0">
-          <div class="col-6 col-xl-4 pl-0 pr-1">
-            <b-tabs v-model="fieldsSourceTabIndex" no-fade>
-              <!--  SOBJECT FIELDS TAB -->
-              <b-tab title="Objects" active>
-                <div class="d-flex flex-column mt-1" style="height: 317px">
-                  <multiselect
-                    v-model="selectedSObject"
-                    class="mb-1"
-                    :options="sobjects"
-                    label="name"
-                    track-by="name"
-                    searcheable
-                    :max-height="400"
-                    select-label=""
-                    deselect-label=""
-                    placeholder="Select Object"
-                    hide-selected
-                    @input="onSelectSObject"
-                  >
-                    <template slot="singleLabel" slot-scope="{ option }">
-                      {{ option.name + ' - ' + option.label }}
-                    </template>
-                    <template slot="option" slot-scope="{ option }">
-                      {{ option.name + ' - ' + option.label }}
-                    </template>
-                    <span slot="noResult">Could not find SObject</span>
-                  </multiselect>
-                  <fields
-                    ref="sobject-fields"
-                    :sobject-name="sobjectName"
-                    :sobject-fields="sobjectFields"
-                    :selected-fields="selectedFields"
-                    @selectFieldReference="onSelectFieldReference"
-                    @insertField="onInsertField"
-                    @insertAllFields="onInsertAllFields"
-                    @clearAllFields="onClearAllSObjectFields"
-                  >
-                  </fields>
-                </div>
-              </b-tab>
-
-              <!--  CHILD RELATIONSHIP FIELDS TAB -->
-              <b-tab
-                title="Child Relationships"
-                :disabled="
-                  !sobjectName ||
-                  !sobjectChildRelationships ||
-                  !sobjectChildRelationships.length
-                "
-              >
-                <div class="d-flex flex-column mt-1" style="height: 317px">
-                  <multiselect
-                    v-model="selectedSObjectChildRelationship"
-                    class="mb-1"
-                    :options="sobjectChildRelationships"
-                    label="relationshipName"
-                    track-by="field"
-                    searcheable
-                    :max-height="400"
-                    select-label=""
-                    deselect-label=""
-                    placeholder="Select Child Relationship"
-                    hide-selected
-                    @select="onSelectSObjectChildRelationship"
-                  >
-                    <template slot="singleLabel" slot-scope="{ option }">
-                      {{
-                        option.relationshipName + ' - ' + option.childSObject
-                      }}
-                    </template>
-                    <template slot="option" slot-scope="{ option }">
-                      {{
-                        option.relationshipName + ' - ' + option.childSObject
-                      }}
-                    </template>
-                    <span slot="noResult"
-                      >Could not find the Child Relationship</span
-                    >
-                  </multiselect>
-                  <fields
-                    ref="child-relationship-fields"
-                    :sobject-name="sobjectChildRelationshipName"
-                    :sobject-fields="sobjectChildRelationshipFields"
-                    :selected-fields="selectedFields"
-                    @selectFieldReference="onSelectFieldReference"
-                    @insertField="onInsertField"
-                    @insertAllFields="onInsertAllFields"
-                    @clearAllFields="onClearAllSObjectFields"
-                  >
-                  </fields>
-                </div>
-              </b-tab>
-
-              <template #tabs-end>
-                <div
-                  v-if="configuration.displayEditor"
-                  v-b-tooltip.hover
-                  v-shortkey="['ctrl', 'r']"
-                  class="clickable-icon fa fa-sync fa-xs my-auto ml-2"
-                  data-placement="top"
-                  title="Refresh Data"
-                  @click="onClickRefreshObjectsButton()"
-                  @shortkey="onClickRefreshObjectsButton()"
-                ></div>
-              </template>
-            </b-tabs>
-          </div>
-          <div class="col-6 col-xl-8 p-0">
-            <selected-fields
-              ref="selected-fields"
-              class="h-100"
-              :selected-fields="selectedFields"
-              @clearAllFields="onClickClearAllFields"
-              @insertField="onInsertField"
-              @selectField="onSelectFieldToEdit"
-              @soqlConfig="onChangeSoqlConfig"
-            >
-            </selected-fields>
-          </div>
-        </div>
-      </div>
-
-      <!-- QUERY EDITOR -->
-      <div
-        class="d-flex flex-column"
-        :class="isDataTableExpanded ? 'd-none' : null"
-      >
+          BUY PRO
+        </button>
+        <!-- ENVIRONMENTS -->
         <div
-          class="justify-content-between"
-          :class="isDataTableExpanded ? 'd-none' : 'd-flex'"
+          v-if="environments && environments.length"
+          :class="!isDataTableExpanded ? 'd-flex' : 'd-none'"
+          class="pb-2"
         >
-          <label class="my-auto">Enter or modify your Query below:</label>
-          <div class="d-flex mb-1">
-            <button
-              class="vscode-button btn btn-primary mr-1 mt-auto"
-              style="height: 30px"
-              :disabled="disableTextAreaActionButtons"
-              @click="onClickFormatQueryButton()"
-            >
-              Format
-            </button>
+          <multiselect
+            v-model="selectedEnvironment"
+            class="environment mb-1"
+            :options="environments"
+            label="username"
+            track-by="username"
+            searcheable
+            :max-height="400"
+            select-label=""
+            deselect-label=""
+            placeholder="Select Environment"
+            hide-selected
+            @select="onSelectEnvironment"
+          >
+            <template slot="singleLabel" slot-scope="{ option }">
+              {{ option.username + (option.alias ? ' - ' + option.alias : '') }}
+            </template>
+            <template slot="option" slot-scope="{ option }">
+              {{ option.username + (option.alias ? ' - ' + option.alias : '') }}
+            </template>
+            <span slot="noResult">Could not find Environment</span>
+          </multiselect>
+          <i
+            v-b-tooltip.hover
+            v-shortkey="['ctrl', 'shift', 'e']"
+            class="clickable-icon fa fa-sync fa-xs my-auto ml-2"
+            data-placement="top"
+            title="Refresh Environments"
+            @click="onClickRefreshEnvironmentsButton()"
+            @shortkey="onClickRefreshEnvironmentsButton()"
+          ></i>
+        </div>
 
-            <div>
-              <label for="api-version-input">API</label>
-              <select
-                id="api-version-input"
-                v-model="apiVersion"
-                class="form-control"
-                style="width: 70px"
-                @change="onSelectApiVersion"
-              >
-                <option
-                  v-for="(apiVersion, index) in apiVersions"
-                  :key="index"
-                  :value="'v' + apiVersion"
+        <!-- QUERY BUILDER -->
+        <div
+          :class="
+            showQueryBuilder && !isDataTableExpanded ? 'd-block' : 'd-none'
+          "
+          style="height: 395px"
+        >
+          <div class="row h-100 m-0">
+            <div class="col-6 col-xl-4 pl-0 pr-1">
+              <b-tabs v-model="fieldsSourceTabIndex" no-fade>
+                <!--  SOBJECT FIELDS TAB -->
+                <b-tab title="Objects" active>
+                  <div class="d-flex flex-column mt-1" style="height: 317px">
+                    <multiselect
+                      v-model="selectedSObject"
+                      class="mb-1"
+                      :options="sobjects"
+                      label="name"
+                      track-by="name"
+                      searcheable
+                      :max-height="400"
+                      select-label=""
+                      deselect-label=""
+                      placeholder="Select Object"
+                      hide-selected
+                      @select="onSelectSObject"
+                    >
+                      <template slot="singleLabel" slot-scope="{ option }">
+                        {{ option.name + ' - ' + option.label }}
+                      </template>
+                      <template slot="option" slot-scope="{ option }">
+                        {{ option.name + ' - ' + option.label }}
+                      </template>
+                      <span slot="noResult">Could not find SObject</span>
+                    </multiselect>
+                    <fields
+                      :ref="'sobject-fields' + name"
+                      :sobject-name="sobjectName"
+                      @selectFieldReference="onSelectFieldReference"
+                      @insertField="onInsertField"
+                      @insertAllFields="onInsertAllFields"
+                      @clearAllFields="onClearAllSObjectFields"
+                    >
+                    </fields>
+                  </div>
+                </b-tab>
+
+                <!--  CHILD RELATIONSHIP FIELDS TAB -->
+                <b-tab
+                  title="Child Relationships"
+                  :disabled="
+                    !sobjectName ||
+                    !sobjectChildRelationships ||
+                    !sobjectChildRelationships.length
+                  "
                 >
-                  {{ apiVersion }}
-                </option>
-              </select>
+                  <div class="d-flex flex-column mt-1" style="height: 317px">
+                    <multiselect
+                      v-model="selectedSObjectChildRelationship"
+                      class="mb-1"
+                      :options="sobjectChildRelationships"
+                      label="relationshipName"
+                      track-by="relationshipName"
+                      searcheable
+                      :max-height="400"
+                      select-label=""
+                      deselect-label=""
+                      placeholder="Select Child Relationship"
+                      hide-selected
+                      @select="onSelectSObjectChildRelationship"
+                    >
+                      <template slot="singleLabel" slot-scope="{ option }">
+                        {{
+                          option.relationshipName + ' - ' + option.childSObject
+                        }}
+                      </template>
+                      <template slot="option" slot-scope="{ option }">
+                        {{
+                          option.relationshipName + ' - ' + option.childSObject
+                        }}
+                      </template>
+                      <span slot="noResult"
+                        >Could not find the Child Relationship</span
+                      >
+                    </multiselect>
+                    <fields
+                      :ref="'child-relationship-fields' + name"
+                      :sobject-name="sobjectChildRelationshipName"
+                      @selectFieldReference="onSelectFieldReference"
+                      @insertField="onInsertField"
+                      @insertAllFields="onInsertAllFields"
+                      @clearAllFields="onClearAllSObjectFields"
+                    >
+                    </fields>
+                  </div>
+                </b-tab>
+
+                <template #tabs-end>
+                  <i
+                    v-if="configuration.displayQueryBuilder"
+                    v-b-tooltip.hover
+                    v-shortkey="['ctrl', 'shift', 'o']"
+                    class="clickable-icon fa fa-sync fa-xs my-auto ml-2"
+                    data-placement="top"
+                    title="Refresh SObjects"
+                    @click="onClickRefreshObjectsButton()"
+                    @shortkey="onClickRefreshObjectsButton()"
+                  ></i>
+                </template>
+              </b-tabs>
+            </div>
+            <div class="col-6 col-xl-8 p-0">
+              <selected-fields
+                ref="selected-fields"
+                class="h-100"
+                :soql="soql"
+                @clearAllFields="onClickClearAllFields"
+                @insertField="onInsertField"
+                @deleteField="onRightClickToDeleteField"
+                @selectField="onSelectFieldToEdit"
+                @soqlConfig="onChangeSoqlConfig"
+              >
+              </selected-fields>
             </div>
           </div>
         </div>
-        <query-text-editor
-          v-model="soqlText"
-          :class="isDataTableExpanded ? 'd-none' : 'd-block'"
-          style="height: 396px"
-        ></query-text-editor>
-        <div class="d-flex justify-content-between mt-1">
-          <div :class="isDataTableExpanded ? 'd-none' : 'd-block'">
-            <button
-              v-shortkey="isExecutingQuery ? ['ctrl', 'c'] : ['ctrl', 'r']"
-              class="vscode-button btn btn-primary"
-              :disabled="
-                isExecutingQueryPlan ||
-                isUpdatingRecords ||
-                isExportingData ||
-                !soqlText
-              "
-              @shortkey="
-                isExecutingQuery
-                  ? onClickCancelRequest()
-                  : onClickExecuteQueryButton()
-              "
-              @click="
-                isExecutingQuery
-                  ? onClickCancelRequest()
-                  : onClickExecuteQueryButton()
-              "
-            >
-              {{ isExecutingQuery ? 'Cancel' : 'Execute' }}
-              <i v-if="isExecutingQuery" class="fa fa-circle-o-notch fa-spin" />
-            </button>
-            <button
-              :disabled="
-                isExecutingQuery ||
-                isUpdatingRecords ||
-                isExportingData ||
-                !soqlText
-              "
-              class="vscode-button btn btn-primary"
-              @click="
-                isExecutingQueryPlan
-                  ? onClickCancelRequest()
-                  : onClickQueryPlanButton()
-              "
-            >
-              {{ isExecutingQueryPlan ? 'Cancel' : 'Query Plan' }}
-              <i
-                v-if="isExecutingQueryPlan"
-                class="fa fa-circle-o-notch fa-spin"
-              />
-            </button>
-            <button
-              v-if="isLicenseValid()"
-              :disabled="disableTextAreaActionButtons"
-              class="vscode-button btn btn-primary"
-              @click="setEditorSOQL()"
-            >
-              {{ isUpdatingQuery ? 'Update Apex' : 'Add to Apex' }}
-            </button>
+
+        <!-- QUERY EDITOR -->
+        <div v-show="!isDataTableExpanded" class="d-flex flex-column">
+          <div
+            class="justify-content-between"
+            :class="isDataTableExpanded ? 'd-none' : 'd-flex'"
+          >
+            <label class="my-auto">Enter or modify your query below:</label>
+            <div class="d-flex mb-1">
+              <button
+                class="vscode-button btn btn-primary mr-1 mt-auto"
+                style="height: 30px"
+                :disabled="disableTextAreaActionButtons"
+                @click="onClickFormatQueryButton()"
+              >
+                Format
+              </button>
+              <button
+                v-clipboard:copy="soqlText"
+                v-clipboard:success="onCopySoqlText"
+                v-clipboard:error="onCopySoqlTextError"
+                class="vscode-button btn btn-primary mr-1 mt-auto"
+                style="height: 30px"
+                :disabled="disableTextAreaActionButtons"
+              >
+                Copy
+              </button>
+
+              <div>
+                <label for="api-version-input">API</label>
+                <select
+                  id="api-version-input"
+                  v-model="apiVersion"
+                  class="form-control"
+                  @change="onSelectApiVersion"
+                >
+                  <option
+                    v-for="(apiVersion, index) in apiVersions"
+                    :key="index"
+                    :value="'v' + apiVersion"
+                  >
+                    {{ apiVersion }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <query-text-editor
+            v-if="!isLoadingSObjects"
+            v-show="!isDataTableExpanded"
+            v-model="soqlText"
+            :is-active="isActive"
+            :is-loading-data="isLoadingData"
+          ></query-text-editor>
+          <div class="d-flex justify-content-between mt-1">
+            <div v-show="!isDataTableExpanded">
+              <button
+                v-shortkey="['ctrl', 'shift', 'q']"
+                class="vscode-button btn btn-primary"
+                :disabled="
+                  isExecutingQueryPlan ||
+                  isUpdatingRecords ||
+                  isExportingData ||
+                  !soqlText
+                "
+                @shortkey="
+                  isExecutingQuery
+                    ? onClickCancelRequest()
+                    : onClickExecuteQueryButton()
+                "
+                @click="
+                  isExecutingQuery
+                    ? onClickCancelRequest()
+                    : onClickExecuteQueryButton()
+                "
+              >
+                {{ isExecutingQuery ? 'Cancel' : 'Execute' }}
+                <i
+                  v-if="isExecutingQuery"
+                  class="fa fa-circle-o-notch fa-spin"
+                />
+              </button>
+              <button
+                :disabled="
+                  isExecutingQuery ||
+                  isUpdatingRecords ||
+                  isExportingData ||
+                  !soqlText
+                "
+                class="vscode-button btn btn-primary"
+                @click="
+                  isExecutingQueryPlan
+                    ? onClickCancelRequest()
+                    : onClickQueryPlanButton()
+                "
+              >
+                {{ isExecutingQueryPlan ? 'Cancel' : 'Query Plan' }}
+                <i
+                  v-if="isExecutingQueryPlan"
+                  class="fa fa-circle-o-notch fa-spin"
+                />
+              </button>
+              <button
+                v-if="isLicenseValid()"
+                :disabled="disableTextAreaActionButtons"
+                class="vscode-button btn btn-primary"
+                @click="setApexClassWithQuery()"
+              >
+                {{ isUpdatingQuery ? 'Update Apex' : 'Add to Apex' }}
+              </button>
+            </div>
           </div>
         </div>
+
+        <!-- SOQL PLAN -->
+        <soql-plan
+          :ref="'query-plan' + name"
+          :soql-plan="soqlPlan"
+          class="mt-2"
+        ></soql-plan>
+
+        <!-- QUERY RESULTS -->
+        <query-results
+          v-show="!soqlPlan || !soqlPlan.length"
+          :ref="'query-results' + name"
+          class="query-results flex-grow-1 mt-2"
+          :value="soqlResult"
+          :username="selectedUsername"
+          :query-errors="errors"
+          :show-query-results="showQueryResults"
+          :query="soqlText"
+          :api-version="apiVersion"
+          :editor-name="name"
+          :sobject-name="sobjectName"
+          @expandDataTable="onExpandDataTable"
+          @refreshData="onClickExecuteQueryButton"
+        ></query-results>
       </div>
 
-      <!-- SOQL PLAN -->
-      <soql-plan :ref="'query-plan' + name" :soql-plan="soqlPlan"></soql-plan>
+      <!-- RELATIONSHIP SELECTOR -->
+      <b-modal
+        :id="relationshipSelectorModalId"
+        :title="`${selectedReference}:${selectedReferenceName}`"
+        size="xl"
+        centered
+        cancel-disabled
+      >
+        <relationship-selector
+          ref="relationship-selector"
+          :username="selectedUsername"
+          :sobject-name="focusedReference"
+          :reference-name="selectedReference"
+          :reference-value="selectedReferenceName"
+          :selected-fields="selectedFields"
+          @removeField="onRemoveRelationshipField"
+          @insertField="onInsertRelationshipField"
+          @insertAllFields="onInsertAllRelationshipFields"
+          @clearAllFields="onClearAllRelationshipFields"
+        />
+        <template #modal-header="{ close }">
+          <div
+            class="d-flex w-100 justify-content-between"
+            style="color: var(--vscode-input-foreground)"
+          >
+            <span>{{ selectedReference + ': ' + selectedReferenceName }}</span>
+            <i class="fa fa-close fa-lg" @click="close()"></i>
+          </div>
+        </template>
+        <template #modal-footer="{ close }">
+          <button
+            type="button"
+            class="vscode-button btn btn-md"
+            @click="close()"
+          >
+            Close
+          </button>
+        </template>
+      </b-modal>
 
-      <!-- QUERY RESULTS -->
-      <query-results
-        :ref="'query-results' + name"
-        class="flex-grow-1"
-        :value="soqlResult"
-        :queryErrors="errors"
-        :showQueryResults="showQueryResults"
-        :query="soqlText"
-        :apiVersion="apiVersion"
-        :editor-name="name"
-        :sobject-name="sobjectName"
-        @expandDataTable="onExpandDataTable"
-        @refreshData="onClickExecuteQueryButton"
-      ></query-results>
-
+      <field-form
+        v-if="selectedField"
+        ref="fieldForm"
+        v-model="selectedField"
+        :soql="soql"
+        @change="onSelectedFieldChange"
+        @deleteField="onDeleteSelectedField"
+        @close="onCloseFieldForm"
+      >
+      </field-form>
     </div>
-
-    <!-- RELATIONSHIP SELECTOR -->
-    <b-modal
-      :id="relationshipSelectorModalId"
-      :title="`${selectedReference}:${selectedReferenceName}`"
-      size="xl"
-      centered
-      cancel-disabled
-    >
-      <relationship-selector
-        ref="relationship-selector"
-        :sobject-name="focusedReference"
-        :reference-name="selectedReference"
-        :reference-value="selectedReferenceName"
-        :selected-fields="selectedFields"
-        @removeField="onRemoveRelationshipField"
-        @insertField="onInsertRelationshipField"
-        @insertAllFields="onInsertAllRelationshipFields"
-        @clearAllFields="onClearAllRelationshipFields"
-      />
-      <template #modal-header="{ close }">
-        <div
-          class="d-flex w-100 justify-content-between"
-          style="color: var(--vscode-input-foreground)"
-        >
-          <span>{{ selectedReference + ': ' + selectedReferenceName }}</span>
-          <i class="fa fa-close fa-lg" @click="close()"></i>
-        </div>
-      </template>
-      <template #modal-footer="{ close }">
-        <button type="button" class="vscode-button btn btn-md" @click="close()">
-          Close
-        </button>
-      </template>
-    </b-modal>
-
-    <field-form
-      v-if="selectedField"
-      ref="fieldForm"
-      v-model="selectedField"
-      :soql="soql"
-      @change="onSelectedFieldChange"
-      @deleteField="onDeleteSelectedField"
-      @close="onCloseFieldForm"
-    >
-    </field-form>
   </div>
 </template>
 
@@ -338,11 +377,11 @@ import SelectedFields from '@/components/selected-fields.vue'
 import QueryTextEditor from '@/components/query-text-editor.vue'
 import QueryResults from '@/components/query-results.vue'
 import SoqlPlan from '@/components/soql-plan.vue'
+import Loading from '@/components/loading.vue'
 
 import { decode } from 'html-entities'
 import sqlFormatter from '@allanoricil/sql-formatter'
 import { parseQuery } from 'soql-parser-js'
-import { removeKeys } from '~/assets/js/utils/objectUtils.js'
 import showToastMessage from '~/mixins/show-toast-message'
 import { formatDateTime } from '~/utilities/soql-formatter-fix-methods'
 
@@ -356,16 +395,32 @@ export default {
     QueryTextEditor,
     QueryResults,
     SoqlPlan,
+    Loading,
   },
   mixins: [showToastMessage],
   props: {
     name: {
       type: String,
-      default: null,
       required: true,
+      default: 'editor-0',
+    },
+    defaultusername: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isLoadingEnvironments: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
-  data() {
+  data: () => {
     return {
       soqlText: '',
       selectedSObject: null,
@@ -380,25 +435,34 @@ export default {
       soql: {
         sobjects: {},
       },
-      soqlResult: null,
+      soqlResult: [],
       soqlPlan: [],
       errors: [],
+      editingSOQL: null,
       selectedReference: null,
       selectedReferenceName: null,
       sobjectChildRelationships: [],
       sobjectFields: [],
       sobjectChildRelationshipFields: [],
-      showForm: true,
+      showQueryBuilder: true,
       isExecutingQuery: false,
       isExecutingQueryPlan: false,
       isDataTableExpanded: false,
       showQueryResults: false,
+      isLoadingSObjects: true,
     }
   },
-  beforeMount() {
+  mounted() {
+    this.isLoadingSObjects = !(
+      this.defaultusername?.sobjects &&
+      Object.keys(this.defaultusername.sobjects)?.length
+    )
+    if (this.defaultusername) this.selectedEnvironment = this.defaultusername
+
     window.addEventListener('keyup', (event) => {
       if (event.ctrlKey && event.shiftKey && event.key === 'H') {
-        this.showForm = this.configuration.displayEditor && !this.showForm
+        this.showQueryBuilder =
+          this.configuration.displayQueryBuilder && !this.showQueryBuilder
         event.preventDefault()
       }
     })
@@ -410,25 +474,20 @@ export default {
       getSObjectChildRelationships: 'salesforce/getSObjectChildRelationships',
       isLicenseValid: 'user/isLicenseValid',
       getConnectedEnvironments: 'salesforce/getConnectedEnvironments',
-      getActiveEditorUsername: 'salesforce/getActiveEditorUsername',
-      getActiveEditor: 'salesforce/getActiveEditor',
     }),
     ...mapState({
       configuration: (state) => state.user.configuration,
-      editors: (state) => state.salesforce.editors,
       apiVersions: (state) => state.salesforce.apiVersions,
     }),
-    sobjects(){
-      return this.selectedEnvironment?.username ? this.getQueryableSObjects({ username: this.selectedEnvironment.username }) : []
+    sobjects() {
+      return this.selectedEnvironment?.username
+        ? this.getQueryableSObjects({
+            username: this.selectedEnvironment.username,
+          })
+        : []
     },
     environments() {
       return this.getConnectedEnvironments()
-    },
-    username() {
-      return this.getActiveEditorUsername()
-    },
-    activeEditor() {
-      return this.getActiveEditor()
     },
     selectedFields() {
       const selectedFields = {}
@@ -436,11 +495,6 @@ export default {
         selectedFields[sobjectName] = Object.values(sobject.fields) || []
       }
       return selectedFields
-    },
-    soqlResultFields() {
-      return this.soqlResult && this.soqlResult[0]
-        ? Object.keys(this.soqlResult[0])
-        : []
     },
     isExportingData() {
       return this.$refs['query-results']
@@ -472,17 +526,18 @@ export default {
         ? this.sobjectName
         : this.sobjectChildRelationshipName
     },
+    selectedUsername() {
+      return this.selectedEnvironment ? this.selectedEnvironment.username : null
+    },
+    isLoadingData() {
+      return this.isLoadingSObjects || this.isLoadingEnvironments
+    },
   },
   sockets: {
     editingsoql(data) {
-      console.log(data);
-      if(this.name === this.activeEditor.name){
-        this.soql = {
-          sobjects: {},
-        }
-        this.selectedSObject = null
-        this.selectedSObjectChildRelationship = null
-        if (data?.soql) {
+      if (this.isActive && this.isLicenseValid()) {
+        this.editingSOQL = data
+        if (data?.soql && this.configuration.setQueryOnClick) {
           this.soqlText = data.soql
             .replaceAll(/\[/g, '')
             .replaceAll(/\]/g, '')
@@ -490,120 +545,30 @@ export default {
             .replace(/\s+$/, '')
           if (this.configuration.format.automatically)
             this.soqlText = this._formatSOQL(this.soqlText)
-          this.onClickExecuteQueryButton()
+
+          if (this.configuration.queryOnClick) {
+            this.soql = {
+              sobjects: {},
+            }
+            this.selectedSObject = null
+            this.selectedSObjectChildRelationship = null
+            this.sobjectFields = []
+            this.sobjectChildRelationshipFields = []
+            this.onClickExecuteQueryButton()
+          }
         }
       }
     },
   },
   watch: {
-    username(newUsername){
-      this.selectedEnvironment = this.environments.find(env => env.username === newUsername);
-    }
-  },
-  methods: {
-    ...mapActions({
-      fetchEnvironmentDetails: 'salesforce/fetchEnvironmentDetails',
-      fetchSObjectFields: 'salesforce/fetchSObjectFields',
-      fetchRecords: 'salesforce/fetchRecords',
-      fetchSObjects: 'salesforce/fetchSObjects',
-      cancelRequest: 'salesforce/cancelRequest',
-      deleteRecord: 'salesforce/deleteRecord',
-      updateRecords: 'salesforce/updateRecords',
-      fetchSOQLPlan: 'salesforce/fetchSOQLPlan',
-    }),
-    ...mapMutations({
-      setApiVersion: 'salesforce/setApiVersion',
-      setEditorLoadingState: 'salesforce/setEditorLoadingState',
-      clearEnvironment: 'salesforce/clearEnvironment',
-    }),
-    onSelectApiVersion(event) {
-      this.apiVersion = event.target.value
-      this.setApiVersion(this.apiVersion)
+    defaultusername(defaultusername) {
+      if (this.isActive) this.selectedEnvironment = defaultusername
     },
-    onSelectSObject(sobject) {
-      if(sobject){
-        this.soql = {
-          sobjects: {
-            [sobject.name]: {
-              fields: {},
-              modifiers: [],
-              functions: [],
-              main: true,
-              limit: this.limit,
-              offset: this.offset,
-            },
-          },
-        }
-        this.soqlResult = null
-        this.sobjectName = sobject.name
-        this.selectedSObjectChildRelationship = null
-        this.sobjectChildRelationships = []
-        this.sobjectChildRelationshipFields = []
-        this.sobjectFields = [
-          ...this.getSObjectFields({
-            sobjectName: this.sobjectName,
-            username: this.username,
-          }),
-        ]
-        this.sobjectChildRelationships = this.getSObjectChildRelationships({
-          sobjectName: this.sobjectName,
-          username: this.username,
-        })
-        if (!this.sobjectFields.length) {
-          this.fetchSObjectFields({
-            sobjectName: this.sobjectName,
-            apiVersion: this.apiVersion,
-            username: this.username,
-          })
-            .then(() => {
-              this.sobjectFields = this.getSObjectFields({
-                sobjectName: this.sobjectName,
-                username: this.username,
-              })
-
-              this.sobjectChildRelationships = this.getSObjectChildRelationships({
-                sobjectName: this.sobjectName,
-                username: this.username,
-              })
-            })
-            .catch(() => {
-              this.showToastMessage('Could not fetch sobject fields')
-            })
-        }
-      }else{
-        this.sobjectFields = []
-      }
-    },
-    onSelectSObjectChildRelationship({ childSObject, relationshipName }) {
-      this.sobjectChildRelationshipName = relationshipName
-      if (childSObject) {
-        this.sobjectChildRelationshipFields = [
-          ...this.getSObjectFields({
-            sobjectName: childSObject,
-            username: this.username,
-          }),
-        ]
-        if (!this.sobjectChildRelationshipFields.length) {
-          this.fetchSObjectFields({
-            sobjectName: childSObject,
-            apiVersion: this.apiVersion,
-            username: this.username,
-          }).then(() => {
-            this.sobjectChildRelationshipFields = [
-              ...this.getSObjectFields({
-                sobjectName: childSObject,
-                username: this.username,
-              }),
-            ]
-          })
-        }
-      }
-    },
-    onClickRefreshObjectsButton() {
+    selectedEnvironment(selectedEnvironment) {
       this.soql = {
         sobjects: {},
       }
-      this.soqlText = null
+      this.soqlText = ''
       this.selectedSObject = null
       this.selectedSObjectChildRelationship = null
       this.selectedField = null
@@ -612,44 +577,236 @@ export default {
       this.sobjectChildRelationshipName = null
       this.parsedSOQL = null
       this.editingSOQL = null
-      this.soqlResult = null
+      this.soqlResult = []
       this.soqlPlan = []
       this.errors = []
       this.selectedReference = null
       this.selectedReferenceName = null
       this.sobjectFields = []
       this.sobjectChildRelationshipFields = []
-      this.isExecutingQuery = false
-      this.isExecutingQueryPlan = false
-      this.clearEnvironment(this.username)
-      this.setEditorLoadingState({ editorName: this.name, isLoading: true })
-      this.fetchSObjects({
-        apiVersion: this.apiVersion,
-        username: this.username,
-      }).then(() => {
-        this.setEditorLoadingState({ editorName: this.name, isLoading: false })
-      })
+      this.$refs['sobject-fields' + this.name].clearAvailableFieldsList()
+      this.$refs[
+        'child-relationship-fields' + this.name
+      ].clearAvailableFieldsList()
+      const fetchSObjects = !(
+        selectedEnvironment?.sobjects &&
+        Object.keys(selectedEnvironment.sobjects)?.length
+      )
+
+      if (selectedEnvironment.username) {
+        if (fetchSObjects) {
+          this.isLoadingSObjects = true
+          this.fetchSObjects({
+            apiVersion: this.apiVersion,
+            username: selectedEnvironment.username,
+          })
+            .catch(() => {
+              this.showToastMessage('Could not fetch SObjects')
+            })
+            .finally(() => (this.isLoadingSObjects = false))
+        } else {
+          this.isLoadingSObjects = false
+        }
+      }
     },
-    onClickExecuteQueryButton() {
-      this.errors = []
+    sobjectFields: {
+      deep: true,
+      handler() {
+        this.$refs['sobject-fields' + this.name].setAvailableFieldList(
+          this.sobjectFields,
+          this.soql.sobjects[this.sobjectName]?.fields || {}
+        )
+      },
+    },
+    sobjectChildRelationshipFields: {
+      deep: true,
+      handler() {
+        this.$refs[
+          'child-relationship-fields' + this.name
+        ].setAvailableFieldList(
+          this.sobjectChildRelationshipFields,
+          this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
+        )
+      },
+    },
+  },
+  methods: {
+    ...mapActions({
+      fetchSObjectFields: 'salesforce/fetchSObjectFields',
+      fetchRecords: 'salesforce/fetchRecords',
+      fetchSObjects: 'salesforce/fetchSObjects',
+      cancelRequest: 'salesforce/cancelRequest',
+      fetchSOQLPlan: 'salesforce/fetchSOQLPlan',
+    }),
+    ...mapMutations({
+      setApiVersion: 'salesforce/setApiVersion',
+      clearEnvironment: 'salesforce/clearEnvironment',
+    }),
+    onSelectApiVersion(event) {
+      this.apiVersion = event.target.value
+      this.setApiVersion(this.apiVersion)
+    },
+    onSelectSObject(sobject) {
+      this.soql = {
+        sobjects: {
+          [sobject.name]: {
+            fields: {},
+            modifiers: [],
+            functions: [],
+            main: true,
+            limit: null,
+            offset: null,
+          },
+        },
+      }
+      this.soqlResult = []
+      this.soqlText = ''
+      this.sobjectName = sobject.name
+      this.selectedSObjectChildRelationship = null
+      this.sobjectChildRelationships = []
+      this.sobjectChildRelationshipFields = []
+      this.sobjectFields = this.getSObjectFields({
+        sobjectName: this.sobjectName,
+        username: this.selectedEnvironment.username,
+      })
+      this.sobjectChildRelationships = this.getSObjectChildRelationships({
+        sobjectName: this.sobjectName,
+        username: this.selectedEnvironment.username,
+      })
+      if (!this.sobjectFields.length) {
+        this.fetchSObjectFields({
+          sobjectName: this.sobjectName,
+          apiVersion: this.apiVersion,
+          username: this.selectedEnvironment.username,
+        })
+          .then(() => {
+            this.sobjectFields = this.getSObjectFields({
+              sobjectName: this.sobjectName,
+              username: this.selectedEnvironment.username,
+            })
+
+            this.sobjectChildRelationships = this.getSObjectChildRelationships({
+              sobjectName: this.sobjectName,
+              username: this.selectedEnvironment.username,
+            })
+          })
+          .catch(() => {
+            this.showToastMessage('Could not fetch sobject fields')
+          })
+      }
+    },
+    onSelectSObjectChildRelationship({ childSObject, relationshipName }) {
+      this.sobjectChildRelationshipFields = []
+      this.sobjectChildRelationshipName = relationshipName
+      if (childSObject) {
+        this.sobjectChildRelationshipFields = [
+          ...this.getSObjectFields({
+            sobjectName: childSObject,
+            username: this.selectedEnvironment.username,
+          }),
+        ]
+        if (!this.sobjectChildRelationshipFields.length) {
+          this.fetchSObjectFields({
+            sobjectName: childSObject,
+            apiVersion: this.apiVersion,
+            username: this.selectedEnvironment.username,
+          })
+            .then(() => {
+              this.sobjectChildRelationshipFields = [
+                ...this.getSObjectFields({
+                  sobjectName: childSObject,
+                  username: this.selectedEnvironment.username,
+                }),
+              ]
+            })
+            .catch(() => {
+              this.showToastMessage('Could not fetch sobject fields')
+            })
+        }
+      }
+    },
+    onClickRefreshObjectsButton() {
+      this.soql = {
+        sobjects: {},
+      }
+      this.soqlText = ''
+      this.selectedSObject = null
+      this.selectedSObjectChildRelationship = null
+      this.selectedField = null
+      this.fieldsSourceTabIndex = 0
+      this.sobjectName = null
+      this.sobjectChildRelationshipName = null
+      this.parsedSOQL = null
+      this.editingSOQL = null
       this.soqlResult = []
       this.soqlPlan = []
-      this.showQueryResults = false;
+      this.errors = []
+      this.selectedReference = null
+      this.selectedReferenceName = null
+      this.sobjectFields = []
+      this.sobjectChildRelationshipFields = []
+      this.$refs['sobject-fields' + this.name].clearAvailableFieldsList()
+      this.$refs[
+        'child-relationship-fields' + this.name
+      ].clearAvailableFieldsList()
+      this.isExecutingQuery = false
+      this.isExecutingQueryPlan = false
+      this.clearEnvironment(this.selectedEnvironment.username)
+      this.isLoadingSObjects = true
+      this.fetchSObjects({
+        apiVersion: this.apiVersion,
+        username: this.selectedEnvironment.username,
+      })
+        .catch(() => {
+          this.showToastMessage('Could not fetch SObjects')
+        })
+        .finally(() => (this.isLoadingSObjects = false))
+    },
+    onClickExecuteQueryButton() {
       if (!this.isExecutingQuery && this.soqlText) {
         this.isExecutingQuery = true
+        this.errors = []
+        this.soqlResult = []
+        this.soqlPlan = []
+        this.selectedSObjectChildRelationship = null
+        this.sobjectChildRelationships = []
+        this.sobjectChildRelationshipFields = []
+        this.showQueryResults = false
         try {
-          let soqlWithoutChildQueries = this.soqlText.replaceAll(/\s\s+|\n/g, ' ').replaceAll(/\(.*\)/g, '').replaceAll(/,/g, '')
-          let soqlTokens = soqlWithoutChildQueries.split(' ');
-          let fromIndex = soqlTokens.findIndex((token) => token.toLowerCase() === "from");
-          this.sobjectName = soqlTokens[fromIndex + 1]
+          const soqlWithoutChildQueries = this.soqlText
+            .replaceAll(/\s\s+|\n/g, ' ')
+            .replaceAll(/\(.*\)/g, '')
+            .replaceAll(/,/g, '')
+          const soqlTokens = soqlWithoutChildQueries.split(' ')
+          const fromIndex = soqlTokens.findIndex(
+            (token) => token.toLowerCase() === 'from'
+          )
+
+          if (this.sobjectName !== soqlTokens[fromIndex + 1]) {
+            this.sobjectName = soqlTokens[fromIndex + 1]
+
+            this.soql = {
+              sobjects: {
+                [this.sobjectName]: {
+                  fields: {},
+                  modifiers: [],
+                  functions: [],
+                  main: true,
+                  limit: null,
+                  offset: null,
+                },
+              },
+            }
+          }
+
           this.fetchRecords({
             soql: this.soqlText,
             sobjectName: this.sobjectName,
             apiVersion: this.apiVersion,
-            username: this.username,
+            username: this.selectedEnvironment.username,
           })
             .then((responses) => {
-              this.showQueryResults = true;
+              this.showQueryResults = true
               this.selectedSObject = this.sobjects.find(
                 (sobject) =>
                   sobject.name.toLowerCase() === this.sobjectName.toLowerCase()
@@ -674,6 +831,21 @@ export default {
                   message: decode(soqlResponse.result[0].message),
                 })
               }
+
+              this.sobjectFields = [
+                ...this.getSObjectFields({
+                  sobjectName: this.sobjectName,
+                  username: this.selectedEnvironment.username,
+                }),
+              ]
+
+              this.sobjectChildRelationships = this.getSObjectChildRelationships(
+                {
+                  sobjectName: this.sobjectName,
+                  username: this.selectedEnvironment.username,
+                }
+              )
+
               this.isExecutingQuery = false
               this.$nextTick(() => {
                 this.$refs['query-results' + this.name].$el.scrollIntoView({
@@ -684,7 +856,7 @@ export default {
               })
             })
             .catch((error) => {
-              this.showToastMessage('SOQL Query failed')
+              this.showToastMessage('Coul not execute Query')
               this.errors.push(error)
               this.isExecutingQuery = false
             })
@@ -702,14 +874,14 @@ export default {
     onClickQueryPlanButton() {
       this.isExecutingQueryPlan = true
       this.soqlPlan = []
-      this.soqlResult = []
+      this.soqlResult = null
       this.errors = []
       try {
         this.parsedSOQL = parseQuery(this.soqlText)
         this.fetchSOQLPlan({
           soql: this.soqlText,
           apiVersion: this.apiVersion,
-          username: this.username,
+          username: this.selectedEnvironment.username,
         })
           .then((response) => {
             if (response.data.plans) this.soqlPlan = response.data.plans
@@ -732,40 +904,29 @@ export default {
         this.showToastMessage('Query could not be parsed')
       }
     },
-    setEditorSOQL() {
+    setApexClassWithQuery() {
       this.$axios
         .post(`${process.env.SALESFORCE_SERVER}/vscode/editor`, {
-          editingSOQL: this._makeSOQL(true),
+          editingSOQL: Object.keys(this.soql.sobjects)?.length
+            ? this._makeSOQL(true)
+            : this.soqlText,
         })
         .then(() => {
-          this.showToastMessage('SOQL updated with success')
+          this.showToastMessage('Apex Class updated with success')
         })
         .catch(() => {
           this.showToastMessage(
-            'Could not update the SOQL in the Editor. Please, update it manually.'
+            'Could not update the Apex Class. Please, update it manually.'
           )
         })
     },
     onClickFormatQueryButton() {
-      this.soqlText = this._formatSOQL(this.soqlText);
+      this.soqlText = this._formatSOQL(this.soqlText)
     },
     onSelectFieldReference({ referenceName, reference }) {
       this.selectedReferenceName = referenceName
       this.selectedReference = reference
       this.$bvModal.show(this.relationshipSelectorModalId)
-    },
-    onClickClearAllFields() {
-      Object.keys(this.soql.sobjects).forEach((sobjectName) => {
-        delete this.soql.sobjects[sobjectName]
-      })
-      this.soql = { ...this.soql }
-      this.sobjectFields = [
-        ...this.getSObjectFields({
-          sobjectName: this.sobjectName,
-          username: this.username,
-        }),
-      ]
-      this.soqlText = this._makeSOQL();
     },
     _makeSOQL(addApexModifiers) {
       let soqlText = ''
@@ -783,72 +944,57 @@ export default {
           soqlText = mainQuery.soql
         } else {
           childRelationshipQueries.push(
-            this._buildSingleSOQL(sobjectName, value, addApexModifiers).soql
+            '(' +
+              this._buildSingleSOQL(sobjectName, value, addApexModifiers).soql +
+              ')'
           )
         }
       }
 
       if (childRelationshipQueries.length) {
-        const addFirstComma = soqlText
-          .slice(0, childRelationshipQueryPosition - 1)
-          .includes(',')
-
-        let childRelationshipQueriesText = ''
-        childRelationshipQueries.forEach((soql, index) => {
-          childRelationshipQueriesText +=
-            (index > 0 ? ', ' : '') + '(' + soql + ')'
-        })
-
         soqlText =
           soqlText.slice(0, childRelationshipQueryPosition - 1) +
-          (addFirstComma ? ', ' : '') +
-          childRelationshipQueriesText +
+          ', ' +
+          childRelationshipQueries.join(', ') +
           soqlText.slice(childRelationshipQueryPosition)
       }
 
-      if (soqlText) {
-        soqlText = this._formatSOQL(soqlText)
-      }
+      soqlText = this._formatSOQL(soqlText)
+
       return soqlText
     },
     _buildSingleSOQL(soqlObjectName, soqlObjectConfig, addApexModifiers) {
-      const fields = Object.keys(soqlObjectConfig.fields).reduce(
+      const fieldKeys = Object.keys(soqlObjectConfig.fields)
+
+      const fields = fieldKeys.reduce(
         (previous, current, index) =>
           previous + (index > 0 ? ', ' : '') + current,
         ''
       )
-      const filters = Object.keys(soqlObjectConfig.fields).reduce(
-        (previous, current, index) => {
-          const field = soqlObjectConfig.fields[current]
-          return (
-            previous +
-            field.filters.reduce((previous, current, index) => {
-              return (
-                previous +
-                ' ' +
-                current.computed +
-                ' ' +
-                (current.logic ? ' ' + current.logic : '')
-              )
-            }, '')
-          )
-        },
-        ''
-      )
-      const orderBy = Object.keys(soqlObjectConfig.fields).reduce(
-        (previous, current, index) => {
-          const field = soqlObjectConfig.fields[current]
-          return (
-            previous +
-            (previous && field.orderBy.order ? ', ' : '') +
-            (field.orderBy.order
-              ? field.name + ' ' + field.orderBy.order
-              : '') +
-            (field.orderBy.nullsOrder ? ' ' + field.orderBy.nullsOrder : '')
-          )
-        },
-        ''
-      )
+      const filters = fieldKeys.reduce((previous, current, index) => {
+        const field = soqlObjectConfig.fields[current]
+        return (
+          previous +
+          field.filters.reduce((previous, current, index) => {
+            return (
+              previous +
+              ' ' +
+              current.computed +
+              ' ' +
+              (current.logic ? ' ' + current.logic : '')
+            )
+          }, '')
+        )
+      }, '')
+      const orderBy = fieldKeys.reduce((previous, current, index) => {
+        const field = soqlObjectConfig.fields[current]
+        return (
+          previous +
+          (previous && field.orderBy.order ? ', ' : '') +
+          (field.orderBy.order ? field.name + ' ' + field.orderBy.order : '') +
+          (field.orderBy.nullsOrder ? ' ' + field.orderBy.nullsOrder : '')
+        )
+      }, '')
 
       const apexModifiers =
         (soqlObjectConfig.allRows ? '  ALL ROWS ' : '') +
@@ -878,11 +1024,11 @@ export default {
         offset: soqlObjectConfig.offset,
       }
     },
-    _formatSOQL(soqlText){
-      soqlText = sqlFormatter.format(soqlText, {indent: '    '})
+    _formatSOQL(soqlText) {
+      soqlText = sqlFormatter.format(soqlText, { indent: '    ' })
       soqlText = formatDateTime(soqlText)
-      soqlText = soqlText.replace(/\u200B|\u200b/, '')
-      return soqlText;
+      soqlText = soqlText.replace(/\u200B|\u200B/, '')
+      return soqlText
     },
     goToSignUp() {
       this.$router.push({ name: 'SignUp' })
@@ -899,7 +1045,7 @@ export default {
     onSelectedFieldChange(newField) {
       this.soql.sobjects[newField.sobjectName].fields[newField.name] = newField
       this.soql = { ...this.soql }
-      this.soqlText = this._makeSOQL();
+      this.soqlText = this._makeSOQL()
     },
     onCloseFieldForm() {
       this.selectedField = null
@@ -907,7 +1053,7 @@ export default {
     onRemoveRelationshipField({ fieldName }) {
       delete this.soql.sobjects[this.focusedReference].fields[fieldName]
       this.soql = { ...this.soql }
-      this.soqlText = this._makeSOQL();
+      this.soqlText = this._makeSOQL()
     },
     addFields(fields) {
       if (fields && fields.length) {
@@ -937,7 +1083,17 @@ export default {
         })
 
         this.soql = { ...this.soql }
-        this.soqlText = this._makeSOQL();
+        this.$refs['sobject-fields' + this.name].setAvailableFieldList(
+          this.sobjectFields,
+          this.soql.sobjects[this.sobjectName]?.fields || {}
+        )
+        this.$refs[
+          'child-relationship-fields' + this.name
+        ].setAvailableFieldList(
+          this.sobjectChildRelationshipFields,
+          this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
+        )
+        this.soqlText = this._makeSOQL()
       }
     },
     onInsertField({ field }) {
@@ -952,10 +1108,39 @@ export default {
     onInsertAllFields({ fields }) {
       this.addFields(fields)
     },
+    onClickClearAllFields() {
+      Object.keys(this.soql.sobjects).forEach((sobjectName) => {
+        delete this.soql.sobjects[sobjectName]
+      })
+      this.soql = { ...this.soql }
+      this.sobjectFields = [
+        ...this.getSObjectFields({
+          sobjectName: this.sobjectName,
+          username: this.selectedEnvironment.username,
+        }),
+      ]
+      this.soqlText = this._makeSOQL()
+      this.$refs['sobject-fields' + this.name].setAvailableFieldList(
+        this.sobjectFields,
+        this.soql.sobjects[this.sobjectName]?.fields || {}
+      )
+      this.$refs['child-relationship-fields' + this.name].setAvailableFieldList(
+        this.sobjectChildRelationshipFields,
+        this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
+      )
+    },
     onClearAllSObjectFields({ sobjectName }) {
       delete this.soql.sobjects[sobjectName]
       this.soql = { ...this.soql }
-      this.soqlText = this._makeSOQL();
+      this.soqlText = this._makeSOQL()
+      this.$refs['sobject-fields' + this.name].setAvailableFieldList(
+        this.sobjectFields,
+        this.soql.sobjects[this.sobjectName]?.fields || {}
+      )
+      this.$refs['child-relationship-fields' + this.name].setAvailableFieldList(
+        this.sobjectChildRelationshipFields,
+        this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
+      )
     },
     onClearAllRelationshipFields(parentRelationshipName) {
       Object.keys(this.soql.sobjects[this.focusedReference].fields).forEach(
@@ -966,36 +1151,44 @@ export default {
       )
 
       this.soql = { ...this.soql }
-      this.soqlText = this._makeSOQL();
+      this.soqlText = this._makeSOQL()
+      this.$refs['sobject-fields' + this.name].setAvailableFieldList(
+        this.sobjectFields,
+        this.soql.sobjects[this.sobjectName]?.fields || {}
+      )
+      this.$refs['child-relationship-fields' + this.name].setAvailableFieldList(
+        this.sobjectChildRelationshipFields,
+        this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
+      )
     },
-    onDeleteSelectedField() {
-      delete this.soql.sobjects[this.selectedField.sobjectName].fields[
-        this.selectedField.name
-      ]
+    deleteField(sobjectName, field){
+      delete this.soql.sobjects[sobjectName].fields[field.name]
       if (
-        !Object.keys(this.soql.sobjects[this.selectedField.sobjectName].fields)
+        !Object.keys(this.soql.sobjects[sobjectName].fields)
           .length
       ) {
-        delete this.soql.sobjects[this.selectedField.sobjectName]
+        delete this.soql.sobjects[sobjectName]
       }
       this.soql = { ...this.soql }
-      this.soqlText = this._makeSOQL();
+      this.soqlText = this._makeSOQL()
+      this.$refs['sobject-fields' + this.name].setAvailableFieldList(
+        this.sobjectFields,
+        this.soql.sobjects[this.sobjectName]?.fields || {}
+      )
+      this.$refs['child-relationship-fields' + this.name].setAvailableFieldList(
+        this.sobjectChildRelationshipFields,
+        this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
+      )
       this.$refs.fieldForm?.closeForm()
     },
+    onDeleteSelectedField() {
+      this.deleteField(this.selectedField.sobjectName, this.selectedField)
+    },
+    onRightClickToDeleteField({ sobjectName, field }){
+      this.deleteField(sobjectName, field)
+    },
     onSelectEnvironment(environment) {
-      if(environment){
-        this.selectedEnvironment = environment;
-        this.errors = []
-        this.selectedSObject = null
-        this.selectedSObjectChildRelationship = null
-        this.soqlPlan = []
-        this.soqlResult = []
-        this.soql = {
-          sobjects: {}
-        }
-        this.soqlText = ""
-        this.fetchEnvironmentDetails({ username: this.selectedEnvironment.username, editorName: this.name })
-      }
+      this.selectedEnvironment = environment
     },
     onChangeSoqlConfig({ soqlConfig, sobjectName }) {
       this.soql.sobjects[sobjectName] = {
@@ -1003,7 +1196,7 @@ export default {
         ...soqlConfig,
       }
       this.soql = { ...this.soql }
-      this.soqlText = this._makeSOQL();
+      this.soqlText = this._makeSOQL()
     },
     onExpandDataTable() {
       this.isDataTableExpanded = !this.isDataTableExpanded
@@ -1015,7 +1208,56 @@ export default {
         })
       })
     },
+    onClickRefreshEnvironmentsButton() {
+      this.$emit('reloadEnvironments')
+    },
+    onClickBuyProButton() {
+      this.showToastMessage('Opening the Product Description Page.')
+      this.$axios
+        .post(
+          `${process.env.SALESFORCE_SERVER}/vscode/page/open`,
+          {
+            page: 'https://salesforcequeryeditor.com/#/product-description',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/vnd.api+json',
+              Accept: 'application/vnd.api+json',
+            },
+          }
+        )
+        .catch(() => {
+          this.showToastMessage('Could not open the Product Description Page')
+        })
+    },
+    onCopySoqlText() {
+      this.showToastMessage('Query copied with success.')
+    },
+    onCopySoqlTextError() {
+      this.showToastMessage('Error while trying to copy the query.')
+    },
   },
+}
+
+function removeKeys(obj, keys) {
+  for (const prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      switch (typeof obj[prop]) {
+        case 'object':
+          if (keys.includes(prop)) {
+            delete obj[prop]
+          } else {
+            removeKeys(obj[prop], keys)
+          }
+          break
+        default:
+          if (keys.includes(prop)) {
+            delete obj[prop]
+          }
+          break
+      }
+    }
+  }
 }
 </script>
 
@@ -1042,16 +1284,6 @@ export default {
 
 .field-has-next:hover {
   color: var(--vscode-button-background) !important;
-}
-
-input,
-select {
-  width: 100% !important;
-  height: 30px;
-}
-
-label {
-  margin-bottom: 0.2rem;
 }
 
 /deep/ .nav-tabs {
@@ -1108,7 +1340,7 @@ label {
     inset 0 -2px 5px 1px #b17d10, inset 0 -1px 1px 3px rgba(250, 227, 133, 1);
 }
 
-.environment /deep/ .multiselect__tags{
+.environment /deep/ .multiselect__tags {
   padding-top: 0 !important;
   padding-left: 0 !important;
   border-top: 0 !important;
@@ -1119,7 +1351,7 @@ label {
 
 .environment /deep/ .multiselect__tags input,
 .environment /deep/ .multiselect__single,
-.environment /deep/ .multiselect__tags .multiselect__placeholder{
+.environment /deep/ .multiselect__tags .multiselect__placeholder {
   height: 29px;
   line-height: 29px;
   font-size: 18px !important;
@@ -1149,5 +1381,14 @@ label {
 
 /deep/ .nav-item a {
   padding: 5px 10px;
+}
+
+.query-results {
+  height: 900px;
+}
+
+select {
+  height: 30px;
+  width: 80px;
 }
 </style>

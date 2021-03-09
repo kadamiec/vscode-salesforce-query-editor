@@ -1,8 +1,8 @@
 // @ts-nocheck
 const routes = require('express').Router();
-const { licenseStorage, loginStorage } = require('../soql-editor');
-const { webview, editor, configuration } = require('../soql-editor');
+const { queryEditorWebview, fetchColorsWebview , editor, configuration, licenseStorage, loginStorage } = require('../soql-editor');
 const { fingerprint } = require('../utilities/fingerprint');
+const vscode = require('vscode');
 
 routes.get("/fingerprint", (req, res) => {
     try{
@@ -11,7 +11,7 @@ routes.get("/fingerprint", (req, res) => {
         })
     }catch(error){
         console.error(error);
-        res.status(500).send({
+        res.status(400).send({
             error: 'Could not create a determine the machine fingerprint'
         })
     }
@@ -22,8 +22,8 @@ routes.get("/configuration", (req, res) => {
 });
 
 routes.post("/activeEditor", (req, res) => {
-    if(webview && req.body.editorName){
-        webview.activeEditorName = req.body.editorName;
+    if(queryEditorWebview && req.body.editorName){
+        queryEditorWebview.activeEditorName = req.body.editorName;
         res.sendStatus(200);
     }else{
         res.status(400).send({
@@ -76,7 +76,7 @@ routes.get("/license", async (req, res) => {
 
 routes.post("/license", async (req, res) => {
     try{
-        await licenseStorage.writeFile('key.txt', JSON.stringify(req.body.key));
+        await licenseStorage.writeFile('key.txt', req.body.key);
         res.status(200).send({
             message: 'Key saved with Success.' 
         })
@@ -140,6 +140,30 @@ routes.post("/notification/:event", (req, res) => {
     }catch(error){
         console.error(error);
         res.sendStatus(400);
+    }
+})
+
+routes.get("/colors", (req, res) => {
+    try{
+        res.status(200).send({
+            colors: fetchColorsWebview._colors
+        })
+    }catch(error){
+        console.error(error);
+        res.status(400).send({
+            message: 'Could not retrieve colors.'
+        })
+    }
+})
+
+routes.post("/page/open", async(req, res) => {
+    try{
+        await vscode.env.openExternal(vscode.Uri.parse(req.body.page))
+    }catch(error){
+        console.error(error);
+        res.status(400).send({
+            message: 'Could not open page.'
+        })
     }
 })
 

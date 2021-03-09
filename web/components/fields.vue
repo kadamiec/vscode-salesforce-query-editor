@@ -43,14 +43,14 @@
                     : '')
                 }}
                 <span
-                  v-if="field.details.nillable"
+                  v-if="field.details.nillable && configuration.field.required"
                   v-b-tooltip.hover
                   class="fa fa-asterisk fa-xs"
                   data-placement="top"
                   title="Required"
                 ></span>
                 <span
-                  v-if="field.details.updateable"
+                  v-if="field.details.updateable && configuration.field.updateable"
                   v-b-tooltip.hover
                   class="fa fa-pen fa-xs"
                   data-placement="top"
@@ -73,7 +73,11 @@
       <button class="vscode-button btn" @click="onClickAddAllFields">
         Add All
       </button>
-      <button class="vscode-button btn" @click="onClickClearAllFields">
+      <button
+        class="vscode-button btn"
+        :disabled="disableClearAllButton"
+        @click="onClickClearAllFields"
+      >
         Clear All
       </button>
     </div>
@@ -89,44 +93,20 @@ export default {
       type: String,
       default: null,
     },
-    sobjectFields: {
-      type: Array,
-      default: () => [],
-    },
-    selectedFields: {
-      type: Object,
-      default: () => {},
-    },
   },
   data: () => {
     return {
       availableFields: [],
+      selectedFields: {},
       selectedReferenceName: null,
       selectedReference: null,
+      disableClearAllButton: null
     }
   },
   computed: {
     ...mapState({
       configuration: (state) => state.user.configuration,
-    }),
-    selectedFieldsList() {
-      return this.selectedFields[this.sobjectName]
-        ? Object.values(this.selectedFields[this.sobjectName])
-        : []
-    },
-  },
-  watch: {
-    sobjectFields(newFields) {
-      this.createAvailableFieldsList(newFields)
-    },
-    selectedFields() {
-      this.createAvailableFieldsList(this.sobjectFields)
-      this.availableFields.forEach((field) => {
-        field.numberOfSelectedFields = this.selectedFieldsList.filter(
-          (selectedField) => selectedField.name.split('.')[0] === field.name
-        ).length
-      })
-    },
+    })
   },
   methods: {
     onClickFieldReference(field) {
@@ -140,12 +120,11 @@ export default {
     removeField(fieldIndex) {
       this.$delete(this.availableFields, fieldIndex)
     },
-    createAvailableFieldsList(fields) {
+    _createAvailableFieldsList(fields) {
       this.availableFields = [...fields].reduce((previous, current) => {
-        const array = []
-        if (
-          !this.selectedFieldsList.find((field) => field.name === current.name)
-        ) {
+        let array = []
+
+        if (!this.selectedFields[current.name]) {
           array.push({
             label: current.label,
             name: current.name,
@@ -159,42 +138,52 @@ export default {
           array.push({
             name,
             reference: current.referenceTo[0],
-            numberOfSelectedFields:
-              this.selectedFieldsList.filter(
-                (field) => field.name.split('.')[0] === name
-              ).length || 0,
+            numberOfSelectedFields: 0
           })
         }
 
+        
         if (current.namePointing) {
           if (current.relationshipName) {
-            array.concat([
+            const polymorphicTypeFieldName = current.relationshipName + '.Type';
+            if(!this.selectedFields[polymorphicTypeFieldName])
+              array.push(
               {
-                name: current.relationshipName + '.Type',
+                name: polymorphicTypeFieldName,
                 type: 'String',
                 relationshipName: current.relationshipName,
-              },
-              {
-                name: current.relationshipName + '.Name',
+                details: current
+              })
+
+            const polymorphicNameFieldName = current.relationshipName + '.Name';
+            if(!this.selectedFields[polymorphicNameFieldName])
+              array.push({
+                name: polymorphicNameFieldName,
                 type: 'String',
                 relationshipName: current.relationshipName,
-              },
-            ])
+                details: current
+              })
           }
 
           if (current.referenceTo.includes('User')) {
-            array.concat([
-              {
-                name: current.relationshipName + '.FirstName',
+            const polymorphicFirstNameFieldName = current.relationshipName + '.FirstName';
+            if(!this.selectedFields[polymorphicFirstNameFieldName])
+              array.push(
+                {
+                  name: polymorphicFirstNameFieldName,
+                  type: 'String',
+                  relationshipName: current.relationshipName,
+                  details: current
+                })
+
+            const polymorphicLastNameFieldName = current.relationshipName + '.LastName';
+            if(!this.selectedFields[polymorphicLastNameFieldName])
+              array.push({
+                name: polymorphicLastNameFieldName,
                 type: 'String',
                 relationshipName: current.relationshipName,
-              },
-              {
-                name: current.relationshipName + '.LastName',
-                type: 'String',
-                relationshipName: current.relationshipName,
-              },
-            ])
+                details: current
+              })
           }
         }
 
@@ -212,6 +201,22 @@ export default {
     onClickClearAllFields() {
       this.$emit('clearAllFields', { sobjectName: this.sobjectName })
     },
+    setAvailableFieldList(fields, selectedFields){
+      this.selectedFields = selectedFields;
+      const selectedFieldNames = Object.keys(this.selectedFields);
+      this.disableClearAllButton = !selectedFieldNames.length;
+      if(fields.length){
+        this._createAvailableFieldsList(fields)
+        this.availableFields.forEach((field) => {
+          field.numberOfSelectedFields = selectedFieldNames.filter(
+            (selectedFieldName) => selectedFieldName.split('.')[0] === field.name
+          ).length
+        })
+      }
+    },
+    clearAvailableFieldsList(){
+      this.availableFields = [];
+    }
   },
 }
 </script>

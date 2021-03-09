@@ -10,7 +10,7 @@ const sfdxRoutes = require('./sfdx');
 const vscodeRoutes = require('./vscode');
 const salesforceRoutes = require('./salesforce');
 const dateFormat = require('dateformat');
-const { outputChannel } = require('../soql-editor');
+const { logsStorage, outputChannel } = require('../soql-editor/index');
 
 if(process.env.NODE_ENV !== 'production'){
     dotenv.config();
@@ -41,7 +41,7 @@ axios.interceptors.request.use(
 );
 
 
-const startServer = async(logsStoragePath, keygen) => {
+const startServer = async() => {
     const app = express();
     app.use(cors());
     app.use(bodyParser.json({ type: "application/vnd.api+json" }));
@@ -49,7 +49,7 @@ const startServer = async(logsStoragePath, keygen) => {
 
     var logsStream = rfs.createStream('server.log', {
         interval: '1d',
-        path: logsStoragePath,
+        path: logsStorage.path,
         maxSize: '10M'
     })
 
@@ -62,7 +62,6 @@ const startServer = async(logsStoragePath, keygen) => {
 
     const http = require('http').Server(app);
 
-    //if(keygen.isValid){
     const io = require('socket.io')(http, {
         serveClient: false,
         cors: {
@@ -73,7 +72,7 @@ const startServer = async(logsStoragePath, keygen) => {
         console.log('connected');
     });
     app.set('io', io);
-    //}
+    
     app.use((req, res, next) => {
         outputChannel.appendLine(`${dateFormat(new Date(), "yyyy-mm-dd h:MM:ss")} : [${req.method}] ${req.originalUrl}`);
         if(Object.keys(req.body) && Object.keys(req.body).length) outputChannel.appendLine(JSON.stringify(req.body));
@@ -88,6 +87,10 @@ const startServer = async(logsStoragePath, keygen) => {
         }
         next();
     });
+
+    app.get('/', (req, res) => {
+        res.sendStatus(200);
+    })
 
     app.use('/salesforce', salesforceRoutes);
     app.use('/vscode', vscodeRoutes);

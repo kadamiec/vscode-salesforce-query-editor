@@ -1,20 +1,22 @@
-import { convertArrayToObject } from '~/assets/js/utils/objectUtils.js'
-
 export default {
   getSObjectByName: (state) => ({ sobjectName, username }) => {
     return state.environments[username].sobjects[sobjectName.toLowerCase()]
   },
   getQueryableSObjects: (state) => ({ username }) => {
-    return state.environments && state.environments[username] && state.environments[username].sobjects ? Object.values(state.environments[username].sobjects)
-      .filter((object) => {
-        return object.queryable
-      })
-      .sort(function (a, b) {
-        return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-      })
-      .map((sobject) => {
-        return { label: sobject.label, name: sobject.name }
-      }) : []
+    return state.environments &&
+      state.environments[username] &&
+      state.environments[username].sobjects
+      ? Object.values(state.environments[username].sobjects)
+          .filter((object) => {
+            return object.queryable
+          })
+          .sort(function (a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+          })
+          .map((sobject) => {
+            return { label: sobject.label, name: sobject.name }
+          })
+      : []
   },
   getSObjectFields: (state) => ({ sobjectName, username }) => {
     return sobjectName &&
@@ -54,7 +56,7 @@ export default {
   },
   getSObjectFieldsMappedByName: (state) => ({ sobjectName, username }) => {
     return sobjectName &&
-      state.environments[username].sobjectsWithDetails[
+      state.environments[username]?.sobjectsWithDetails[
         sobjectName.toLowerCase()
       ]
       ? convertArrayToObject(
@@ -66,21 +68,29 @@ export default {
       : {}
   },
   getConnectedEnvironments: (state) => () => {
-    return Object.values(state.environments).filter(
-      (environment) => {
-        if(environment.isScratchOrg) return environment.isExpired === false && environment.status === 'Active'
-        else return environment.connectedStatus === 'Connected'
-      }
-    )
+    return Object.values(state.environments).filter((environment) => {
+      if (environment.isScratchOrg)
+        return (
+          environment.isExpired === false && environment.status === 'Active'
+        )
+      else return environment.connectedStatus === 'Connected'
+    })
   },
-  getActiveEditor: (state) => () => {
-    return Object.values(state.editors).find((editor) => editor.active)
+  getEnvironment: (state) => (username) => {
+    return state.environments[username]
   },
-  getActiveEditorUsername: (state) => () => {
-    const activeEditor = Object.values(state.editors).find(
-      (editor) => editor.active
-    )
-    if (activeEditor) return activeEditor.username
-    else return null
-  },
+  getSObjectKeyPrefix: (state) => ({ sobjectName, username }) => {
+    return state.environments[username]?.sobjects[sobjectName.toLowerCase()]?.keyPrefix;
+  }
+}
+
+
+function convertArrayToObject(array, key) {
+  const initialValue = {}
+  return array.reduce((obj, item) => {
+    return {
+      ...obj,
+      [item[key]]: item,
+    }
+  }, initialValue)
 }

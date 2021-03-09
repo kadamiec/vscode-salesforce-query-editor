@@ -1,8 +1,7 @@
 <template>
   <div class="d-flex flex-column">
-    <div class="d-flex justify-content-between mb-2" style="height: 30px">
-      <div class="mt-auto">
-
+    <div class="d-flex justify-content-between mb-1" style="height: 30px">
+      <div class="my-auto">
         <div v-if="queryErrors && queryErrors.length">
           <template v-for="(error, errorIndex) in queryErrors">
             <span :key="errorIndex">
@@ -10,26 +9,25 @@
             </span>
           </template>
         </div>
-
-        <div v-else-if="showQueryResults">
-          <i
-            v-if="soqlResult.length"
-            v-b-tooltip.hover
-            :title="isDataTableExpanded ? 'Show Form' : 'Expand Table'"
-            class="clickable-icon ml-auto fa fa-lg fa-expand-arrows-alt"
-            @click="onClickExpandQueryResults"
-          ></i>
-          <label
-            class="mb-0"
-          >
-            {{ soqlResult.length }} Results
-          </label>
-        </div>
-        
-        
+        <i
+          v-if="areThereRecords"
+          v-b-tooltip.hover
+          v-shortkey="['ctrl', 'alt', 't']"
+          :title="isDataTableExpanded ? 'Show Form' : 'Expand Table'"
+          class="clickable-icon ml-auto mr-1 fa fa-lg fa-expand-arrows-alt"
+          @click="onClickExpandQueryResults"
+          @shortkey="onClickExpandQueryResults"
+        ></i>
       </div>
 
       <div class="ml-auto">
+        <button
+          v-if="areThereRecords"
+          class="vscode-button btn"
+          @click="onClickNewRecord"
+        >
+          New Record
+        </button>
         <button
           v-if="isDataTableExpanded"
           :disabled="isRefreshingData"
@@ -39,24 +37,39 @@
           Refresh
           <i v-if="isRefreshingData" class="fa fa-circle-o-notch fa-spin" />
         </button>
-        <button
-          v-if="showSaveChangesButton"
-          v-shortkey="['ctrl', 's']"
-          :disabled="isUpdatingRecords"
-          class="vscode-button btn btn-primary"
-          @click="onClickSaveChangesButton()"
-          @shortkey="
-            showSaveChangesButton && !isUpdatingRecords
-              ? onClickSaveChangesButton()
-              : null
-          "
-        >
-          Save
-          <i v-if="isUpdatingRecords" class="fa fa-circle-o-notch fa-spin" />
-        </button>
+        <template v-if="areThereChanges">
+          <button
+            v-shortkey="['ctrl', 'shift', 's']"
+            :disabled="isUpdatingRecords"
+            class="vscode-button btn btn-primary"
+            @click="onClickSaveChangesButton()"
+            @shortkey="
+              areThereChanges && !isUpdatingRecords
+                ? onClickSaveChangesButton()
+                : null
+            "
+          >
+            Save
+            <i v-if="isUpdatingRecords" class="fa fa-circle-o-notch fa-spin" />
+          </button>
+          <button
+            v-shortkey="['ctrl', 'shift', 'c']"
+            :disabled="isUpdatingRecords"
+            class="vscode-button btn btn-primary"
+            @click="onClickCancelAllChangesButton()"
+            @shortkey="
+              areThereChanges && !isUpdatingRecords
+                ? onClickCancelAllChangesButton()
+                : null
+            "
+          >
+            Cancel
+          </button>
+        </template>
+
         <button
           v-if="showExportDataButton"
-          v-shortkey="['ctrl', 'e']"
+          v-shortkey="['ctrl', 'shift', 'd']"
           :disabled="isExportingData"
           class="vscode-button btn btn-primary"
           @shortkey="
@@ -76,199 +89,20 @@
       </div>
     </div>
 
-    <transition name="fade">
-      <div v-if="soqlResult && soqlResult.length" class="table-responsive">
-        <table ref="table" class="table table-sm" @keyup.esc="onCancelChanges">
-          <thead>
-            <tr>
-              <th
-                v-if="showTableActionsColumn"
-                class="soql-results-actions-column"
-              />
-              <th
-                v-for="field in soqlResultFields"
-                :key="field"
-                class="w-auto text-nowrap"
-                scope="col"
-              >
-                <div class="d-flex flex-column">
-                  <div>{{ field }}</div>
-                  <div class="field-type" v-if="configuration.fieldType.table && sobjectFieldsMappedByName[field] && sobjectFieldsMappedByName[field].type">
-                    {{ sobjectFieldsMappedByName[field].type }}
-                  </div>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(record, recordIndex) in soqlResult"
-              :key="recordIndex"
-              :class="{ edited: editingRecords[record.Id] }"
-              @click="onClickRow(recordIndex)"
-            >
-              <td
-                v-if="showTableActionsColumn"
-                class="soql-results-actions-column"
-              >
-                <div class="d-flex flex-column">
-                  <button
-                    v-if="editingRecords[record.Id]"
-                    :disabled="isUpdatingRecords"
-                    class="vscode-button btn btn-primary btn-sm table-button"
-                    @click="onClickCancelChangesButton(record.Id, recordIndex)"
-                  >
-                    <span class="fa fa-times-circle fa-xs" />
-                  </button>
-                  <button
-                    v-else
-                    :disabled="isUpdatingRecords"
-                    class="vscode-button btn btn-primary btn-sm table-button"
-                    @click="onClickDeleteButton(record.Id, recordIndex)"
-                  >
-                    <span class="fa fa-trash fa-xs" />
-                  </button>
-                </div>
-              </td>
-              <template v-for="(value, fieldName, valueIndex) in record">
-                <td
-                  :key="valueIndex"
-                  class="w-auto text-nowrap"
-                  :class="{
-                    'soql-result-table-cell':
-                      sobjectFieldsMappedByName[fieldName] &&
-                      sobjectFieldsMappedByName[fieldName].updateable,
-                  }"
-                >
-                  <template v-if="typeof value === 'object' && value !== null">
-                    <vue-json-pretty
-                      v-if="configuration.nestedResults.style"
-                      :data="value"
-                      :show-line="false"
-                      :deep="
-                        configuration.nestedResults.expanded
-                          ? configuration.nestedResults.depth
-                            ? configuration.nestedResults.depth
-                            : 1
-                          : 0
-                      "
-                    >
-                    </vue-json-pretty>
-                    <pre v-else>{{
-                      JSON.stringify(value, undefined, 2).replace(/^\s*/g, '')
-                    }}</pre>
-                  </template>
-                  <template
-                    v-else-if="
-                      sobjectFieldsMappedByName[fieldName] &&
-                      sobjectFieldsMappedByName[fieldName].updateable
-                    "
-                  >
-                    <select
-                      v-if="
-                        sobjectFieldsMappedByName[fieldName].picklistValues
-                          .length
-                      "
-                      :value="soqlResult[recordIndex][fieldName]"
-                      :class="{ 'no-arrow': !showTableActionsColumn }"
-                      :disabled="!showTableActionsColumn"
-                      @input="
-                        onTableInputChange(
-                          $event,
-                          record.Id,
-                          recordIndex,
-                          fieldName
-                        )
-                      "
-                    >
-                      <option></option>
-                      <option
-                        v-for="(
-                          picklistValue, picklistValueIndex
-                        ) in sobjectFieldsMappedByName[
-                          fieldName
-                        ].picklistValues.filter(
-                          (picklistValue) => picklistValue.active
-                        )"
-                        :key="picklistValueIndex"
-                        :value="picklistValue.value"
-                      >
-                        {{ picklistValue.label }}
-                      </option>
-                    </select>
-                    <label
-                      v-else-if="
-                        sobjectFieldsMappedByName[
-                          fieldName
-                        ].type.toLowerCase() === 'boolean'
-                      "
-                      class="form-check-label custom-checkbox-container"
-                    >
-                      <input
-                        :value="soqlResult[recordIndex][fieldName]"
-                        :disabled="!showTableActionsColumn"
-                        class="form-check-input"
-                        type="checkbox"
-                        @change="
-                          onTableInputChange(
-                            $event,
-                            record.Id,
-                            recordIndex,
-                            fieldName
-                          )
-                        "
-                      />
-                      <span class="checkmark" />
-                    </label>
-                    <input
-                      v-else
-                      :disabled="!showTableActionsColumn"
-                      :value="soqlResult[recordIndex][fieldName]"
-                      type="text"
-                      @input="
-                        onTableInputChange(
-                          $event,
-                          record.Id,
-                          recordIndex,
-                          fieldName
-                        )
-                      "
-                    />
-
-                    <i
-                      v-if="
-                        showTableActionsColumn &&
-                        !sobjectFieldsMappedByName[fieldName].picklistValues
-                          .length &&
-                        sobjectFieldsMappedByName[
-                          fieldName
-                        ].type.toLowerCase() !== 'boolean'
-                      "
-                      class="edit-icon fa fa-pencil"
-                    ></i>
-                  </template>
-                  <p
-                    v-else-if="
-                      sobjectFieldsMappedByName[fieldName] &&
-                      ['id', 'reference'].includes(
-                        sobjectFieldsMappedByName[fieldName].type.toLowerCase()
-                      )
-                    "
-                    class="record-id"
-                    @click="onClickRecordId(value)"
-                  >
-                    {{ value }}
-                  </p>
-                  <p v-else>
-                    {{ value }}
-                  </p>
-                </td>
-              </template>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </transition>
+    <custom-table
+      :value="pageRecords"
+      :fields="fields"
+      :username="username"
+      :fields-mapped-by-name="sobjectFieldsMappedByName"
+      :picklist-values-mapped-by-field="picklistValuesMappedByField"
+      :editing-records="editingRecords"
+      @cancelRecordChanges="onCancelRecordChanges"
+      @deleteRecord="onDeleteRecord"
+      @saveRecordChanges="onSaveRecordChanges"
+      @change="onRecordChange"
+      @sort="onSort"
+    >
+    </custom-table>
 
     <!-- UPDATE AND DELETE ERRORS MODAL -->
     <b-modal
@@ -319,17 +153,27 @@
         </button>
       </template>
     </b-modal>
+
+    <pagination
+      v-if="soqlResult && soqlResult.length"
+      v-model="page"
+      :records="soqlResult.length"
+      :per-page="pageSize"
+      @paginate="onPageSelected"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
-import VueJsonPretty from 'vue-json-pretty'
+import Pagination from 'vue-pagination-2'
+import CustomTable from '@/components/custom-table'
 import showToastMessage from '~/mixins/show-toast-message'
 
 export default {
   components: {
-    VueJsonPretty,
+    Pagination,
+    CustomTable,
   },
   mixins: [showToastMessage],
   props: {
@@ -346,9 +190,9 @@ export default {
       type: Array,
       default: () => [],
     },
-    showQueryResults:{
+    showQueryResults: {
       type: Boolean,
-      default: false
+      default: false,
     },
     query: {
       type: String,
@@ -356,7 +200,11 @@ export default {
     },
     apiVersion: {
       type: String,
-      default: ''
+      default: '',
+    },
+    username: {
+      type: String,
+      default: null,
     },
     value: {
       type: Array,
@@ -365,37 +213,68 @@ export default {
   },
   data: () => {
     return {
+      page: 1,
+      pageSize: 20,
+      pageRecords: [],
       soqlResult: [],
       editingRecords: {},
       errors: [],
       isUpdatingRecords: false,
       isExportingData: false,
       isRefreshingData: false,
-      recordIndex: null,
-      showSaveChangesButton: false,
+      selectedRowIndex: null,
+      areThereChanges: false,
       isDataTableExpanded: false,
+      picklistValuesMappedByField: {},
+      fields: [],
+      curCol: null,
+      nxtCol: null,
+      pageX: null,
+      nxtColWidth: null,
+      curColWidth: null,
+      addedColumnDivs: false,
     }
   },
   watch: {
     value(newRecords) {
       if (newRecords && newRecords.length) {
+        newRecords.forEach((record, index) => (record._index = index))
         this.isRefreshingData = false
         this.soqlResult = [...newRecords]
+        this.fields = Object.keys(newRecords[0])
+        this.pageRecords = [...newRecords.slice(0, this.pageSize)]
+        this.fields.forEach((fieldName) => {
+          const fieldDetails = this.sobjectFieldsMappedByName[fieldName]
+          if (
+            fieldDetails?.picklistValues?.length &&
+            !this.picklistValuesMappedByField[fieldName]
+          ) {
+            this.picklistValuesMappedByField[
+              fieldName
+            ] = fieldDetails.picklistValues.filter(
+              (picklistValue) => picklistValue.active
+            )
+          }
+        })
       } else {
+        this.fields = []
+        this.picklistValuesMappedByField = {}
         this.soqlResult = []
+        this.pageRecords = []
       }
-
+      this.page = 1
+      this.selectedRowIndex = null
       this.editingRecords = {}
     },
     editingRecords: {
       deep: true,
       handler(newEditingRecords) {
         if (!Object.keys(newEditingRecords).length) {
-          this.showSaveChangesButton = false
+          this.areThereChanges = false
         } else {
           for (const recordId in newEditingRecords) {
             if (Object.keys(newEditingRecords[recordId]?.differences)?.length) {
-              this.showSaveChangesButton = true
+              this.areThereChanges = true
               break
             }
           }
@@ -406,27 +285,28 @@ export default {
   computed: {
     ...mapGetters({
       getSObjectFieldsMappedByName: 'salesforce/getSObjectFieldsMappedByName',
-      getActiveEditorUsername: 'salesforce/getActiveEditorUsername',
+      getSObjectKeyPrefix: 'salesforce/getSObjectKeyPrefix',
     }),
     ...mapState({
       configuration: (state) => state.user.configuration,
     }),
-    username() {
-      return this.getActiveEditorUsername()
+    sobjectFieldsMappedByName() {
+      return this.getSObjectFieldsMappedByName({
+        sobjectName: this.sobjectName,
+        username: this.username,
+      })
+    },
+    areThereRecords() {
+      return this.soqlResult && this.soqlResult.length
     },
     showExportDataButton() {
-      return this.query && this.soqlResult && this.soqlResult.length
-    },
-    soqlResultFields() {
-      return this.soqlResult && this.soqlResult[0]
-        ? Object.keys(this.soqlResult[0])
-        : []
+      return this.query && this.areThereRecords
     },
     showTableActionsColumn() {
-      if (!this.soqlResultFields.includes('Id')) return false
+      if (!this.fields.includes('Id')) return false
       let isThereAnUpdateableField = false
-      for (const fieldIndex in this.soqlResultFields) {
-        const fieldName = this.soqlResultFields[fieldIndex]
+      for (const fieldIndex in this.fields) {
+        const fieldName = this.fields[fieldIndex]
         if (
           this.sobjectFieldsMappedByName[fieldName] &&
           this.sobjectFieldsMappedByName[fieldName].updateable
@@ -437,14 +317,6 @@ export default {
       }
       return isThereAnUpdateableField
     },
-    sobjectFieldsMappedByName() {
-      return this.sobjectName
-        ? this.getSObjectFieldsMappedByName({
-            sobjectName: this.sobjectName,
-            username: this.username,
-          })
-        : {}
-    },
     errorsModalId() {
       return `errors-modal${this.editorName}`
     },
@@ -454,35 +326,29 @@ export default {
       deleteRecord: 'salesforce/deleteRecord',
       updateRecords: 'salesforce/updateRecords',
     }),
-    onClickRecordId(id) {
-      this.showToastMessage(`Opening Record Id ${id}`)
-      this.$axios
-        .get(`${process.env.SALESFORCE_SERVER}/sfdx/open/record/${id}`)
-        .then(() => {
-          this.showToastMessage(`Record Id ${id} opened with Success.`)
-        })
-        .catch(() => {
-          this.showToastMessage(`Record Id ${id} could not be opened.`)
-        })
-    },
-    onClickCancelChangesButton(recordId, rowIndex) {
+    onCancelRecordChanges(rowIndex) {
+      const recordId = this.soqlResult[rowIndex].Id
       this.soqlResult.splice(rowIndex, 1, this.editingRecords[recordId].record)
+      this.onPageSelected(this.page)
       delete this.editingRecords[recordId]
-      this.soqlResult = [...this.soqlResult]
+      this.editingRecords = { ...this.editingRecords }
     },
-    onCancelChanges() {
-      const recordId = this.soqlResult[this.recordIndex].Id
-      if (this.editingRecords[recordId]) {
-        this.soqlResult.splice(
-          this.recordIndex,
-          1,
-          this.editingRecords[recordId].record
-        )
-        delete this.editingRecords[recordId]
-        this.editingRecords = { ...this.editingRecords }
-      }
+    onClickCancelAllChangesButton() {
+      this.soqlResult.forEach((soqlResult) => {
+        const editingRecord = this.editingRecords[soqlResult.Id]
+        if (editingRecord) {
+          this.soqlResult.splice(
+            editingRecord.rowIndex,
+            1,
+            editingRecord.record
+          )
+          this.onPageSelected(this.page)
+        }
+      })
+      this.editingRecords = {}
     },
-    onClickDeleteButton(recordId, rowIndex) {
+    onDeleteRecord(rowIndex) {
+      const recordId = this.soqlResult[rowIndex].Id
       this.$bvModal
         .msgBoxConfirm('Are you sure you want to delete this record?', {
           centered: true,
@@ -497,6 +363,10 @@ export default {
             })
               .then(() => {
                 this.$delete(this.soqlResult, rowIndex)
+                this.soqlResult.forEach(
+                  (record, index) => (record._index = index)
+                )
+                this.onPageSelected(this.page)
                 this.showToastMessage(
                   `The Record [${recordId}] has been deleted.`
                 )
@@ -512,7 +382,7 @@ export default {
           }
         })
     },
-    onClickSaveChangesButton() {
+    onSaveRecordChanges() {
       this.isUpdatingRecords = true
       this.$emit('updatingRecords', true)
       const recordsToUpdate = []
@@ -560,7 +430,7 @@ export default {
           this.$emit('updatingRecords', false)
         })
     },
-    onTableInputChange(event, recordId, recordIndex, fieldName) {
+    onRecordChange({ value, recordId, recordIndex, fieldName }) {
       if (!this.editingRecords[recordId]) {
         this.editingRecords[recordId] = {
           record: { ...this.soqlResult[recordIndex] },
@@ -569,10 +439,8 @@ export default {
         }
         this.editingRecords = { ...this.editingRecords }
       }
-
       const oldValue = this.editingRecords[recordId].record[fieldName]
-      const newValue = event.target.value || null
-
+      const newValue = typeof value === 'boolean' ? value : value || null
       if (oldValue != newValue) {
         this.editingRecords[recordId].differences[fieldName] = newValue
       } else {
@@ -587,8 +455,8 @@ export default {
       this.errors = []
       this.$bvModal.hide(this.errorsModalId)
     },
-    onClickRow(recordIndex) {
-      this.recordIndex = recordIndex
+    onClickRow(rowIndex) {
+      this.selectedRowIndex = rowIndex
     },
     onClickExportAsSourceTree() {
       this.isExportingData = true
@@ -597,6 +465,7 @@ export default {
           `${process.env.SALESFORCE_SERVER}/sfdx/export/sourcetree/${this.apiVersion}`,
           {
             soql: this.query,
+            username: this.username,
           }
         )
         .then(() => this.showToastMessage('Data exported with success.'))
@@ -613,131 +482,60 @@ export default {
       this.isRefreshingData = true
       this.$emit('refreshData')
     },
+    onPageSelected(page) {
+      const start = this.pageSize * (page - 1)
+      this.pageRecords = this.soqlResult.slice(start, start + this.pageSize)
+    },
+    onSort(sort) {
+      this.soqlResult.sort(alphabetically(sort.order === 'asc', sort.field))
+      this.soqlResult.forEach((record, index) => (record._index = index))
+      this.onPageSelected(this.page)
+    },
+    onClickNewRecord() {
+      const sobjectKeyPrefix = this.getSObjectKeyPrefix({
+        sobjectName: this.sobjectName,
+        username: this.username,
+      })
+
+      if (sobjectKeyPrefix) {
+        this.showToastMessage('Opening New Record Page')
+        this.$axios
+          .post(`${process.env.SALESFORCE_SERVER}/sfdx/record/new`, {
+            sobjectKeyPrefix,
+            username: this.username,
+          })
+          .then(() => {
+            this.showToastMessage(`New Record Page opened with Success.`)
+          })
+          .catch(() => {
+            this.showToastMessage(`New Record Page could not be opened.`)
+          })
+      } else {
+        this.showToastMessage('Could not find the SObject Key Prefix')
+      }
+    },
   },
+}
+
+function alphabetically(ascending, field) {
+  return function (a, b) {
+    if (a[field] === b[field]) {
+      return 0
+    } else if (a[field] === null) {
+      return 1
+    } else if (b[field] === null) {
+      return -1
+    } else if (ascending) {
+      return a[field] < b[field] ? 1 : -1
+    } else {
+      return a[field] < b[field] ? -1 : 1
+    }
+  }
 }
 </script>
 
-<style src="vue-json-pretty/lib/styles.css"></style>
 <style scoped>
-.table-button {
-  width: 30px;
-}
-
-.soql-result-table-cell {
-  position: relative;
-}
-
-.soql-result-table-cell:hover {
-  background-color: rgba(var(--vscode-input-background), 0.8);
-}
-
-.soql-result-table-cell > div {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  display: table;
-  cursor: pointer;
-}
-
-.soql-result-table-cell > div:hover {
-  opacity: 0.05;
-  background-color: var(--vscode-menu-foreground);
-}
-
-.soql-results-actions-column {
-  width: 40px !important;
-  max-width: 40px !important;
-}
-
-.record-id {
-  color: var(--vscode-textLink-foreground);
-  cursor: pointer;
-}
-
-.record-id:hover {
-  text-decoration: underline !important;
-}
-
-table {
-  background-color: var(--vscode-editor-background);
-  color: var(--vscode-input-foreground);
-}
-
-table input,
-table input:focus,
-table select,
-table select:focus {
-  width: 100% !important;
-  height: 100% !important;
-  border: none !important;
-  padding: 5px 5px;
-  background-color: transparent !important;
-}
-
-table select:not(:disabled) {
-  width: 100%;
-}
-
-table select option {
-  background-color: var(--vscode-editor-background);
-}
-
-tr {
-  height: 30px !important;
-}
-
-table td p {
-  display: inline-block;
-  vertical-align: middle;
-  line-height: 30px;
-  padding: 5px 5px !important;
-}
-
-table th,
-table td {
-  border-color: var(--vscode-inputOption-activeBackground);
-}
-
-table td:not(:first-child) {
-  padding: 0px 5px !important;
-  height: 30px;
-  min-width: 200px;
-}
-
-table tr td:first-child {
-  padding: 5px 5px !important;
-}
-
-table tr.edited td {
-  border-bottom: thin solid var(--vscode-activityBarBadge-background);
-}
-
-/deep/ .vjs-tree {
-  height: 100%;
-}
-
-/deep/ .vjs-tree.is-root > div:first-child {
-  padding: 9px 0px;
-}
-
-select.no-arrow {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  text-indent: 1px;
-  text-overflow: '';
-}
-
-i.edit-icon {
-  display: none;
-}
-
-td:hover i.edit-icon {
-  display: block;
-  position: absolute;
-  top: 13px;
-  right: 20px;
+.fa-expand-arrows {
+  font-size: 20px;
 }
 </style>

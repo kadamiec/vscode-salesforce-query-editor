@@ -1,23 +1,22 @@
 export default {
   fetchSObjects({ commit, state }, { apiVersion, username }) {
-    const response = this.$axios.get(
-      `${process.env.SALESFORCE_SERVER}/salesforce/${
-        apiVersion || process.env.SALESFORCE_API_VERSION
-      }/sobjects`,
-      {
-        headers: {
-          Authorization: `Bearer ${state.environments[username].accessToken}`,
-          instanceUrl: state.environments[username].instanceUrl,
-        },
-      }
-    )
-
-    response.then((response) => {
-      commit('setSObjects', { sobjects: response.data.sobjects, username })
-    })
-    return response
+    return this.$axios
+      .get(
+        `${process.env.SALESFORCE_SERVER}/salesforce/${
+          apiVersion || process.env.SALESFORCE_API_VERSION
+        }/sobjects`,
+        {
+          headers: {
+            Authorization: `Bearer ${state.environments[username].accessToken}`,
+            instanceUrl: state.environments[username].instanceUrl,
+          },
+        }
+      )
+      .then((response) => {
+        commit('setSObjects', { sobjects: response.data.sobjects, username })
+      })
   },
-  async fetchSObjectFields(
+  fetchSObjectFields(
     { commit, state, dispatch },
     { sobjectName, username, apiVersion }
   ) {
@@ -27,19 +26,19 @@ export default {
       state.environments[username].sobjectsRequests[sobjectNameLowerCase]
         .status !== 'success'
     ) {
-      try {
-        const response = await this.$axios.get(
-          `${process.env.SALESFORCE_SERVER}/salesforce/${
-            apiVersion || process.env.SALESFORCE_API_VERSION
-          }/sobjects/${sobjectNameLowerCase}`,
-          {
-            headers: {
-              Authorization: `Bearer ${state.environments[username].accessToken}`,
-              instanceUrl: state.environments[username].instanceUrl,
-            },
-          }
-        )
+      const response = this.$axios.get(
+        `${process.env.SALESFORCE_SERVER}/salesforce/${
+          apiVersion || process.env.SALESFORCE_API_VERSION
+        }/sobjects/${sobjectNameLowerCase}`,
+        {
+          headers: {
+            Authorization: `Bearer ${state.environments[username].accessToken}`,
+            instanceUrl: state.environments[username].instanceUrl,
+          },
+        }
+      )
 
+      response.then((response) => {
         if (response.data && response.data.name && response.data.fields)
           commit('setSObjectRequests', {
             sobjectName: sobjectNameLowerCase,
@@ -60,16 +59,12 @@ export default {
           apiVersion,
           username,
         })
-        return response
-      } catch (error) {
-        console.error(error)
-      }
+      })
+
+      return response
     }
   },
-  async fetchSObjectsFields(
-    { commit, state },
-    { fields, apiVersion, username }
-  ) {
+  fetchSObjectsFields({ commit, state }, { fields, apiVersion, username }) {
     let sobjects = []
     fields.forEach((field) => {
       field.referenceTo.forEach((reference) => {
@@ -104,22 +99,22 @@ export default {
     })
 
     if (batchRequests.length) {
-      try {
-        const responses = await this.$axios.post(
-          `${process.env.SALESFORCE_SERVER}/salesforce/${
-            apiVersion || process.env.SALESFORCE_API_VERSION
-          }/composite/batch`,
-          {
-            batchRequests,
+      const responses = this.$axios.post(
+        `${process.env.SALESFORCE_SERVER}/salesforce/${
+          apiVersion || process.env.SALESFORCE_API_VERSION
+        }/composite/batch`,
+        {
+          batchRequests,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${state.environments[username].accessToken}`,
+            instanceUrl: state.environments[username].instanceUrl,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${state.environments[username].accessToken}`,
-              instanceUrl: state.environments[username].instanceUrl,
-            },
-          }
-        )
+        }
+      )
 
+      responses.then((responses) => {
         console.log(responses.data)
 
         responses.data.forEach((response) => {
@@ -143,11 +138,9 @@ export default {
             commit('setSObject', { sobject: sobjectDetails, username })
           })
         })
+      })
 
-        return responses
-      } catch (error) {
-        console.error(error)
-      }
+      return responses
     }
   },
   fetchRecords(
@@ -197,30 +190,24 @@ export default {
         })
       }
     })
-  
+
     return responses
   },
-  async fetchSOQLPlan({ state }, { soql, apiVersion, username }) {
-    try {
-      const response = await this.$axios.post(
-        `${process.env.SALESFORCE_SERVER}/salesforce/${
-          apiVersion || process.env.SALESFORCE_API_VERSION
-        }/query?explain=true`,
-        {
-          soql,
+  fetchSOQLPlan({ state }, { soql, apiVersion, username }) {
+    return this.$axios.post(
+      `${process.env.SALESFORCE_SERVER}/salesforce/${
+        apiVersion || process.env.SALESFORCE_API_VERSION
+      }/query?explain=true`,
+      {
+        soql,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${state.environments[username].accessToken}`,
+          instanceUrl: state.environments[username].instanceUrl,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${state.environments[username].accessToken}`,
-            instanceUrl: state.environments[username].instanceUrl,
-          },
-        }
-      )
-
-      return response
-    } catch (error) {
-      console.error(error)
-    }
+      }
+    )
   },
   updateRecords({ state }, { changes, apiVersion, username }) {
     return this.$axios.patch(
@@ -251,12 +238,13 @@ export default {
       }
     )
   },
-  fetchSfdxData({ state, commit, dispatch }, { editorName }) {
-    commit('setEditorLoadingState', {
-      editorName: editorName || 'editor-0',
-      isLoading: true,
+  fetchEnvironments({ state, commit }){
+    return this.$axios.get(`${process.env.SALESFORCE_SERVER}/sfdx/orgs`)
+    .then((response) => {
+      commit('setEnvironments', response.data.result)
     })
-
+  },
+  fetchSFDXData({ state, commit, dispatch }) {
     return Promise.all([
       this.$axios.get(
         `${process.env.SALESFORCE_SERVER}/sfdx/config/apiVersion`
@@ -277,44 +265,27 @@ export default {
 
       commit('setEnvironments', environmentsResponse.data.result)
       commit('setEnvironmentDetails', defaultUsernameResponse.data.result)
-      commit('setSelectedUsername', {
-        editorName: 'editor-0',
-        username: defaultUsernameResponse.data.result.username,
-      })
-      dispatch('fetchSObjects', {
+
+      return dispatch('fetchSObjects', {
         apiVersion: state.apiVersion,
         username: defaultUsernameResponse.data.result.username,
       }).then(() => {
-        commit('setEditorLoadingState', {
-          editorName: 'editor-0',
-          isLoading: false,
-        })
+        return state.environments[defaultUsernameResponse.data.result.username]
       })
     })
   },
-  fetchEnvironmentDetails({ state, dispatch, commit }, { username, editorName }) {
-    commit('setSelectedUsername', { editorName, username })
-    if(!Object.keys(state.environments[username].sobjects).length){
-      commit('setEditorLoadingState', {
-        editorName,
-        isLoading: true,
+  fetchEnvironmentDetails({ state, dispatch, commit }, { username }) {
+    return this.$axios
+      .get(`${process.env.SALESFORCE_SERVER}/sfdx/orgs/${username}`)
+      .then((response) => {
+        commit('setEnvironmentDetails', response.data.result)
       })
-  
-      return this.$axios
-        .get(`${process.env.SALESFORCE_SERVER}/sfdx/orgs/${username}`)
-        .then((response) => {
-          commit('setEnvironmentDetails', response.data.result)
-          dispatch('fetchSObjects', {
-            apiVersion: state.apiVersion,
-            username,
-          }).then(() => {
-            commit('setEditorLoadingState', {
-              editorName: 'editor-0',
-              isLoading: false,
-            })
-          })
+      .then(() => {
+        return dispatch('fetchSObjects', {
+          apiVersion: state.apiVersion,
+          username,
         })
-    }
+      })
   },
   async cancelRequest({ state }) {
     try {

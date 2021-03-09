@@ -4,8 +4,12 @@
 
 <script>
 import disableInspect from '~/mixins/disable-inspect'
+import configurationChange from '~/mixins/configuration-change'
+import colorChange from '~/mixins/color-change'
+
 export default {
-  mixins: [disableInspect],
+  mixins: [colorChange, configurationChange, disableInspect],
+  middleware: ['fetch-colors', 'is-local-server-running'],
 }
 </script>
 

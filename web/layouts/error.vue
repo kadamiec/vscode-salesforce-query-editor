@@ -12,7 +12,11 @@
 
 <script>
 import { mapState } from 'vuex'
+import colorChange from '~/mixins/color-change'
+import configurationChange from '~/mixins/configuration-change'
+
 export default {
+  mixins: [colorChange, configurationChange],
   props: ['error'],
   computed: {
     ...mapState({

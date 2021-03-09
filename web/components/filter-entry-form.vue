@@ -35,7 +35,7 @@
       />
     </div>
     <button
-      v-if="['date', 'datetime'].includes(field.type)"
+      v-if="['date', 'datetime'].includes(field.details.type)"
       class="vscode-button btn btn-primary mt-auto ml-auto mr-2"
       @click="onClickUseFunctionButton"
     >

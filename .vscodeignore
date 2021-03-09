@@ -10,6 +10,7 @@ vsc-extension-quickstart.md
 web
 !web/dist/**
 web/dist/**/*.map
+web/dist/_nuxt/app.js
 src
 .images
 !.images/icon.png
@@ -17,5 +18,7 @@ src
 !.images/icon_light.png
 node_modules
 webpack.config.js
+webpack.config.dev.js
+data/*
 .build
 *.env

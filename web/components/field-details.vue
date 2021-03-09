@@ -8,8 +8,7 @@
     <b-collapse id="field-details" visible accordion="field-details">
       <b-card-body style="padding: 5px">
         <table class="w-100">
-          <thead>
-          </thead>
+          <thead></thead>
           <tbody>
             <tr>
               <td>Label</td>
@@ -52,7 +51,7 @@
               <td>{{ field.unique }}</td>
             </tr>
             <tr>
-              <td>Exteral Id</td>
+              <td>External Id</td>
               <td>{{ field.externalId }}</td>
             </tr>
             <tr>

@@ -16,6 +16,9 @@
         :key="field.name"
         class="vscode-button ml-1 mb-1 noselect"
         @click="onClickField({ field, fieldIndex, sobjectName })"
+        @contextmenu.prevent="
+          onRightClickField({ field, fieldIndex, sobjectName })
+        "
       >
         {{ field.name }}
         <i v-if="field.filters.length" class="fa fa-filter"></i>
@@ -30,7 +33,11 @@
       </button>
     </div>
 
-    <soql-form ref="soql-form" @soqlConfig="onChangeSoqlConfig"></soql-form>
+    <soql-form
+      ref="soql-form"
+      :is-main="soql.sobjects[sobjectName].main"
+      @soqlConfig="onChangeSoqlConfig"
+    ></soql-form>
   </div>
 </template>
 
@@ -50,10 +57,17 @@ export default {
       type: Array,
       default: () => [],
     },
+    soql: {
+      type: Object,
+      default: () => {},
+    },
   },
   methods: {
     onClickField({ field, fieldIndex, sobjectName }) {
       this.$emit('click', { field, fieldIndex, sobjectName })
+    },
+    onRightClickField({ field, fieldIndex, sobjectName }) {
+      this.$emit('rightClick', { field, fieldIndex, sobjectName })
     },
     onClickOpenConfiguration() {
       this.$refs['soql-form'].open()

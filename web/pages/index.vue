@@ -4,6 +4,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+
 export default {
   middleware: ['auth'],
   created() {
@@ -13,6 +14,7 @@ export default {
   methods: {
     ...mapActions({
       fetchMachineFingerprint: 'user/fetchMachineFingerprint',
+      fetchThemeColors: 'user/fetchThemeColors',
     }),
   },
 }

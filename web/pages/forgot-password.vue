@@ -5,11 +5,11 @@
         <label for="email" class="form-label">E-mail</label>
         <input
           id="email"
-          v-on:keyup.enter="onClickResetPassword"
           v-model="$v.user.email.$model"
           class="form-control"
           type="text"
           placeholder="Enter your email"
+          @keyup.enter="onClickResetPassword"
         />
         <template v-if="$v.user.email.$error">
           <div class="error form-text">The informed e-mail is wrong.</div>
@@ -45,7 +45,7 @@ export default {
   data: () => {
     return {
       user: {
-        email: 'allanoricilcos2@outlook.com',
+        email: null,
       },
       error: null,
       isResetingPassword: false,

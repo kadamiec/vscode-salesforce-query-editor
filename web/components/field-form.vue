@@ -98,13 +98,13 @@ export default {
       return false
     },
   },
+  watch: {
+    value(newValue) {
+      this.field = { ...newValue }
+    },
+  },
   mounted() {
     this.field = { ...this.value }
-  },
-  watch:{
-    value(newValue){
-      this.field = {...newValue}
-    }
   },
   beforeMount() {
     window.addEventListener('keyup', (event) => {
@@ -118,7 +118,7 @@ export default {
     openForm() {
       this.$refs['side-menu'].open()
     },
-    closeForm(){
+    closeForm() {
       this.$refs['side-menu'].close()
     },
     onCloseForm() {

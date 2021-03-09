@@ -50,7 +50,7 @@
       <button
         v-for="(field, index) in selectedFieldsList"
         :key="field.name"
-        class="vscode-button ml-1 mb-1"
+        class="vscode-button mr-1 mb-1"
         @click="onClickRemoveFieldButton(field, index)"
       >
         {{ field.name }}
@@ -67,6 +67,10 @@ const MAX_DEPTH_LEVEL = 5
 export default {
   props: {
     sobjectName: {
+      type: String,
+      default: null,
+    },
+    username: {
       type: String,
       default: null,
     },
@@ -94,7 +98,6 @@ export default {
   computed: {
     ...mapGetters({
       getSObjectFields: 'salesforce/getSObjectFields',
-      getActiveEditorUsername: 'salesforce/getActiveEditorUsername',
     }),
     ...mapState({
       apiVersion: (state) => state.salesforce.apiVersion,
@@ -156,9 +159,6 @@ export default {
     },
     isClearAllButtonDisabled() {
       return this.selectedFieldsList && !this.selectedFieldsList.length
-    },
-    username() {
-      return this.getActiveEditorUsername()
     },
   },
   methods: {

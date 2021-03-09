@@ -1,76 +1,89 @@
-# Salesforce SOQL Editor
+# Salesforce Query Editor
 
 <p><a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/version/allanoricil.salesforce-soql-editor.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=VERSION" alt="Version"></a>
 <a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/downloads/allanoricil.salesforce-soql-editor.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=DOWNLOADS" alt="Downloads"></a>
 <a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/rating-star/allanoricil.salesforce-soql-editor.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=RATING" alt="Ratings"></a></p>
 
-This extension enables developers to create, run and add to Apex SOQL queries without leaving the IDE. If you want to contribute, please consider clicking on the button below. Thanks.
+This extension brings the same functionality available in the Query Editor in the Salesforce Developer Console to VS Code.
 
-<a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
-
-<img src="https://drive.google.com/uc?id=1NwUzkAQ2x_LHk2ecIMlK9aNxz1bYAko-" width="1200px"></img>
+<img src="https://drive.google.com/uc?id=1-MwpPdK3bLJ6DocTHsfkY_x2x6fGb-hQ" width="1200px"></img>
 
 ## Features
 
-- [x] Create SOQL Queries.
-- [x] Run SOQL Queries.
+- [x] SOQL Builder.
+- [x] Execute SOQL Queries.
 - [x] Get SOQL Query Plans.
-- [x] Add SOQL Queries to Apex.
-- [x] Update Records.
+- [x] Update, Create and Delete Records.
 - [x] Add Relationship Fields.
+- [x] Add Child Parent Relationship Fields.
+- [x] Works with any VS Code Theme.
+- [x] Works side by side with your Apex Class.
+- [x] Access to Field Details, such as Name, Label, Required, Updateable, Groupable and more.
+- [x] Compact to not take away the space you have available while writing code.
+- [ ] Query Storage and History.
+- [ ] Reorder Fields alphabetically.
+- [ ] Aggregated functions.
+- [ ] Group By.
+- [ ] Having.
+- [ ] Portuguese (PT-BR).
+- [ ] Tooling API.
+- [ ] SOSL.
+
+## Paid Features
+
+- [x] Remove BUY PRO golden button.
+- [x] Window Mode.
+- [x] Desktop App (PWA).
+- [x] Quickly update or add a new Query to apex using `Add to Apex` and `Update Apex` buttons.
+- [x] Run multiple queries in different tabs.
+
+I'm also selling the source code. If you are interested, send an email to allanoricilcos@outlook.com
 
 ## Requirements
 
-- sfdx-cli 7.81.0
-- VS Code 1.47.2 -> To update your vscode go to Help -> then click on Check for Updates / Restart to Update
+- sfdx-cli/7.92.0-88320113e7
+- VS Code 1.54.3 -> To update your vscode go to Help -> then click on Check for Updates / Restart to Update
 - MUST BE USED FROM A SFDX PROJECT
+- YOU MUST NOT HAVE ANYTHING RUNNING ON PORT 5000
 
 ## Issues
 
 You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 
-# Instalation
 
-Open VS Code, click on the Extension button in the side bar menu, search for `Salesforce SOQL Editor` and click `Install`.
+# How To Buy a License
 
-<img src="https://drive.google.com/uc?id=1Rvs9f6quK06iQnIo5fqr7iiQfJXbQQkB" width="800px"></img>
+- Open the extension
 
-Then open a SFDX project and wait for the Activation Message to appear. The extension will be activated automatically on workspaces that have a file called `sfdx-project.json`.
+- Click on the Buy Pro golden button
 
-<img src="https://drive.google.com/uc?id=1Hdr8xEuQ6ct_g37SLG29fFGk6G-BBExK" width="600px"></img>
+- It will open a page where you can see the available premium features
 
-In cases where the file `sfdx-project.json` is not in the root of the current workspace, you can manually activate the extension by pressing `Ctrl + Shift + P` and then selecting `SFDX: SOQL Editor`.
+- Scroll down to the bottom of the page and click on the Buy Licenses button
 
-<img src="https://drive.google.com/uc?id=1etE2ZuZBOn0bEvNyTTlLWvegzpwOAZnP" width="600px"></img>
+- You will be redirected to the Subscription page. If it does not pick up your login credentials, it will ask you to login again. This is necessary because the Subscription and the Licenses are connected to an Account.
 
-# How to use the SOQL Editor
+- Choose your Subscription Plan and the number of licenses you want to acquire. Each license can only be activated in one machine.
 
-## How to select an Org
+- Add your Debit or Credit Card Details.
 
-Configure a Default Username on SFDX. The App will use this user to query the data.
+- Click on the Pay button and wait for the Success message.
 
-```
-sfdx force:config:set defaultusername=me@myhub.org
-```
+- After that you should receive an email with the license keys and instructions on how to activate a license.
 
-If you have the official Salesforce Extensions for VSCode you can change the Defaultusername Org by clicking on this button:
+- Inside the app, one the account page you can manage all your subscriptions and licenses. You can choose to cancel your subscription, and activate/deactivate licenses.
 
-<img src="https://drive.google.com/uc?id=1xcn1XP3ntCFgwJ91WAC1TKcnKy81X-6a" width="600px"></img>
+Obs: The payment is handled by Stripe and therefore it is secure. It was implemented using Stripe Elements and you can read more about it here https://stripe.com/en-ie/payments/elements
 
-Whenever you change the org or refresh the objects list, a loading component appears until the new objects list is retrieved. If sfdx could not retrieve a valid accessToken for the current selected org, then the loading component will be displayed forever until you pick up a new org that has a valid accessToken.
+# How to Use
 
-If the accessToken is not valid, the following message will be displayed:
+## How to open the Salesforce Query Editor
 
-<img src="https://drive.google.com/uc?id=11pp2nGl5zHgMGJJjipdfQVaWxtjA4AnG" width="600px"></img>
-
-
-## How to open the SOQL Editor
-
-There are three ways to open the SOQL Editor.
+There are three ways to open the editor.
 
 ### File Explorer Context
 
-In the file explorer click with the right button on any Apex class to see the option `SFDX: SOQL Editor` in the Menu.
+In the file explorer, click with the right button on any Apex class to see the option `SFDX: SOQL Editor` in the Menu.
 
 <img src="https://drive.google.com/uc?id=1hPfBf8Rzap7K9dQf8I92Kf_43yHIeU9A"></img>
 
@@ -86,46 +99,187 @@ Open an Apex class and click on the button shown in the image below. This button
 
 <img src="https://drive.google.com/uc?id=1ufLB1_TdaZDku6sSU-OdKHehX-CeHSi3"></img>
 
-## Run a SOQL query
 
-Wait a few seconds after the editor is opened to see the available SObjects.
-Once the data is loaded, choose a SObject and wait until the available fields are displayed right below the object name.
-To select multiple fields press `CTRL` and click on a new field.
-To add multiple `WHERE` conditions, click on the `+` button to add a new Filter entry.
-To `ORDER BY` your results use the three Order by fields that are to the right of the Object selection.
-To `LIMIT` your results use the Max Records field.
-You can also write your query in the Query Editor and run it without using any of the input fields.
-
-<img src="https://drive.google.com/uc?id=1YxuqmhsiTDoEDFJm5lNmQqRk1YZ9Os_j" width="1200px"></img>
-
-## Add your SOQL query to Apex
+## How to add a query, or updated it, in the Apex Class without copy and paste
 
 - Open an Apex Class
 
-- Open the SOQL editor
+- Open the Salesforce Query editor extension
 
-- Create your query
+- Create/Write your query
 
-- Click anywhere in the Apex class to set the place where you want to place the query.
+- Click anywhere in the Apex class to set the cursor/anchor where you want to place the query.
 
-- In the SOQL editor click on the button `Add to Apex`. The query will appear on the apex class, at the position you clicked before.
+- If the cursor/anchor is anywhere inside a soql query (inside the `[]`), the `Update Apex` button appears. Use it to quickly update queries without having to copy and paste.
 
-<img src="https://drive.google.com/uc?id=1NwUzkAQ2x_LHk2ecIMlK9aNxz1bYAko-" width="1200px"></img>
+- If the cursor/anchor is anywhere else in the class, the `Add to Apex` button appears. Use it to quickly place new queries, for instance, in for loops.
 
-## Update Records
+## How to perform CRUD Operations
 
-- Query an Id field and at least one `updatabe` field to show the Edit and Delete buttons.
+- Query an Id field and at least one `updateable` field to show a table in edit mode and the delete button.
 
-- Click on the Edit button to change a particular record. 
+- Every table cell is in edit mode by default when you query the Id and one `updateable` field. 
 
-- And if you want to discard all of your changes just click on the Cancel button.
+- If you want to discard all of your changes for a record, click on the `cancel` button or click anywhere in that row and then press `ESC` key.
 
-- Once you are happy with your changes click on the Commit button to save everything on the database.
+- If you want to discard all changes of every record, click on the `cancel` button that is on the top right corner of the table.
 
-- If all the changes you did for that record are saved without any errors, the record changes back to read mode. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
+- To create a new record click on the `New Record` button that is on the top right corner of the table.
+
+- If all the changes you did for that record are saved without any errors, the record changes back to read mode and the `cancel` button vanishes. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
+
+
+## How to add fields
+
+To add fields you can either drag and drop them, or click twice on a field in case you get tired of using the first approach
+
+<img src="https://drive.google.com/uc?id=1da7Le6LmnWZSKxyYPGeymm_KHm6o70ys" width="800px"></img>
+
+You can also use the `Add All` button to add all the fields of the current selected SObject or Child Relationship
+
+## How to remove fields
+
+To quickly remove a field, click on the field with the right mouse button. Or you click on the field with the left mouse button, and then select the `bin` icon on the top left side of the field menu.
+
+If you click on the `Clear All` button that is to the left of the `Add All` button, you will remove all the fields for the current selected SObject or Child Relationship.
+
+If you click on the `Clear All` that is above the area to drop fields, it will clear all the fields.
+
+## How to add child relationship fields
+
+<img src="https://drive.google.com/uc?id=1YUfVu-DD6JMrRRgwXsxmurKiYC-UNpVB" width="800px"></img>
+
+## How to add filters
+
+You can add filters by clicking on a field:
+
+<img src="https://drive.google.com/uc?id=1I-h8LgE7IUs_HwHT5in-fHUZhRTIAzLm" width="800px"></img>
+
+## How to add Date Literals
+
+Date literals can be added on any `datetime` field.
+
+<img src="https://drive.google.com/uc?id=1AitCIziFnk1yDAN1nbBNAc6rFTcKx_Wj" width="800px"></img>
+
+## How to add ORDER BY
+
+<img src="https://drive.google.com/uc?id=1H1-HwU1M4N5gEmlvl6_aXcIY6gSva67B" width="800px"></img>
+
+## How to add LIMIT and OFFSET
+
+<img src="https://drive.google.com/uc?id=1tinX7YFzdFWn7a0uE2WgM5mqIAoFMiE3" width="800px"></img>
+
+## How to add FOR VIEW, FOR UPDATE, FOR REFERENCE, ALL ROWS
+
+These keywords only work on Apex Classes and you can add them using the query builder, but they will only appear once you've added the query on the apex class. This only works with the buttons `Add to Apex` and `Update Apex`, which are only available for paid users.
+
+## How to display the field type
+
+You can configure the extension to show the field type in the query builder and also in the table
+
+### Query builder
+
+<img src="https://drive.google.com/uc?id=1-MlWgs_kSw_5P5OD4tpkCwjFYgH1nguo" width="800px"></img>
+
+### Table
+
+<img src="https://drive.google.com/uc?id=17twZSAf_nKctgUI2jf4tR2cVNBIKM6WG" width="800px"></img>
+
+
+## How to display Required and Updateable fields
+
+When users are editing data, it is good to know if the field is updateable and required before doing any changes. So, by default, these two options are already enabled. But you can choose to turn it off if you don't like it.
+
+
+<img src="https://drive.google.com/uc?id=14b3XQXY79ra2343niDbG5Is17YKqDyRf" width="800px"></img>
+
+## How to Open Window Mode
+
+ - File -> Preferences -> Settings
+ - Type SOQL in the search bar
+ - Look for Window Mode and click on the checkbox
+
+ Now every time you open the extension, using any of the three methods listed above, it will be opened in a separate window. This way users that have multiple monitors can  have a better experience while developing as the extension will not take any space of their editor.
+
+<img src="https://drive.google.com/uc?id=1eIEREuMLkpb6hXx223vypc--RyVbAddR" width="800px"></img>
+
+## How to Install the App
+
+### Google Chrome
+
+<img src="https://drive.google.com/uc?id=1jPBrBzny6dXNe_r3QjvFt5Mg7kfuNFEq" width="1000px"></img>
+
+
+### Microsoft Edge (Chromium Version)
+
+<img src="https://drive.google.com/uc?id=19lDJqMu2fSVK22VtMd5ZjM_6iQlFTzT6" width="1000px"></img>
+
+### Safari
+
+Safari also has PWA features available. I just don't have a machine to show how to install it. If anybody could do it and then send an e-mail to me, that would be much appreciated.
+
+### Opera
+
+Opera does not support PWA features yet.
+
+### Firefox
+
+Mozilla has no plans for PWA features. But why are you using Firefox? You should change to any of the Chromium based browsers.
+
+## Shortcuts
+
+- `ctrl + shift + o` to refresh the objects for the selected environment
+
+- `ctrl + shift + e` to refresh the Environments list
+
+- `ctrl + shift + q` to execute the Query
+
+- `ctrl + shift + t` to expand the table
+
+- `ctrl + shift + s` to save the table changes
+
+- `ctrl + shift + c` to cancel all the table changes
+
+- `ctrl + shift + d` to export data as source tree
 
 
 ## Release Notes
+
+### 1.0.0
+
+- MUST HAVE THIS PLUGIN `https://github.com/forcedotcom/cli/issues/835` INSTALLED
+
+- The extension is now called Salesforce Query Editor as it brings the same functionality available in the Query Editor tab in the developer console.
+
+- Fully refactored using Nuxt JS.
+
+- Enables Window Mode and PWA App.
+
+- Enables Window Mode.
+
+- Improves Records Table.
+
+- Add Update Apex Button.
+
+- Enables Child Relationship queries.
+
+- Adds Date Time Literals for DateTime fields when configuring filters.
+
+- Adds `FOR UPDATE`, `FOR VIEW`, `FOR REFERENCE`, `ALL ROWS`. Only available when using `Add to Apex` or `Update Apex` buttons.
+
+- Adds `Copy` button to copy the query to clipboard.
+
+- It now uses the Monaco Editor for the Query Editor.
+
+- Improves the looking and feel by adding support to many vscode themes. Now the Query Editor text also changes between a Light and Dark color when changing themes.
+
+- Now it shows Field Details.
+
+- Now the user can quickly change between the orgs connected to `SFDX`.
+
+- Now it uses the Composition API to bundle together 20 requests to the Database.
+
+- The App also changes its colors when the user chooses a new theme in VS Code.
 
 ### 0.10.0
 

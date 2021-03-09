@@ -1,35 +1,6 @@
 export default {
-  createKeygenUser(context, { attributes }) {
-    return this.$axios.post(
-      `https://api.keygen.sh/v1/accounts/${process.env.KEYGEN_ACCOUNT_ID}/users`,
-      {
-        data: { type: 'users', attributes },
-      },
-      {
-        headers: {
-          'Content-Type': 'application/vnd.api+json',
-          Accept: 'application/vnd.api+json',
-        },
-      }
-    )
-  },
-  updateKeygenUser({ state }, { attributes }) {
-    return this.$axios.patch(
-      `${process.env.WEBHOOKS_SERVER}/user`,
-      {
-        userId: state.auth.userId,
-        attributes,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/vnd.api+json',
-          Accept: 'application/vnd.api+json',
-        },
-      }
-    )
-  },
-  login({commit}, { email, password }) {
-    const authResponse = this.$axios
+  login({ commit }, { email, password }) {
+    return this.$axios
       .post(
         `https://api.keygen.sh/v1/accounts/${process.env.KEYGEN_ACCOUNT_ID}/tokens`,
         null,
@@ -37,29 +8,28 @@ export default {
           headers: {
             'Content-Type': 'application/vnd.api+json',
             Accept: 'application/vnd.api+json',
-            Authorization: `Basic ${window.btoa(
-              `${email}:${password}`
-            )}`,
+            Authorization: `Basic ${window.btoa(`${email}:${password}`)}`,
           },
         }
-      ).then((authResponse)=>{
+      )
+      .then((authResponse) => {
         commit('setAuth', { ...authResponse.data, email })
       })
-
-    return authResponse
   },
-  fetchKeygenUser({commit, state}){
-    return this.$axios.get(
-      `https://api.keygen.sh/v1/accounts/${process.env.KEYGEN_ACCOUNT_ID}/users/${state.auth.userId}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.auth.token}`,
-        },
-      }
-    ).then((userResponse) => {
-      commit('setUser', userResponse.data.data.attributes)
-    })
+  fetchKeygenUser({ commit, state }) {
+    return this.$axios
+      .get(
+        `https://api.keygen.sh/v1/accounts/${process.env.KEYGEN_ACCOUNT_ID}/users/${state.auth.userId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${state.auth.token}`,
+          },
+        }
+      )
+      .then((userResponse) => {
+        commit('setUser', userResponse.data.data.attributes)
+      })
   },
   async validateLicense({ state, commit }, key) {
     console.log(key)
@@ -343,4 +313,15 @@ export default {
     commit('setStripeUser', createLicensesResponse.data.stripeCustomer.id)
     return createLicensesResponse
   },
+  fetchThemeColors({ commit }) {
+    return this.$axios.get(
+      `${process.env.SALESFORCE_SERVER}/vscode/colors`
+    )
+    .then((response) => {
+      commit('setThemeColors', response.data.colors);
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+  }
 }

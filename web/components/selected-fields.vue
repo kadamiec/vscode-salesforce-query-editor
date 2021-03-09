@@ -14,34 +14,25 @@
         class="d-flex"
         style="position: absolute; width: 100%; height: 100%; padding: 0px"
       >
-        <div class="m-auto" style="font-size: 30px">Drag and Drop a Field</div>
+        <div class="m-auto" style="font-size: 30px; text-align: center">
+          Drag and Drop Fields
+        </div>
       </div>
       <div v-else class="d-flex flex-column p-2">
-        <template v-if="configuration.groupSelectedFields">
+        <template>
           <fields-group
             v-for="(fields, sobjectName) in selectedFields"
             :key="sobjectName"
             :sobject-name="sobjectName"
             :fields="fields"
+            :soql="soql"
             class="mb-1"
             @click="onClickField"
+            @rightClick="onRightClickField"
             @soqlConfig="onChangeSoqlConfig"
           >
           </fields-group>
         </template>
-        <div v-else>
-          <template v-for="(fields, sobjectName) in selectedFields">
-            <button
-              v-for="(field, fieldIndex) in fields"
-              :key="field.name"
-              class="vscode-button ml-1 mb-1 noselect"
-              @click="onClickField({ sobjectName, field, fieldIndex })"
-            >
-              >
-              {{ sobjectName + '.' + field.name }}
-            </button>
-          </template>
-        </div>
       </div>
     </drop>
   </div>
@@ -56,7 +47,11 @@ export default {
     FieldsGroup,
   },
   props: {
-    selectedFields: {
+    isMain: {
+      type: Boolean,
+      default: false,
+    },
+    soql: {
       type: Object,
       default: () => {},
     },
@@ -66,7 +61,17 @@ export default {
       configuration: (state) => state.user.configuration,
     }),
     displayDropAFieldText() {
-      return this.selectedFields && !Object.keys(this.selectedFields).length
+      for (const sobject of Object.values(this.soql.sobjects)) {
+        if (Object.values(sobject.fields)?.length) return false
+      }
+      return true
+    },
+    selectedFields() {
+      const selectedFields = {}
+      for (const [sobjectName, sobject] of Object.entries(this.soql.sobjects)) {
+        selectedFields[sobjectName] = Object.values(sobject.fields) || []
+      }
+      return selectedFields
     },
   },
   methods: {
@@ -81,6 +86,9 @@ export default {
     },
     onChangeSoqlConfig({ soqlConfig, sobjectName }) {
       this.$emit('soqlConfig', { soqlConfig, sobjectName })
+    },
+    onRightClickField({ sobjectName, field, fieldIndex }) {
+      this.$emit('deleteField', { sobjectName, field, fieldIndex })
     },
   },
 }
@@ -99,6 +107,6 @@ export default {
 }
 
 button {
-  height: 30px;
+  height: 30px !important;
 }
 </style>

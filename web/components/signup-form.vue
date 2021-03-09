@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column m-auto">
+  <div class="d-flex flex-column">
     <div class="form-group required control-label">
       <label for="firstame" class="form-label">First Name</label>
       <input

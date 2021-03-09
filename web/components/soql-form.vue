@@ -33,6 +33,7 @@
           <label>ALL ROWS</label>
           <div class="switch">
             <input
+              :disabled="soqlConfig.forUpdate"
               v-model="soqlConfig.allRows"
               type="checkbox"
               @change="onChange"
@@ -45,11 +46,12 @@
           and archived activities.
         </p>
       </div>
-      <div class="mb-4">
+      <div v-if="isMain" class="mb-4">
         <label class="d-flex flex-column mb-0">
           <label>FOR UPDATE</label>
           <div class="switch">
             <input
+              :disabled="soqlConfig.allRows"
               v-model="soqlConfig.forUpdate"
               type="checkbox"
               @change="onChange"
@@ -67,6 +69,7 @@
           <label>FOR VIEW</label>
           <div class="switch">
             <input
+              :disabled="soqlConfig.forReference"
               v-model="soqlConfig.forView"
               type="checkbox"
               @change="onChange"
@@ -85,6 +88,7 @@
           <label>FOR REFERENCE</label>
           <div class="switch">
             <input
+              :disabled="soqlConfig.forView"
               v-model="soqlConfig.forReference"
               type="checkbox"
               @change="onChange"
@@ -107,6 +111,12 @@ import SideMenu from '@/components/side-menu.vue'
 export default {
   components: {
     SideMenu,
+  },
+  props: {
+    isMain: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => {
     return {

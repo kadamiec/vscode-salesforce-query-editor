@@ -5,4 +5,4 @@ const passwordValidator = helpers.regex(
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 )
 
-export default passwordValidator;
+export default passwordValidator

@@ -20,7 +20,11 @@
           <i class="fa fa-close"></i>
         </button>
       </div>
-      <button class="tab add-tab-button" @click="onClickNewTab">
+      <button
+        v-if="isAddTabEnabled"
+        class="tab add-tab-button"
+        @click="onClickNewTab"
+      >
         <i class="fa fa-plus px-auto"></i>
       </button>
     </div>
@@ -34,6 +38,10 @@ export default {
     value: {
       type: String,
       default: null,
+    },
+    isAddTabEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => {
@@ -72,8 +80,7 @@ export default {
   padding: 0px;
   border: none;
   border-radius: 0 !important;
-  border-bottom: var(--tab-border-bottom-size) solid
-    var(--vscode-tab-inactiveBackground) !important;
+  border-bottom: var(--tab-border-bottom-size) solid var(--vscode-tab-border) !important;
   background-color: var(--vscode-tab-inactiveBackground) !important;
   color: var(--vscode-tab-inactiveForeground) !important;
   height: 100%;
@@ -88,8 +95,9 @@ export default {
 }
 
 .tab.active {
+  background-color: var(--vscode-tab-unfocusedActiveBackground) !important;
   border-bottom: var(--tab-border-bottom-size) solid
-    var(--vscode-tab-activeBackground) !important;
+    var(--vscode-activityBarBadge-background) !important;
   color: var(--vscode-tab-activeForeground) !important;
 }
 
@@ -116,7 +124,6 @@ export default {
 }
 
 .add-tab-button:hover {
-  color: var(--vscode-tab-activeForeground) !important;
   border-bottom: var(--tab-border-bottom-size) solid
     var(--vscode-tab-inactiveBackground) !important;
 }

@@ -73,7 +73,10 @@
         </div>
       </div>
 
-      <div class="d-flex flex-column mt-3" style="font-size: 15px">
+      <div
+        class="d-flex flex-column mt-3"
+        style="font-size: 15px; color: var(--vscode-input-foreground)"
+      >
         <div class="text-center mb-2" style="font-size: 20px">
           Purchase Summary
         </div>
@@ -167,22 +170,22 @@
 import { Card, createToken } from 'vue-stripe-elements-plus'
 import { required, minValue } from 'vuelidate/lib/validators'
 import { mapActions, mapState } from 'vuex'
-import capitalizeFirstLetter from '~/mixins/capitelize-first-letter'
 import Loading from '@/components/loading'
+import capitalizeFirstLetter from '~/mixins/capitelize-first-letter'
 
 export default {
   components: {
     Card,
-    Loading
+    Loading,
   },
   mixins: [capitalizeFirstLetter],
-  middleware: 'auth',
+  middleware: ['auth'],
   data: () => {
     return {
       complete: false,
       submited: false,
       stripe: {
-        cardholderName: 'Allan Oricil',
+        cardholderName: null,
         subscriptionPlan: null,
         numberOfLicenses: 1,
         price: {
@@ -250,6 +253,39 @@ export default {
       return !!this.stripe.price.subscriptionPlans
     },
   },
+  watch: {
+    subscriptionsLoaded(newValue) {
+      this.$nextTick(() => {
+        if (newValue) {
+          const inputElem = this.$refs['cardholder-name']
+          const inputComputedStyles = window.getComputedStyle(inputElem, null)
+          const fontSize = inputComputedStyles.getPropertyValue('font-size')
+          const inputForegroundColor = inputComputedStyles.getPropertyValue(
+            '--vscode-input-foreground'
+          )
+          const labelFontFamily = inputComputedStyles.getPropertyValue(
+            '--vscode-font-family'
+          )
+
+          this.stripe.options.style.base.fontSize = fontSize
+          this.stripe.options.style.base.color = inputForegroundColor
+          this.stripe.options.style.base.fontFamily = labelFontFamily
+          this.stripe.options.style.invalid[
+            ':focus'
+          ].color = inputForegroundColor
+          this.stripe.options.style.base.iconColor = inputForegroundColor
+          this.stripe.options.style.base[
+            '::placeholder'
+          ].color = inputForegroundColor
+
+          this.$nextTick(() => {
+            this.mountCard = true
+            console.log(this.stripe.options)
+          })
+        }
+      })
+    },
+  },
   async beforeMount() {
     try {
       const plansResponse = await this.$axios.get(
@@ -259,39 +295,6 @@ export default {
     } catch {
       return this.$nuxt.error({ message: 'Could not fetch Subscription Plans' })
     }
-  },
-  watch: {
-    subscriptionsLoaded(newValue) {
-      this.$nextTick(() => {
-        if (newValue) {
-          const inputElem = this.$refs['cardholder-name']
-          const inputComputedStyles = window.getComputedStyle(inputElem, null)
-          const fontSize = inputComputedStyles.getPropertyValue('font-size')
-          const labelForegroundColor = inputComputedStyles.getPropertyValue(
-            '--vscode-menu-foreground'
-          )
-          const labelFontFamily = inputComputedStyles.getPropertyValue(
-            '--vscode-font-family'
-          )
-
-          this.stripe.options.style.base.fontSize = fontSize
-          this.stripe.options.style.base.color = labelForegroundColor
-          this.stripe.options.style.base.fontFamily = labelFontFamily
-          this.stripe.options.style.invalid[
-            ':focus'
-          ].color = labelForegroundColor
-          this.stripe.options.style.base.iconColor = labelForegroundColor
-          this.stripe.options.style.base[
-            '::placeholder'
-          ].color = labelForegroundColor
-
-          this.$nextTick(() => {
-            this.mountCard = true
-            console.log(this.stripe.options)
-          })
-        }
-      })
-    },
   },
   methods: {
     ...mapActions({
@@ -318,43 +321,44 @@ export default {
                 name: this.stripe.cardholderName,
                 email: this.user.email,
               })
-              .then((createTokenResponse) => {
-                if (createTokenResponse.error) {
-                  this.errors.push({
-                    message: createTokenResponse.error.message,
-                  })
-                  this.isPaying = false
-                } else {
-                  this.createLicenses({
-                    quantity: this.stripe.numberOfLicenses,
-                    stripePlanId: this.stripe.price.subscriptionPlans[
-                      this.stripe.subscriptionPlan
-                    ].id,
-                    stripeToken: createTokenResponse.token.id,
-                  })
-                    .then(() => {
-                      this.isPaying = false
-                      this.stripe.options.disabled = false
-                      this.$refs['stripe-card'].update(this.stripe.options)
-                      this.$router.push({
-                        name: 'success-subscription',
-                        params: {
-                          error: false,
-                        },
-                      })
+                .then((createTokenResponse) => {
+                  if (createTokenResponse.error) {
+                    this.errors.push({
+                      message: createTokenResponse.error.message,
                     })
-                    .catch(() => {
-                      this.isPaying = false
-                      this.errors.push({
-                        message: 'Could not Subscribe',
-                      })
+                    this.isPaying = false
+                  } else {
+                    this.createLicenses({
+                      quantity: this.stripe.numberOfLicenses,
+                      stripePlanId: this.stripe.price.subscriptionPlans[
+                        this.stripe.subscriptionPlan
+                      ].id,
+                      stripeToken: createTokenResponse.token.id,
                     })
-                }
-              }).catch(() => {
-                this.errors.push({
-                  message: 'Could not create Stripe Token',
+                      .then(() => {
+                        this.isPaying = false
+                        this.stripe.options.disabled = false
+                        this.$refs['stripe-card'].update(this.stripe.options)
+                        this.$router.push({
+                          name: 'success-subscription',
+                          params: {
+                            error: false,
+                          },
+                        })
+                      })
+                      .catch(() => {
+                        this.isPaying = false
+                        this.errors.push({
+                          message: 'Could not Subscribe',
+                        })
+                      })
+                  }
                 })
-              })
+                .catch(() => {
+                  this.errors.push({
+                    message: 'Could not create Stripe Token',
+                  })
+                })
             }
           })
       }
@@ -405,6 +409,7 @@ input {
   cursor: pointer;
   max-width: 20rem;
   background-color: var(--vscode-button-background) !important;
+  color: var(--vscode-button-foreground) !important;
 }
 
 .card.disabled {

@@ -1,3 +1,5 @@
+import darkTheme from '~/assets/json/dark-theme.json'
+
 export default () => ({
   auth: {},
   license: {
@@ -5,24 +7,21 @@ export default () => ({
       valid: false,
     },
   },
+  theme: darkTheme,
   user: {},
   subscriptions: [],
   fingerprint: null,
-  configuration: {
-    displayEditor: true,
-    format: {
-      automatically: true,
-    },
-    fieldType: {
-      table: false,
-      form: false,
-    },
-    nestedResults: {
-      style: false,
-      expanded: false,
-      depth: false,
-    },
-    groupSelectedFields: true,
-  },
+  configuration: {},
   activeMenu: null,
+  isVSCode: isVScode(),
+  isLocalServerRunning: false
 })
+
+function isVScode() {
+  try {
+    acquireVsCodeApi()
+    return true
+  } catch (_) {
+    return false
+  }
+}

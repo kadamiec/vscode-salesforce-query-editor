@@ -7,9 +7,6 @@ class Editor {
     constructor(){
         this._editor = vscode.window.activeTextEditor;
         this._editingSOQL = { start: 0, end: 0, soql: null };
-        vscode.window.onDidChangeTextEditorSelection(() => {
-            this.sendEditingSOQL();
-        })
     }
 
     set editor(editor){
@@ -20,9 +17,17 @@ class Editor {
         return vscode.window.activeTextEditor;
     }
 
+    activate(keygen){
+        if(keygen.isValid){
+            vscode.window.onDidChangeTextEditorSelection(() => {
+                this.setEditor();
+                this.sendEditingSOQL();
+            })
+        }
+    }
+
     sendEditingSOQL(){
         if(this._editor){
-            this._editingSOQL = this.getSOQL();
             axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/editingsoql`, this._editingSOQL);
         }
     }

@@ -22,7 +22,7 @@
                 class="vscode-button btn"
                 @click="onClickAddLicense"
               >
-                Activate License
+                Add License
               </button>
             </div>
           </div>
@@ -290,7 +290,10 @@ export default {
       this.licenseButton.licenseIndex = licenseIndex
       this.deactivateMachine({ subscriptionIndex, licenseIndex })
         .then(async () => {
-          await this.fetchSubscriptions().then(() => (this.isDataReady = true))
+          await this.fetchSubscriptions().then(() => {
+            this.isDataReady = true
+            this.showToastMessage('License was Deactivated with success.')
+          })
         })
         .catch(() => {
           this.showToastMessage('Could not Deactivate your License.')
@@ -306,13 +309,13 @@ export default {
       this.activateMachine({ subscriptionIndex, licenseIndex })
         .then(() => {
           this.fetchSubscriptions()
-          .then(() => {
-            this.showToastMessage('License was activated with success.')
-          })
-          .catch(() => {
-            this.showToastMessage('Could not fetch your licenses.')
-          })
-          .finally(() => this.isDataReady = true)
+            .then(() => {
+              this.showToastMessage('License was activated with success.')
+            })
+            .catch(() => {
+              this.showToastMessage('Could not fetch your licenses.')
+            })
+            .finally(() => (this.isDataReady = true))
         })
         .catch(() => {
           this.showToastMessage('Could not Activate your License.')
@@ -336,15 +339,15 @@ export default {
         noCloseButton: true,
       })
     },
-    onClickUpdatePassword(){
-      this.$router.push({name: 'update-password'})
-    }
+    onClickUpdatePassword() {
+      this.$router.push({ name: 'update-password' })
+    },
   },
 }
 </script>
 
 <style scoped>
-.user-info{
+.user-info {
   font-size: 23px;
 }
 

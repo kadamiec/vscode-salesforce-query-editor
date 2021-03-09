@@ -1,10 +1,10 @@
 <template>
   <div>
-    <loading v-if="!isDataReady" />
-    <template v-show="isDataReady">
+    <template v-if="isLocalServerRunning">
       <tabs
-        v-if="isLicenseValid()"
-        :value="activeEditor.name"
+        v-if="displayTabs"
+        :value="activeEditor"
+        :is-add-tab-enabled="isAddTabEnabled"
         @newTab="onClickNewTab"
         @removeTab="onRemoveTab"
         @activate="onClickTab"
@@ -14,100 +14,136 @@
           :key="editor.name"
           :name="editor.name"
           :label="editor.label"
-          :is-active="activeEditor.name === editor.name"
+          :is-active="activeEditor === editor.name"
         >
-          <editor :name="editor.name" class="px-2 pt-2"></editor>
+          <editor
+            :name="editor.name"
+            :defaultusername="defaultusername"
+            :is-active="activeEditor === editor.name"
+            :is-loading-environments="isLoadingEnvironments"
+            @reloadEnvironments="onReloadEnvironments"
+          ></editor>
         </tab>
       </tabs>
       <editor
         v-else
         name="editor-0"
-        class="vh-100 px-2 pt-2"
+        :defaultusername="defaultusername"
+        :is-active="true"
+        :is-loading-environments="isLoadingEnvironments"
+        class="vh-100"
+        @reloadEnvironments="onReloadEnvironments"
       ></editor>
     </template>
+    <div v-else class="d-flex vh-100">
+      <h3 class="m-auto">
+        Open VS Code, wait until the extension is Activated, and then refresh
+        this Page.
+      </h3>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Editor from '@/components/editor.vue'
 import Tabs from '@/components/tabs'
 import Tab from '@/components/tab'
-import Loading from '@/components/loading'
-import soqlEditor from '~/assets/js/utils/soqlEditor/index'
-
-soqlEditor.activate()
 
 export default {
   components: {
     Editor,
     Tabs,
     Tab,
-    Loading,
   },
   layout: 'loggedin',
   middleware: ['auth', 'validate-keygen-license', 'menu'],
+  data: () => {
+    return {
+      defaultusername: {},
+      activeEditor: 'editor-0',
+      isAddTabEnabled: false,
+      isLoadingEnvironments: true,
+      editors: [
+        {
+          name: 'editor-0',
+          label: 'Editor',
+        },
+      ],
+    }
+  },
   computed: {
     ...mapState({
       configuration: (state) => state.user.configuration,
-      editors: (state) => state.salesforce.editors,
-      environments: (state) => state.salesforce.environments,
-      defaultusername: (state) => state.salesforce.defaultusername,
+      isVSCode: (state) => state.user.isVSCode,
+      isLocalServerRunning: (state) => state.user.isLocalServerRunning,
     }),
     ...mapGetters({
       isLicenseValid: 'user/isLicenseValid',
-      getActiveEditor: 'salesforce/getActiveEditor',
+      getEnvironment: 'salesforce/getEnvironment',
     }),
-    activeEditor() {
-      return this.getActiveEditor()
+    displayTabs() {
+      if (this.isVSCode) {
+        return this.isLicenseValid() && this.configuration.displayTabs
+      } else {
+        return this.isLicenseValid()
+      }
     },
-    isDataReady() {
-      return this.editors && !this.editors[this.activeEditor.name].loading
+  },
+  sockets: {
+    defaultusername(defaultusername) {
+      this.setEnvironmentDetails(defaultusername.result)
+      this.defaultusername = this.getEnvironment(
+        defaultusername.result.username
+      )
     },
   },
   mounted() {
     this.fetchConfiguration()
-    if (!this.isDataReady) {
-      this.fetchSfdxData({ editorName: this.activeEditor.name }).catch(() => {
-        return this.$nuxt.error({ message: 'Could not fetch sfdx data' })
-      })
-    }
-  },
-  sockets: {
-    defaultusername(data) {
-      console.log(data)
-    },
+    this.fetchSFDXData().then((defaultusername) => {
+      this.isAddTabEnabled = true
+      this.isLoadingEnvironments = false
+      this.defaultusername = defaultusername
+    })
   },
   methods: {
     ...mapActions({
-      fetchSfdxData: 'salesforce/fetchSfdxData',
+      fetchSFDXData: 'salesforce/fetchSFDXData',
       sendActiveEditor: 'salesforce/sendActiveEditor',
-      fetchConfiguration: 'user/fetchConfiguration'
+      fetchEnvironments: 'salesforce/fetchEnvironments',
+      fetchConfiguration: 'user/fetchConfiguration',
+      fetchSObjects: 'salesforce/fetchSObjects',
     }),
     ...mapMutations({
-      addEditor: 'salesforce/addEditor',
-      deleteEditor: 'salesforce/deleteEditor',
-      setActiveEditor: 'salesforce/setActiveEditor',
+      setEnvironmentDetails: 'salesforce/setEnvironmentDetails',
     }),
     onClickNewTab({ label, name }) {
-      this.addEditor({ editorName: name, editorLabel: label })
+      this.editors.push({
+        name,
+        label,
+      })
+      this.activeEditor = name
       this.sendActiveEditor()
     },
     onClickTab(editorName) {
-      this.setActiveEditor({ editorName })
+      this.activeEditor = editorName
     },
     onRemoveTab({ name, index }) {
-      if (this.activeEditor.name === name) {
-        const editorKeys = Object.keys(this.editors)
-        let editorName
-        if (index === editorKeys.length - 1) {
-          editorName = editorKeys[index - 1]
-        } else {
-          editorName = editorKeys[index + 1]
-        }
-        this.setActiveEditor({ editorName })
+      if (this.activeEditor === name) {
+        this.activeEditor =
+          index === this.editors.length - 1
+            ? this.editors[index - 1].name
+            : this.editors[index + 1].name
       }
-      this.deleteEditor({ editorName: name })
+      this.editors.splice(index, 1)
+    },
+    onReloadEnvironments() {
+      this.isLoadingEnvironments = true
+      this.fetchSFDXData()
+        .then((defaultusername) => {
+          this.defaultusername = defaultusername
+        })
+        .finally(() => (this.isLoadingEnvironments = false))
     },
   },
 }
@@ -121,10 +157,5 @@ export default {
 
 .tab-delete-button:hover {
   color: var(--vscode-button-foreground) !important;
-}
-
-.google-ads-container {
-  width: 150px;
-  height: 100vh;
 }
 </style>

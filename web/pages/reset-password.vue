@@ -1,7 +1,6 @@
 <template>
   <div class="d-flex flex-column vh-100">
     <form class="m-auto" style="width: 400px">
-
       <div class="form-group control-label mt-2">
         <label for="password" class="form-label">New Password</label>
         <input
@@ -12,13 +11,15 @@
           placeholder="Enter your password"
         />
         <div class="form-text" :class="{ error: $v.user.password.$error }">
-            Password must have a minimum of eight characters, at least one letter,
-            one number and one special character.
+          Password must have a minimum of eight characters, at least one letter,
+          one number and one special character.
         </div>
       </div>
 
       <div class="form-group control-label mt-2">
-        <label for="passwordConfirmation" class="form-label">Confirm Password</label>
+        <label for="passwordConfirmation" class="form-label"
+          >Confirm Password</label
+        >
         <input
           id="passwordConfirmation"
           v-model="$v.user.passwordConfirmation.$model"
@@ -27,7 +28,7 @@
           placeholder="Enter your Password again"
         />
         <template v-if="$v.user.passwordConfirmation.$error">
-            <div class="error form-text">Passwords do not match.</div>
+          <div class="error form-text">Passwords do not match.</div>
         </template>
       </div>
 
@@ -57,51 +58,57 @@ import showToastMessage from '@/mixins/show-toast-message'
 import { MD5 } from 'object-hash'
 
 export default {
-    mixins: [showToastMessage],
-    data: () => {
-        return {
-        user: {
-            password: '07021994aA@',
-            passwordConfirmation: '07021994aA@'
-        },
-        error: null,
-        isChangingPassword: false,
-        }
+  mixins: [showToastMessage],
+  middleware: ['fetch-colors'],
+  data: () => {
+    return {
+      user: {
+        password: null,
+        passwordConfirmation: null,
+      },
+      error: null,
+      isChangingPassword: false,
+    }
+  },
+  validations: {
+    user: {
+      password: {
+        required,
+        passwordValidator,
+      },
+      passwordConfirmation: {
+        sameAs: sameAs('password'),
+      },
     },
-    validations: {
-        user: {
-            password: {
-                required,
-                passwordValidator
-            },
-            passwordConfirmation: {
-                sameAs: sameAs('password')
-            }
-        },
-    },
-    methods: {
-        onClickChangePassword(){
-            const queryParams = new URLSearchParams(atob(this.$route.query.code));
+  },
+  methods: {
+    onClickChangePassword() {
+      const queryParams = new URLSearchParams(atob(this.$route.query.code))
 
-            this.isChangingPassword = true;
-            this.$axios.post(`https://api.keygen.sh/v1/accounts/${process.env.KEYGEN_ACCOUNT_ID}/users/${queryParams.get("userId")}/actions/reset-password`,
-                {
-                    "meta": {
-                        "passwordResetToken": queryParams.get("passwordResetToken"),
-                        "newPassword": MD5(this.user.password)
-                    }
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/vnd.api+json",
-                        "Accept": "application/vnd.api+json"
-                    }
-                }
-            ).then(() => this.$router.push({name: 'signin'}))
-            .catch(() => this.showToastMessage('Could not change your password'))
-            .finally(() => this.isChangingPassword = false)
-        }
+      this.isChangingPassword = true
+      this.$axios
+        .post(
+          `https://api.keygen.sh/v1/accounts/${
+            process.env.KEYGEN_ACCOUNT_ID
+          }/users/${queryParams.get('userId')}/actions/reset-password`,
+          {
+            meta: {
+              passwordResetToken: queryParams.get('passwordResetToken'),
+              newPassword: MD5(this.user.password),
+            },
+          },
+          {
+            headers: {
+              'Content-Type': 'application/vnd.api+json',
+              Accept: 'application/vnd.api+json',
+            },
+          }
+        )
+        .then(() => this.$router.push({ name: 'signin' }))
+        .catch(() => this.showToastMessage('Could not change your password'))
+        .finally(() => (this.isChangingPassword = false))
     },
+  },
 }
 </script>
 

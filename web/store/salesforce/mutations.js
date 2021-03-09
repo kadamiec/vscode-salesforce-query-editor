@@ -18,7 +18,7 @@ export default {
         sobject
       )
     })
-    state.environments = {...state.environments}
+    state.environments = { ...state.environments }
   },
   clearSObjectsDetails(state) {
     state.sobjectsWithDetails = {}
@@ -35,7 +35,7 @@ export default {
     const nonScratchOrgs = environments.nonScratchOrgs || []
     const scratchOrgs = environments.scratchOrgs || []
 
-    let envs = {};
+    let envs = {}
     nonScratchOrgs.forEach((env) => {
       envs = {
         ...envs,
@@ -62,49 +62,24 @@ export default {
       }
     })
 
-    state.environments = envs;
+    state.environments = envs
   },
   setEnvironmentDetails(state, environmentDetails) {
     state.environments[environmentDetails.username] = {
       ...state.environments[environmentDetails.username],
       ...environmentDetails,
-      sobjects: {},
-      sobjectsWithDetails: {},
-      sobjectsRequests: {},
+      sobjects: state.environments[environmentDetails.username]?.sobjects || {},
+      sobjectsWithDetails:
+        state.environments[environmentDetails.username]?.sobjectsWithDetails ||
+        {},
+      sobjectsRequests:
+        state.environments[environmentDetails.username]?.sobjectsRequests || {},
     }
   },
   clearEnvironment(state, username) {
     state.environments[username].sobjects = {}
     state.environments[username].sobjectsWithDetails = {}
     state.environments[username].sobjectsRequests = {}
-  },
-  setSelectedUsername(state, { editorName, username }) {
-    state.editors[editorName].username = username
-  },
-  setEditorLoadingState(state, { editorName, isLoading }) {
-    state.editors[editorName].loading = isLoading
-  },
-  addEditor(state, { editorName, editorLabel }) {
-    for (const [_, editor] of Object.entries(state.editors)) {
-      editor.active = false
-    }
-    Vue.set(state.editors, editorName, {
-      active: true,
-      name: editorName,
-      label: editorLabel,
-      username: state.editors[Object.keys(state.editors)[0]].username,
-      loading: false,
-    })
-  },
-  setActiveEditor(state, { editorName }) {
-    for (const [_, editor] of Object.entries(state.editors)) {
-      editor.active = false
-    }
-    state.editors[editorName].active = true
-    Vue.set(state.editors, editorName, state.editors[editorName])
-  },
-  deleteEditor(state, { editorName }) {
-    Vue.delete(state.editors, editorName)
   },
   saveQueryToHistory(state, { query, username }) {
     if (!state.environments[username].history)

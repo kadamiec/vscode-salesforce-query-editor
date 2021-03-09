@@ -28,6 +28,7 @@ module.exports = {
     'no-prototype-builtins': 'off',
     'vue/no-mutating-props': 'off',
     'no-unused-vars' : 'off',
-    'no-useless-escape': 'off'
+    'no-useless-escape': 'off',
+    'unicorn/prefer-starts-ends-with': 'off'
   },
 }

@@ -1,25 +1,43 @@
-const vscode  = require('vscode');
+// @ts-nocheck
+const vscode = require('vscode');
+const axios = require('axios');
 
 class Configuration {
     
-    static _properties() {
-        return [
-            "displayEditor",
-            "fieldType", 
-            "format", 
-            "nestedResults", 
-            "groupSelectedFields",
-            "windowMode"
-        ];
+    constructor(outputChannel){
+        this._outputChannel = outputChannel;
+        this._properties = {
+            displayQueryBuilder: null,
+            fieldType: null,
+            field: null,
+            format: null, 
+            nestedResults: null,
+            windowMode: null,
+            displayTabs: null,
+            queryOnClick: null,
+            setQueryOnClick: null
+        };
+        this._context = null;
     }
-    constructor(){}
+
+    activate(context){
+        this._context = context;
+        vscode.workspace.onDidChangeConfiguration(() => {
+            this.loadProperties();
+            axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/configuration`, this.properties)
+                .catch((_) => this._outputChannel.appendLine('Could not delivery the Workspace Configuration'));
+        })
+    }
 
     get properties(){
-        const properties = {};
-        Configuration._properties().forEach((property) => {
-            properties[property] = vscode.workspace.getConfiguration('soqlEditor').get(property)
+        this.loadProperties();
+        return this._properties;
+    }
+
+    loadProperties(){
+        Object.keys(this._properties).forEach((property) => {
+            this._properties[property] = vscode.workspace.getConfiguration('soqlEditor').get(property)
         });
-        return properties;
     }
 }
 

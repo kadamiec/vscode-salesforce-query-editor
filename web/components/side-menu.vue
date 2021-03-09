@@ -9,7 +9,7 @@
               <slot name="left-button"></slot>
               <slot name="close">
                 <i
-                  class="fa fa-close fa-lg ml-auto"
+                  class="clickable-icon fa fa-close fa-lg ml-auto"
                   style="margin-right: 5px"
                   @click="close"
                 ></i>
@@ -101,10 +101,5 @@ export default {
   position: fixed;
   width: 100vw;
   height: 100vh;
-}
-
-i:hover {
-  cursor: pointer;
-  color: var(--vscode-button-foreground);
 }
 </style>

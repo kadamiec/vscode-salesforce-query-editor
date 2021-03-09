@@ -2,6 +2,7 @@
   <div class="overflow-hidden">
     <side-bar :active="displaySideBar"></side-bar>
     <Nuxt
+      keep-alive
       :class="{
         main: this.displaySideBar,
         'w-100': !this.displaySideBar,
@@ -14,18 +15,30 @@
 
 <script>
 import SideBar from '@/components/side-bar'
+import { mapState } from 'vuex'
 import disableInspect from '~/mixins/disable-inspect'
+import colorChange from '~/mixins/color-change'
+import configurationChange from '~/mixins/configuration-change'
 
 export default {
   components: {
     SideBar,
   },
-  mixins: [disableInspect],
+  middleware: ['fetch-colors', 'is-local-server-running'],
+  mixins: [colorChange, configurationChange, disableInspect],
   data: () => {
     return {
-      displaySideBar: true,
+      displaySideBar: null,
     }
   },
+  computed: {
+    ...mapState({
+      isVSCode: (state) => state.user.isVSCode
+    }),
+  },
+  beforeMount(){
+    this.displaySideBar = !this.isVSCode;
+  }
 }
 </script>
 

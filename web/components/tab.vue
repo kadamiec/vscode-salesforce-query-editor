@@ -6,7 +6,7 @@
     class="tab-content"
     role="tabpanel"
   >
-    <transition name="fade"><slot></slot></transition>
+    <slot></slot>
   </div>
 </template>
 
