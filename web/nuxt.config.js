@@ -69,7 +69,8 @@ export default {
     { src: '~plugins/fontawesome.js', ssr: false },
     { src: '~plugins/vue-socket.io.js', ssr: false },
     { src: '~plugins/vue-infinite-loading.js', ssr: false },
-    { src: '~plugins/vue-columns-resizable.js', ssr: false}
+    { src: '~plugins/vue-columns-resizable.js', ssr: false},
+    ...(!process.env.IS_VSCODE ? [{ src: '~plugins/vue-gtag.js', ssr: false}] : [])
   ],
 
   components: true,

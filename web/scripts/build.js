@@ -7,7 +7,7 @@ const NUXTIGNORE_PATH = path.resolve('.nuxtignore');
 
 async function run(){
     if(process.env.IS_VSCODE){
-        const nuxtignore = `pages/product-description.vue\npages/update-password.vue`
+        const nuxtignore = `pages/product-description.vue\npages/update-password.vue\npages/privacy-policy.vue`
 
         fs.writeFileSync(NUXTIGNORE_PATH, nuxtignore, { encoding: 'utf-8'});
     }

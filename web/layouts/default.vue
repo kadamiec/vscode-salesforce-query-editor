@@ -1,15 +1,26 @@
 <template>
-  <Nuxt style="overflow-y: hidden" />
+  <div>
+    <Nuxt style="overflow-y: hidden" />
+    <cookie-banner v-if="!isVSCode"></cookie-banner>
+  </div>
 </template>
 
 <script>
+import CookieBanner from '@/components/cookie-banner.vue'
+import { mapState } from 'vuex'
 import disableInspect from '~/mixins/disable-inspect'
 import configurationChange from '~/mixins/configuration-change'
 import colorChange from '~/mixins/color-change'
 
 export default {
+  components: [CookieBanner],
   mixins: [colorChange, configurationChange, disableInspect],
   middleware: ['fetch-colors', 'is-local-server-running'],
+  computed: {
+    ...mapState({
+      isVSCode: (state) => state.user.isVSCode,
+    }),
+  },
 }
 </script>
 
@@ -33,3 +44,4 @@ html {
   margin: 0;
 }
 </style>
+CookieBanner

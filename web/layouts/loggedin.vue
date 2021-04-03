@@ -1,19 +1,21 @@
 <template>
   <div class="overflow-hidden">
-    <side-bar :active="displaySideBar"></side-bar>
+    <side-bar :active="!isVSCode"></side-bar>
     <Nuxt
       keep-alive
       :class="{
-        main: this.displaySideBar,
-        'w-100': !this.displaySideBar,
+        main: !this.isVSCode,
+        'w-100': !!this.isVSCode,
       }"
       style="position: fixed"
       class="margin-transition"
     />
+    <cookie-banner v-if="!isVSCode"></cookie-banner>
   </div>
 </template>
 
 <script>
+import CookieBanner from '@/components/cookie-banner.vue'
 import SideBar from '@/components/side-bar'
 import { mapState } from 'vuex'
 import disableInspect from '~/mixins/disable-inspect'
@@ -23,22 +25,15 @@ import configurationChange from '~/mixins/configuration-change'
 export default {
   components: {
     SideBar,
+    CookieBanner,
   },
-  middleware: ['fetch-colors', 'is-local-server-running'],
   mixins: [colorChange, configurationChange, disableInspect],
-  data: () => {
-    return {
-      displaySideBar: null,
-    }
-  },
+  middleware: ['fetch-colors', 'is-local-server-running'],
   computed: {
     ...mapState({
-      isVSCode: (state) => state.user.isVSCode
+      isVSCode: (state) => state.user.isVSCode,
     }),
   },
-  beforeMount(){
-    this.displaySideBar = !this.isVSCode;
-  }
 }
 </script>
 
