@@ -27,7 +27,7 @@ jobs:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Build Extension
         run: |
-         npm run install
+         npm install
          npm run create:env
          npm run build:prod
          rm ./web/dist/_nuxt/app.js
