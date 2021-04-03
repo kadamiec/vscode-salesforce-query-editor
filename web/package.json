@@ -1,6 +1,6 @@
 {
   "name": "salesforce-query-editor-app",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "private": false,
   "scripts": {
     "dev": "cross-env SALESFORCE_SERVER=http://localhost:5000 nuxt",
