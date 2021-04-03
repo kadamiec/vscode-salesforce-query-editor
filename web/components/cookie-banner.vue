@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { bootstrap } from 'vue-gtag';
+
 export default {
   data: () => {
     return {
