@@ -22,3 +22,5 @@ webpack.config.dev.js
 data/*
 .build
 *.env
+.github
+scripts
