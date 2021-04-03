@@ -20,7 +20,6 @@ jobs:
          yarn install
          yarn build:vscode
          yarn generate:vscode
-         yarn checksum
          npm publish
         working-directory: ./web
         env:
