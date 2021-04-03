@@ -15,11 +15,11 @@ export default {
   props: {
     pageName: {
       type: String,
-      default: null,
+      default: 'signin',
     },
     pageLabel: {
       typ: String,
-      default: null,
+      default: 'Sign In',
     },
   },
   data: () => {

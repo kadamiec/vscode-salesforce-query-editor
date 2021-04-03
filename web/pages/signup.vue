@@ -29,24 +29,36 @@
           <li>Add Child Parent Relationship Fields</li>
           <li>Works with any VS Code Theme</li>
           <li>Works side by side with your Apex Class</li>
-          <li>Access Field Details, such as Name, Label, Required, Updateable, Groupable and more</li>
-          <li>Compact to not take away the space you have available while writing code</li>
+          <li>
+            Access Field Details, such as Name, Label, Required, Updateable,
+            Groupable and more
+          </li>
+          <li>
+            Compact to not take away the space you have available while writing
+            code
+          </li>
           <li>A lot more...</li>
         </ul>
         <h3>Paid Features</h3>
         <ul>
-          <li> Remove BUY PRO golden button and any other Propaganda.</li>
-          <li> Window Mode</li>
-          <li> Desktop App (PWA)</li>
-          <li> Quickly update or add a new Query to apex using Add to Apex and Update Apex buttons</li>
-          <li> Quickly run Queries</li>
-          <li> Run multiple queries in different tabs</li>
+          <li>Remove BUY PRO golden button and any other Propaganda.</li>
+          <li>Window Mode</li>
+          <li>Desktop App (PWA)</li>
+          <li>
+            Quickly update or add a new Query to apex using Add to Apex and
+            Update Apex buttons
+          </li>
+          <li>Quickly run Queries</li>
+          <li>Run multiple queries in different tabs</li>
         </ul>
-        <button class="vscode-button btn" @click="onClickLearnMoreButton">Learn more</button>
-        <button class="vscode-button btn" @click="onClickInstallItNowButton">Install it Now</button>
+        <button class="vscode-button btn" @click="onClickLearnMoreButton">
+          Learn more
+        </button>
+        <button class="vscode-button btn" @click="onClickInstallItNowButton">
+          Install it Now
+        </button>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -59,7 +71,7 @@ import Logo from '@/components/logo'
 export default {
   components: {
     SignUpForm,
-    Logo
+    Logo,
   },
   data: () => {
     return {
@@ -76,13 +88,13 @@ export default {
       error: null,
     }
   },
-  computed:{
+  computed: {
     ...mapState({
-      isVSCode: (state) => state.user.isVSCode
-    })
+      isVSCode: (state) => state.user.isVSCode,
+    }),
   },
-  mounted(){
-    localStorage.setItem('partnerId', this.$route.query.partnerId);  
+  mounted() {
+    localStorage.setItem('partnerId', this.$route.query.partnerId)
   },
   methods: {
     ...mapActions({
@@ -91,30 +103,24 @@ export default {
     }),
     submit() {
       this.error = null
-      this.submited = true
       this.$refs['sign-up-form'].$v.$touch()
-      if (!this.$refs['sign-up-form'].$v.$invalid) {
+      this.submited = true
+      if (this.$refs['sign-up-form'].$v.$invalid) {
+        this.submited = false
+      } else {
+        const password = MD5(this.user.password)
         const attributes = {
           firstName: this.user.firstname,
           lastName: this.user.lastname,
           email: this.user.email,
-          password: MD5(this.user.password),
+          password,
           metadata: {
-            partnerId: localStorage.getItem('partnerId'),
+            partnerId: localStorage.getItem('partnerId') || null,
           },
         }
         this.createKeygenUser(attributes)
           .then(() => {
-            this.login({
-              email: this.user.email,
-              password: this.user.password,
-            })
-              .then(() => {
-                this.fetchKeygenUser()
-                  .then(() => this.$router.push({ name: 'editor' }))
-                  .catch(() => this.router.push({ name: 'signin' }))
-              })
-              .catch(() => this.$router.push({ name: 'signin' }))
+            this.$router.push({ name: 'success-signup' })
           })
           .catch((error) => {
             error.response.data.errors.forEach((error) => {
@@ -122,7 +128,8 @@ export default {
                 this.error =
                   'E-mail has already been taken. Choose a different E-mail and try again.'
               } else {
-                this.error = error.detail
+                this.error =
+                  "Sorry, your account couldn't be created at the moment. Try again later."
               }
             })
           })
@@ -143,16 +150,18 @@ export default {
         }
       )
     },
-    onClickLearnMoreButton(){
-      this.$router.push({ name: 'product-description'});
+    onClickLearnMoreButton() {
+      this.$router.push({ name: 'product-description' })
     },
-    onClickInstallItNowButton(){
-      window.open('https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor', '__blank')
+    onClickInstallItNowButton() {
+      window.open(
+        'https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor',
+        '__blank'
+      )
       window.open('vscode:extension/allanoricil.salesforce-soql-editor')
-    }
+    },
   },
 }
 </script>
 
-<style>
-</style>
+<style></style>

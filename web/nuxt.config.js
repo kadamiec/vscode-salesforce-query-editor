@@ -2,6 +2,21 @@ import webpack from 'webpack';
 import WebpackObfuscator from 'webpack-obfuscator';
 import MonacoEditorPlugin from 'monaco-editor-webpack-plugin';
 
+const buildPlugins = [
+  new MonacoEditorPlugin({
+    languages: ['java'],
+    features: ['!gotoSymbol'],
+  }),
+]
+
+if(process.env.IS_VSCODE){
+  buildPlugins.push(
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1
+    })
+  )
+}
+
 export default {
   target: 'static',
   ssr: false,
@@ -15,7 +30,7 @@ export default {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'salesforce-query-editor',
+    title: 'Salesforce Query Editor',
     htmlAttrs: {
       lang: 'en',
       ...(process.env === 'dev' && {oncontextmenu: 'return false'})
@@ -75,35 +90,47 @@ export default {
   modules: [
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    ...(!process.env.IS_VSCODE ? ['@nuxtjs/pwa'] : []),
   ],
 
   axios: {},
 
-  pwa: {
-    manifest: {
-      short_name: 'SOQL',
-      name: 'Salesforce Query Editor',
-      description:
-        'This Web App helps Salesforce Developers to write Queries and manage Salesforce data while using VSCode.',
-      start_url: '/',
-      theme_color: '#ffffff',
-      background_color: '#ffffff',
-      display: 'standalone'
+  ...(!process.env.IS_VSCODE ? {
+    pwa: {
+      manifest: {
+        short_name: 'SOQL',
+        name: 'Salesforce Query Editor',
+        description:
+          'This Web App helps Salesforce Developers to write queries and work with data.',
+        start_url: '/',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone'
+      },
+      icons: {
+        purpose: ['maskable', 'any']
+      }
     },
-    icons: {
-      purpose: ['maskable', 'any']
-    }
-  },
-
+  } : {}),
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    ...(!process.env.IS_VSCODE && {
+      extractCSS: true,
+      optimization :{
+        splitChunks: {
+          chunks: 'all',
+          automaticNameDelimiter: '.',
+          name: 'test',
+          maxSize : 51200
+        }
+      },
+    }),
     extend(config, ctx) {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map';
       }
 
-      if (ctx.isClient) {
+      if (ctx.isClient && process.env.IS_VSCODE) {
         config.output.filename = 'app.js',
         config.output.chunkFilename = '[id].js';
         config.optimization.splitChunks.cacheGroups.default = false;
@@ -132,19 +159,9 @@ export default {
       }
 
       config.module.rules.splice(nuxtFontLoaderIndex, 1, newFontLoader);
-
-      console.log(config.module.rules);
     },
 
-    plugins: [
-      new MonacoEditorPlugin({
-        languages: ['java'],
-        features: ['!gotoSymbol'],
-      }),
-      new webpack.optimize.LimitChunkCountPlugin({
-        maxChunks: 1
-      }),
-    ],
+    plugins: buildPlugins
   },
 
   router: {

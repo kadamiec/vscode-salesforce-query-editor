@@ -28,7 +28,7 @@ export default {
 }
 .logo-title {
   width: 100%;
-  font-size: 25px;
+  font-size: 23px;
   padding-left: 10px;
 }
 </style>

@@ -3,25 +3,31 @@
     <div class="d-flex flex-column">
       <div class="container">
         <div class="row mb-5">
-          <div class="col-2">
-            <div class="d-flex"><h4 class="ml-auto">Window Mode</h4></div>
+          <div class="col-12 col-md-2">
+            <div class="d-flex">
+              <span class="feature-title ml-md-auto">Window Mode</span>
+            </div>
           </div>
-          <div class="col-10">
+          <div class="col-12 col-md-10">
             <img src="~/assets/images/window_mode.PNG" style="width: 90%" />
           </div>
         </div>
         <div class="row mb-5">
-          <div class="col-2">
-            <div class="d-flex"><h4 class="ml-auto">Desktop App (PWA)</h4></div>
+          <div class="col-12 col-md-2">
+            <div class="d-flex">
+              <span class="feature-title ml-md-auto">Desktop App (PWA)</span>
+            </div>
           </div>
           <div class="col-10">
             <img src="~/assets/images/pwa_mode.PNG" style="width: 90%" />
           </div>
         </div>
         <div class="row mb-5">
-          <div class="col-2">
+          <div class="col-12 col-md-2">
             <div class="d-flex">
-              <h4 class="ml-auto">Work with Multiple Tabs</h4>
+              <span class="feature-title ml-md-auto"
+                >Work with Multiple Tabs</span
+              >
             </div>
           </div>
           <div class="col-10">
@@ -29,9 +35,9 @@
           </div>
         </div>
         <div class="row mb-5">
-          <div class="col-2">
+          <div class="col-12 col-md-2">
             <div class="d-flex">
-              <h4 class="ml-auto">Quickly run a Query</h4>
+              <span class="feature-title ml-md-auto">Quickly run a Query</span>
             </div>
           </div>
           <div class="col-10">
@@ -42,9 +48,11 @@
           </div>
         </div>
         <div class="row mb-5">
-          <div class="col-2">
+          <div class="col-12 col-md-2">
             <div class="d-flex">
-              <h4 class="ml-auto">Removes Buy Pro golden button and any other Propaganda</h4>
+              <span class="feature-title ml-md-auto">
+                Removes Buy Pro golden button and any other Propaganda
+              </span>
             </div>
           </div>
           <div class="col-10">
@@ -55,11 +63,11 @@
           </div>
         </div>
         <div class="row mb-5">
-          <div class="col-2">
+          <div class="col-12 col-md-2">
             <div class="d-flex">
-              <h4 class="ml-auto">
+              <span class="feature-title ml-md-auto">
                 Quickly Add or Update Queries in your Apex Class
-              </h4>
+              </span>
             </div>
           </div>
           <div class="col-10">
@@ -100,12 +108,20 @@ export default {
   overflow-y: auto !important;
 }
 
-h4 {
+.feature-title {
+  font-size: 1.2rem;
+}
+
+span {
   text-align: right !important;
 }
 
 button {
   height: 50px;
   font-size: 18px;
+}
+
+img {
+  border-radius: 20px;
 }
 </style>

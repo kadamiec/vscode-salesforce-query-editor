@@ -33,11 +33,11 @@ export default {
     },
     pageLabel: {
       type: String,
-      default: 'signin',
+      default: 'Sign In',
     },
     pageName: {
       type: String,
-      default: 'Sign In',
+      default: 'signin',
     },
   },
 }
