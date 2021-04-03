@@ -51,7 +51,6 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '~/assets/css/googleCookieFont.css',
     '~/assets/css/global.css',
     '~/assets/css/vscode-dark.css'
   ],

@@ -1,0 +1,86 @@
+{
+  "CookieBanner": {
+    "description": "Auto imported from components/cookie-banner.vue"
+  },
+  "CustomTableCell": {
+    "description": "Auto imported from components/custom-table-cell.vue"
+  },
+  "CustomTable": {
+    "description": "Auto imported from components/custom-table.vue"
+  },
+  "DateLiteralsValueEntryForm": {
+    "description": "Auto imported from components/date-literals-value-entry-form.vue"
+  },
+  "Editor": {
+    "description": "Auto imported from components/editor.vue"
+  },
+  "FieldDetails": {
+    "description": "Auto imported from components/field-details.vue"
+  },
+  "FieldForm": {
+    "description": "Auto imported from components/field-form.vue"
+  },
+  "FieldsGroup": {
+    "description": "Auto imported from components/fields-group.vue"
+  },
+  "Fields": {
+    "description": "Auto imported from components/fields.vue"
+  },
+  "FilterEntryForm": {
+    "description": "Auto imported from components/filter-entry-form.vue"
+  },
+  "FilterForm": {
+    "description": "Auto imported from components/filter-form.vue"
+  },
+  "GroupByForm": {
+    "description": "Auto imported from components/group-by-form.vue"
+  },
+  "Loading": {
+    "description": "Auto imported from components/loading.vue"
+  },
+  "Logo": {
+    "description": "Auto imported from components/logo.vue"
+  },
+  "OrderByForm": {
+    "description": "Auto imported from components/order-by-form.vue"
+  },
+  "QueryResults": {
+    "description": "Auto imported from components/query-results.vue"
+  },
+  "QueryTextEditor": {
+    "description": "Auto imported from components/query-text-editor.vue"
+  },
+  "RedirectButton": {
+    "description": "Auto imported from components/redirect-button.vue"
+  },
+  "RelationshipSelector": {
+    "description": "Auto imported from components/relationship-selector.vue"
+  },
+  "SelectedFields": {
+    "description": "Auto imported from components/selected-fields.vue"
+  },
+  "SideBar": {
+    "description": "Auto imported from components/side-bar.vue"
+  },
+  "SideMenu": {
+    "description": "Auto imported from components/side-menu.vue"
+  },
+  "SignupForm": {
+    "description": "Auto imported from components/signup-form.vue"
+  },
+  "SoqlForm": {
+    "description": "Auto imported from components/soql-form.vue"
+  },
+  "SoqlPlan": {
+    "description": "Auto imported from components/soql-plan.vue"
+  },
+  "SuccessMessage": {
+    "description": "Auto imported from components/success-message.vue"
+  },
+  "Tab": {
+    "description": "Auto imported from components/tab.vue"
+  },
+  "Tabs": {
+    "description": "Auto imported from components/tabs.vue"
+  }
+}

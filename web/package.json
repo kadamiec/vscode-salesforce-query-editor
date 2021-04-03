@@ -54,8 +54,7 @@
     "vue-stripe-checkout": "^3.5.14-beta.0",
     "vue-stripe-elements-plus": "^0.3.2",
     "vuelidate": "^0.7.5",
-    "vuex-extensions": "^1.1.5",
-    "vuex-persist": "^3.1.3"
+    "vuex-extensions": "^1.1.5"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^5.0.0",

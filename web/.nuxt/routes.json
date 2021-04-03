@@ -1,0 +1,98 @@
+[
+  {
+    "name": "account",
+    "path": "/account",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\account.vue",
+    "chunkName": "pages/account"
+  },
+  {
+    "name": "editor",
+    "path": "/editor",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\editor.vue",
+    "chunkName": "pages/editor"
+  },
+  {
+    "name": "forgot-password",
+    "path": "/forgot-password",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\forgot-password.vue",
+    "chunkName": "pages/forgot-password"
+  },
+  {
+    "name": "license-activation",
+    "path": "/license-activation",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\license-activation.vue",
+    "chunkName": "pages/license-activation"
+  },
+  {
+    "name": "privacy-policy",
+    "path": "/privacy-policy",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\privacy-policy.vue",
+    "chunkName": "pages/privacy-policy"
+  },
+  {
+    "name": "product-description",
+    "path": "/product-description",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\product-description.vue",
+    "chunkName": "pages/product-description"
+  },
+  {
+    "name": "reset-password",
+    "path": "/reset-password",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\reset-password.vue",
+    "chunkName": "pages/reset-password"
+  },
+  {
+    "name": "signin",
+    "path": "/signin",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\signin.vue",
+    "chunkName": "pages/signin"
+  },
+  {
+    "name": "signup",
+    "path": "/signup",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\signup.vue",
+    "chunkName": "pages/signup"
+  },
+  {
+    "name": "subscription",
+    "path": "/subscription",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\subscription.vue",
+    "chunkName": "pages/subscription"
+  },
+  {
+    "name": "success-password-reset",
+    "path": "/success-password-reset",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\success-password-reset.vue",
+    "chunkName": "pages/success-password-reset"
+  },
+  {
+    "name": "success-signup",
+    "path": "/success-signup",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\success-signup.vue",
+    "chunkName": "pages/success-signup"
+  },
+  {
+    "name": "success-subscription",
+    "path": "/success-subscription",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\success-subscription.vue",
+    "chunkName": "pages/success-subscription"
+  },
+  {
+    "name": "success-verification",
+    "path": "/success-verification",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\success-verification.vue",
+    "chunkName": "pages/success-verification"
+  },
+  {
+    "name": "update-password",
+    "path": "/update-password",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\update-password.vue",
+    "chunkName": "pages/update-password"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "C:\\\\Users\\\\allan_000\\\\workspace\\\\soe2\\\\web\\\\pages\\\\index.vue",
+    "chunkName": "pages/index"
+  }
+]
