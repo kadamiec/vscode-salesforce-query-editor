@@ -1,4 +1,4 @@
-name: Node.js Package
+name: Extension
 
 on:
   push:
@@ -27,9 +27,9 @@ jobs:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Build Extension
         run: |
-         yarn install
-         yarn create:env
-         yarn build:prod
+         npm run install
+         npm run create:env
+         npm run build:prod
          rm ./web/dist/_nuxt/app.js
       - name: Publish Extension
         uses: lannonbr/vsce-action@master
