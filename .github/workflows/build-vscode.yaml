@@ -30,7 +30,7 @@ jobs:
          npm install
          npm run create:env
          npm run build:prod
-         rm -d ./web
+         rm -r ./web
       - name: Publish Extension
         uses: lannonbr/vsce-action@master
         with:
