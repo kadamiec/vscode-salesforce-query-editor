@@ -291,6 +291,7 @@
 
         <!-- SOQL PLAN -->
         <soql-plan
+          v-show="soqlPlan && soqlPlan.length"
           :ref="'query-plan' + name"
           :soql-plan="soqlPlan"
           class="mt-2"
@@ -298,7 +299,7 @@
 
         <!-- QUERY RESULTS -->
         <query-results
-          v-show="!soqlPlan || !soqlPlan.length"
+          v-show="soqlResult && soqlResult.length"
           :ref="'query-results' + name"
           class="query-results flex-grow-1 mt-2"
           :value="soqlResult"
@@ -767,7 +768,7 @@ export default {
         this.isExecutingQuery = true
         this.errors = []
         this.soqlResult = []
-        this.soqlPlan = []
+        this.soqlPlan = null
         this.selectedSObjectChildRelationship = null
         this.sobjectChildRelationships = []
         this.sobjectChildRelationshipFields = []
@@ -847,13 +848,15 @@ export default {
               )
 
               this.isExecutingQuery = false
-              this.$nextTick(() => {
-                this.$refs['query-results' + this.name].$el.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                  inline: 'start',
+              if (this.soqlResult && this.soqlResult.length) {
+                this.$nextTick(() => {
+                  this.$refs['query-results' + this.name].$el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start',
+                  })
                 })
-              })
+              }
             })
             .catch((error) => {
               this.showToastMessage('Coul not execute Query')
@@ -1161,12 +1164,9 @@ export default {
         this.soql.sobjects[this.sobjectChildRelationshipName]?.fields || {}
       )
     },
-    deleteField(sobjectName, field){
+    deleteField(sobjectName, field) {
       delete this.soql.sobjects[sobjectName].fields[field.name]
-      if (
-        !Object.keys(this.soql.sobjects[sobjectName].fields)
-          .length
-      ) {
+      if (!Object.keys(this.soql.sobjects[sobjectName].fields).length) {
         delete this.soql.sobjects[sobjectName]
       }
       this.soql = { ...this.soql }
@@ -1184,7 +1184,7 @@ export default {
     onDeleteSelectedField() {
       this.deleteField(this.selectedField.sobjectName, this.selectedField)
     },
-    onRightClickToDeleteField({ sobjectName, field }){
+    onRightClickToDeleteField({ sobjectName, field }) {
       this.deleteField(sobjectName, field)
     },
     onSelectEnvironment(environment) {

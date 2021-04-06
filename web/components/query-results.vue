@@ -216,7 +216,7 @@ export default {
       page: 1,
       pageSize: 20,
       pageRecords: [],
-      soqlResult: null,
+      soqlResult: [],
       editingRecords: {},
       errors: [],
       isUpdatingRecords: false,
@@ -239,6 +239,7 @@ export default {
     value(newRecords) {
       if (newRecords && newRecords.length) {
         newRecords.forEach((record, index) => (record._index = index))
+        this.soqlResult = [...newRecords]
         this.isRefreshingData = false
         this.fields = Object.keys(newRecords[0])
         this.pageRecords = [...newRecords.slice(0, this.pageSize)]
@@ -256,12 +257,12 @@ export default {
           }
         })
       } else {
+        this.soqlResult = []
         this.fields = []
         this.picklistValuesMappedByField = {}
         this.pageRecords = []
       }
 
-      this.soqlResult = [...newRecords]
       this.page = 1
       this.selectedRowIndex = null
       this.editingRecords = {}
