@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column">
-    <div class="d-flex justify-content-between mb-1" style="height: 30px">
+    <div class="d-flex justify-content-between mb-1">
       <div class="my-auto">
         <div v-if="queryErrors && queryErrors.length">
           <template v-for="(error, errorIndex) in queryErrors">
@@ -42,10 +42,10 @@
             v-shortkey="['ctrl', 'shift', 's']"
             :disabled="isUpdatingRecords"
             class="vscode-button btn btn-primary"
-            @click="onClickSaveChangesButton()"
+            @click="onSaveRecordChanges()"
             @shortkey="
               areThereChanges && !isUpdatingRecords
-                ? onClickSaveChangesButton()
+                ? onSaveRecordChanges()
                 : null
             "
           >
@@ -216,7 +216,7 @@ export default {
       page: 1,
       pageSize: 20,
       pageRecords: [],
-      soqlResult: [],
+      soqlResult: null,
       editingRecords: {},
       errors: [],
       isUpdatingRecords: false,
@@ -240,7 +240,6 @@ export default {
       if (newRecords && newRecords.length) {
         newRecords.forEach((record, index) => (record._index = index))
         this.isRefreshingData = false
-        this.soqlResult = [...newRecords]
         this.fields = Object.keys(newRecords[0])
         this.pageRecords = [...newRecords.slice(0, this.pageSize)]
         this.fields.forEach((fieldName) => {
@@ -259,9 +258,10 @@ export default {
       } else {
         this.fields = []
         this.picklistValuesMappedByField = {}
-        this.soqlResult = []
         this.pageRecords = []
       }
+
+      this.soqlResult = [...newRecords]
       this.page = 1
       this.selectedRowIndex = null
       this.editingRecords = {}

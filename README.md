@@ -77,6 +77,8 @@ Obs: The payment is handled by Stripe and therefore it is secure. It was impleme
 
 # How to Use
 
+Obs: set a "defaultusername" before opening the extension.
+
 ## How to open the Salesforce Query Editor
 
 There are three ways to open the editor.
@@ -246,8 +248,6 @@ Mozilla has no plans for PWA features. But why are you using Firefox? You should
 ## Release Notes
 
 ### 1.0.0
-
-- MUST HAVE THIS PLUGIN `https://github.com/forcedotcom/cli/issues/835` INSTALLED
 
 - The extension is now called Salesforce Query Editor as it brings the same functionality available in the Query Editor tab in the developer console.
 
