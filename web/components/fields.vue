@@ -50,7 +50,9 @@
                   title="Required"
                 ></span>
                 <span
-                  v-if="field.details.updateable && configuration.field.updateable"
+                  v-if="
+                    field.details.updateable && configuration.field.updateable
+                  "
                   v-b-tooltip.hover
                   class="fa fa-pen fa-xs"
                   data-placement="top"
@@ -70,11 +72,11 @@
     </div>
 
     <div class="mt-1 noselect">
-      <button class="vscode-button btn" @click="onClickAddAllFields">
+      <button class="vscode-button" @click="onClickAddAllFields">
         Add All
       </button>
       <button
-        class="vscode-button btn"
+        class="vscode-button"
         :disabled="disableClearAllButton"
         @click="onClickClearAllFields"
       >
@@ -100,13 +102,13 @@ export default {
       selectedFields: {},
       selectedReferenceName: null,
       selectedReference: null,
-      disableClearAllButton: null
+      disableClearAllButton: null,
     }
   },
   computed: {
     ...mapState({
       configuration: (state) => state.user.configuration,
-    })
+    }),
   },
   methods: {
     onClickFieldReference(field) {
@@ -122,7 +124,7 @@ export default {
     },
     _createAvailableFieldsList(fields) {
       this.availableFields = [...fields].reduce((previous, current) => {
-        let array = []
+        const array = []
 
         if (!this.selectedFields[current.name]) {
           array.push({
@@ -138,51 +140,50 @@ export default {
           array.push({
             name,
             reference: current.referenceTo[0],
-            numberOfSelectedFields: 0
+            numberOfSelectedFields: 0,
           })
         }
 
-        
         if (current.namePointing) {
           if (current.relationshipName) {
-            const polymorphicTypeFieldName = current.relationshipName + '.Type';
-            if(!this.selectedFields[polymorphicTypeFieldName])
-              array.push(
-              {
+            const polymorphicTypeFieldName = current.relationshipName + '.Type'
+            if (!this.selectedFields[polymorphicTypeFieldName])
+              array.push({
                 name: polymorphicTypeFieldName,
                 type: 'String',
                 relationshipName: current.relationshipName,
-                details: current
+                details: current,
               })
 
-            const polymorphicNameFieldName = current.relationshipName + '.Name';
-            if(!this.selectedFields[polymorphicNameFieldName])
+            const polymorphicNameFieldName = current.relationshipName + '.Name'
+            if (!this.selectedFields[polymorphicNameFieldName])
               array.push({
                 name: polymorphicNameFieldName,
                 type: 'String',
                 relationshipName: current.relationshipName,
-                details: current
+                details: current,
               })
           }
 
           if (current.referenceTo.includes('User')) {
-            const polymorphicFirstNameFieldName = current.relationshipName + '.FirstName';
-            if(!this.selectedFields[polymorphicFirstNameFieldName])
-              array.push(
-                {
-                  name: polymorphicFirstNameFieldName,
-                  type: 'String',
-                  relationshipName: current.relationshipName,
-                  details: current
-                })
+            const polymorphicFirstNameFieldName =
+              current.relationshipName + '.FirstName'
+            if (!this.selectedFields[polymorphicFirstNameFieldName])
+              array.push({
+                name: polymorphicFirstNameFieldName,
+                type: 'String',
+                relationshipName: current.relationshipName,
+                details: current,
+              })
 
-            const polymorphicLastNameFieldName = current.relationshipName + '.LastName';
-            if(!this.selectedFields[polymorphicLastNameFieldName])
+            const polymorphicLastNameFieldName =
+              current.relationshipName + '.LastName'
+            if (!this.selectedFields[polymorphicLastNameFieldName])
               array.push({
                 name: polymorphicLastNameFieldName,
                 type: 'String',
                 relationshipName: current.relationshipName,
-                details: current
+                details: current,
               })
           }
         }
@@ -201,22 +202,23 @@ export default {
     onClickClearAllFields() {
       this.$emit('clearAllFields', { sobjectName: this.sobjectName })
     },
-    setAvailableFieldList(fields, selectedFields){
-      this.selectedFields = selectedFields;
-      const selectedFieldNames = Object.keys(this.selectedFields);
-      this.disableClearAllButton = !selectedFieldNames.length;
-      if(fields.length){
+    setAvailableFieldList(fields, selectedFields) {
+      this.selectedFields = selectedFields
+      const selectedFieldNames = Object.keys(this.selectedFields)
+      this.disableClearAllButton = !selectedFieldNames.length
+      if (fields.length) {
         this._createAvailableFieldsList(fields)
         this.availableFields.forEach((field) => {
           field.numberOfSelectedFields = selectedFieldNames.filter(
-            (selectedFieldName) => selectedFieldName.split('.')[0] === field.name
+            (selectedFieldName) =>
+              selectedFieldName.split('.')[0] === field.name
           ).length
         })
       }
     },
-    clearAvailableFieldsList(){
-      this.availableFields = [];
-    }
+    clearAvailableFieldsList() {
+      this.availableFields = []
+    },
   },
 }
 </script>

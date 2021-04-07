@@ -9,14 +9,14 @@
       for more information.
     </p>
     <div class="d-flex justify-content-center mt-1 mb-2">
-      <div class="vscode-button btn mr-2" @click="accept">Yes, sure</div>
-      <div class="vscode-button btn" @click="deny">No</div>
+      <div class="vscode-button mr-2" @click="accept">Yes, sure</div>
+      <div class="vscode-button" @click="deny">No</div>
     </div>
   </div>
 </template>
 
 <script>
-import { bootstrap } from 'vue-gtag';
+import { bootstrap } from 'vue-gtag'
 
 export default {
   data: () => {

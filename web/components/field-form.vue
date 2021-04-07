@@ -2,7 +2,7 @@
   <side-menu v-if="field" ref="side-menu" @close="onCloseForm">
     <template #left-button>
       <button
-        class="vscode-button btn"
+        class="vscode-button"
         style="margin-left: 12px"
         @click="onClickDeleteFieldButton"
       >

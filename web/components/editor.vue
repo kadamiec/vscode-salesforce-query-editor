@@ -153,7 +153,7 @@
                     v-shortkey="['ctrl', 'shift', 'o']"
                     class="clickable-icon fa fa-sync fa-xs my-auto ml-2"
                     data-placement="top"
-                    title="Refresh SObjects"
+                    title="Refresh Objects"
                     @click="onClickRefreshObjectsButton()"
                     @shortkey="onClickRefreshObjectsButton()"
                   ></i>
@@ -185,7 +185,7 @@
             <label class="my-auto">Enter or modify your query below:</label>
             <div class="d-flex mb-1">
               <button
-                class="vscode-button btn btn-primary mr-1 mt-auto"
+                class="vscode-button btn-primary mr-1 mt-auto"
                 style="height: 30px"
                 :disabled="disableTextAreaActionButtons"
                 @click="onClickFormatQueryButton()"
@@ -196,7 +196,7 @@
                 v-clipboard:copy="soqlText"
                 v-clipboard:success="onCopySoqlText"
                 v-clipboard:error="onCopySoqlTextError"
-                class="vscode-button btn btn-primary mr-1 mt-auto"
+                class="vscode-button btn-primary mr-1 mt-auto"
                 style="height: 30px"
                 :disabled="disableTextAreaActionButtons"
               >
@@ -233,7 +233,7 @@
             <div v-show="!isDataTableExpanded">
               <button
                 v-shortkey="['ctrl', 'shift', 'q']"
-                class="vscode-button btn btn-primary"
+                class="vscode-button btn-primary"
                 :disabled="
                   isExecutingQueryPlan ||
                   isUpdatingRecords ||
@@ -264,7 +264,7 @@
                   isExportingData ||
                   !soqlText
                 "
-                class="vscode-button btn btn-primary"
+                class="vscode-button btn-primary"
                 @click="
                   isExecutingQueryPlan
                     ? onClickCancelRequest()
@@ -280,7 +280,7 @@
               <button
                 v-if="isLicenseValid()"
                 :disabled="disableTextAreaActionButtons"
-                class="vscode-button btn btn-primary"
+                class="vscode-button btn-primary"
                 @click="setApexClassWithQuery()"
               >
                 {{ isUpdatingQuery ? 'Update Apex' : 'Add to Apex' }}
@@ -305,7 +305,6 @@
           :value="soqlResult"
           :username="selectedUsername"
           :query-errors="errors"
-          :show-query-results="showQueryResults"
           :query="soqlText"
           :api-version="apiVersion"
           :editor-name="name"
@@ -345,11 +344,7 @@
           </div>
         </template>
         <template #modal-footer="{ close }">
-          <button
-            type="button"
-            class="vscode-button btn btn-md"
-            @click="close()"
-          >
+          <button type="button" class="vscode-button-md" @click="close()">
             Close
           </button>
         </template>
@@ -449,7 +444,6 @@ export default {
       isExecutingQuery: false,
       isExecutingQueryPlan: false,
       isDataTableExpanded: false,
-      showQueryResults: false,
       isLoadingSObjects: true,
     }
   },
@@ -769,10 +763,8 @@ export default {
         this.errors = []
         this.soqlResult = []
         this.soqlPlan = null
-        this.selectedSObjectChildRelationship = null
         this.sobjectChildRelationships = []
         this.sobjectChildRelationshipFields = []
-        this.showQueryResults = false
         try {
           const soqlWithoutChildQueries = this.soqlText
             .replaceAll(/\s\s+|\n/g, ' ')
@@ -807,7 +799,6 @@ export default {
             username: this.selectedEnvironment.username,
           })
             .then((responses) => {
-              this.showQueryResults = true
               this.selectedSObject = this.sobjects.find(
                 (sobject) =>
                   sobject.name.toLowerCase() === this.sobjectName.toLowerCase()
@@ -856,15 +847,17 @@ export default {
                     inline: 'start',
                   })
                 })
+              } else {
+                this.showToastMessage('0 Records')
               }
             })
             .catch((error) => {
-              this.showToastMessage('Coul not execute Query')
+              this.showToastMessage('Could not execute Query')
               this.errors.push(error)
               this.isExecutingQuery = false
             })
         } catch {
-          this.showToastMessage('Could not determine SObject Name')
+          this.showToastMessage('Could not determine the Object Name')
           this.isExecutingQuery = false
         }
       }

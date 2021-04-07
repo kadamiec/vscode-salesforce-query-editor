@@ -81,7 +81,7 @@
         <div class="row mb-5">
           <div class="col-12">
             <button
-              class="vscode-button btn w-100"
+              class="vscode-button w-100"
               @click="onClickBuyALicenseButton"
             >
               Buy License

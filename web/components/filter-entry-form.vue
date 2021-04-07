@@ -36,7 +36,7 @@
     </div>
     <button
       v-if="['date', 'datetime'].includes(field.details.type)"
-      class="vscode-button btn btn-primary mt-auto ml-auto mr-2"
+      class="vscode-button btn-primary mt-auto ml-auto mr-2"
       @click="onClickUseFunctionButton"
     >
       <i class="fa fa-calendar"></i>
@@ -55,7 +55,7 @@
       </select>
     </div>
     <button
-      class="vscode-button btn btn-primary mt-auto ml-auto"
+      class="vscode-button btn-primary mt-auto ml-auto"
       @click="deleteFilter()"
     >
       <span class="fa fa-trash"></span>
@@ -76,12 +76,12 @@
         </div>
       </template>
       <template #modal-footer="{ close }">
-        <button type="button" class="vscode-button btn btn-md" @click="close()">
+        <button type="button" class="vscode-button btn-md" @click="close()">
           Close
         </button>
         <button
           type="button"
-          class="vscode-button btn btn-md"
+          class="vscode-button btn-md"
           @click="onClickInsert()"
         >
           Insert

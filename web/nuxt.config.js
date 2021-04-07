@@ -150,15 +150,14 @@ export default {
           }, [])
         );
       }
-      
-      const nuxtFontLoaderIndex = config.module.rules.findIndex((rule) => String(rule.test) == String(/\.(woff2?|eot|ttf|otf)(\?.*)?$/i));
+    
+      if(process.env.IS_VSCODE){
+        const nuxtFontLoader = config.module.rules.find((rule) => String(rule.test) == String(/\.(woff2?|eot|ttf|otf)(\?.*)?$/i));
+        nuxtFontLoader.use = 'base64-inline-loader?limit=1000&name=[name].[ext]';
 
-      const newFontLoader = {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
-        use: 'base64-inline-loader?limit=1000&name=[name].[ext]'
+        const nuxtImageLoader = config.module.rules.find((rule) => String(rule.test) == String(/\.(png|jpe?g|gif|svg|webp|avif)$/i));
+        nuxtImageLoader.use[0].options.limit = 2000000;
       }
-
-      config.module.rules.splice(nuxtFontLoaderIndex, 1, newFontLoader);
     },
 
     plugins: buildPlugins

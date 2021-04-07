@@ -7,7 +7,7 @@
 
         <button
           variant="primary"
-          class="vscode-button btn mt-3 btn-block"
+          class="vscode-button mt-3 btn-block"
           @click.prevent="submit()"
         >
           Sign Up
@@ -51,10 +51,10 @@
           <li>Quickly run Queries</li>
           <li>Run multiple queries in different tabs</li>
         </ul>
-        <button class="vscode-button btn" @click="onClickLearnMoreButton">
+        <button class="vscode-button" @click="onClickLearnMoreButton">
           Learn more
         </button>
-        <button class="vscode-button btn" @click="onClickInstallItNowButton">
+        <button class="vscode-button" @click="onClickInstallItNowButton">
           Install it Now
         </button>
       </div>

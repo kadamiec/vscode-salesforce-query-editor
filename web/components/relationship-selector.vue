@@ -25,17 +25,17 @@
     </div>
 
     <button
-      class="vscode-button btn btn-md my-1"
+      class="vscode-button my-1"
       :disabled="isAddFieldButtonDisabled"
       @click="onClickAddFieldButton"
     >
       Add Field
     </button>
-    <button class="vscode-button btn btn-md my-1" @click="onClickAddAllButton">
+    <button class="vscode-button my-1" @click="onClickAddAllButton">
       Add All
     </button>
     <button
-      class="vscode-button btn btn-md my-1"
+      class="vscode-button my-1"
       :disabled="isClearAllButtonDisabled"
       @click="onClickClearAllButton"
     >
@@ -356,5 +356,9 @@ export default {
   font-family: var(--vscode-font-family) !important;
   font-weight: var(--vscode-font-weight) !important;
   font-size: 15px !important;
+}
+
+#fields-container button {
+  padding: 2px 5px;
 }
 </style>

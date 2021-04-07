@@ -20,7 +20,7 @@
         <div class="error form-text">Key is required.</div>
       </template>
       <button
-        class="vscode-button btn mt-2"
+        class="vscode-button mt-2"
         :disabled="$v.key.$invalid || isActivating"
         @click="onClickActivate()"
       >

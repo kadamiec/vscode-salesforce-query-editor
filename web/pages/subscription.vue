@@ -139,7 +139,7 @@
       </template>
 
       <button
-        class="vscode-button btn mt-3 btn-block"
+        class="vscode-button mt-3 btn-block"
         :disabled="isPaying"
         @click.prevent="submit()"
       >
@@ -149,7 +149,7 @@
 
       <button
         :disabled="isPaying"
-        class="vscode-button btn mt-3 btn-block"
+        class="vscode-button mt-3 btn-block"
         @click.prevent="onClickCancel"
       >
         Cancel

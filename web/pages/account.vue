@@ -8,18 +8,15 @@
             <div class="user-info">{{ user.fullName }}</div>
             <div class="user-info">{{ user.email }}</div>
             <div class="d-flex mt-2">
-              <button
-                class="vscode-button btn mr-2"
-                @click="onClickUpdatePassword"
-              >
+              <button class="vscode-button mr-2" @click="onClickUpdatePassword">
                 Change Password
               </button>
-              <button class="vscode-button btn mr-2" @click="onClickBuyLicense">
+              <button class="vscode-button mr-2" @click="onClickBuyLicense">
                 Buy Licenses
               </button>
               <button
                 v-if="!userLicenseKey"
-                class="vscode-button btn"
+                class="vscode-button"
                 @click="onClickAddLicense"
               >
                 Add License
@@ -46,7 +43,7 @@
                 <button
                   v-if="!row.item.canceledAt"
                   style="width: 110px"
-                  class="vscode-button btn mb-2 mb-md-0"
+                  class="vscode-button mb-2 mb-md-0"
                   :disabled="cancelSubscriptionButtonIndex"
                   @click="onClickCancelSubscription(row.item, row.index)"
                 >
@@ -58,7 +55,7 @@
                 </button>
                 <button
                   style="width: 110px"
-                  class="vscode-button btn"
+                  class="vscode-button"
                   @click="row.toggleDetails"
                 >
                   Licenses
@@ -79,7 +76,7 @@
                       <transition name="fade">
                         <button
                           v-if="licenseRow.item.activated === 'Yes'"
-                          class="vscode-button btn"
+                          class="vscode-button"
                           style="width: 100px"
                           :disabled="
                             licenseButton.subscriptionIndex === row.index &&
@@ -103,7 +100,7 @@
                         </button>
                         <button
                           v-else-if="!userLicenseKey"
-                          class="vscode-button btn"
+                          class="vscode-button"
                           style="width: 100px"
                           :disabled="
                             licenseButton.subscriptionIndex === row.index &&

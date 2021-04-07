@@ -36,7 +36,7 @@
         id="signin"
         type="reset"
         variant="primary"
-        class="vscode-button btn mt-4 btn-block"
+        class="vscode-button mt-4 btn-block"
         :disabled="isChangingPassword"
         @click.prevent="onClickChangePassword"
       >

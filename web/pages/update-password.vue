@@ -37,7 +37,7 @@
         id="signin"
         type="reset"
         variant="primary"
-        class="vscode-button btn btn-block"
+        class="vscode-button btn-block"
         :disabled="isChangingPassword"
         @click.prevent="onClickChangePassword"
       >
@@ -49,7 +49,7 @@
         id="signin"
         type="reset"
         variant="primary"
-        class="vscode-button btn btn-block"
+        class="vscode-button btn-block"
         @click.prevent="onClickCancel"
       >
         Cancel

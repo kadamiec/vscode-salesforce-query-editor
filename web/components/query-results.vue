@@ -23,7 +23,7 @@
       <div class="ml-auto">
         <button
           v-if="areThereRecords"
-          class="vscode-button btn"
+          class="vscode-button"
           @click="onClickNewRecord"
         >
           New Record
@@ -31,7 +31,7 @@
         <button
           v-if="isDataTableExpanded"
           :disabled="isRefreshingData"
-          class="vscode-button btn btn-primary"
+          class="vscode-button btn-primary"
           @click="onClickRefreshData()"
         >
           Refresh
@@ -41,7 +41,7 @@
           <button
             v-shortkey="['ctrl', 'shift', 's']"
             :disabled="isUpdatingRecords"
-            class="vscode-button btn btn-primary"
+            class="vscode-button btn-primary"
             @click="onSaveRecordChanges()"
             @shortkey="
               areThereChanges && !isUpdatingRecords
@@ -55,7 +55,7 @@
           <button
             v-shortkey="['ctrl', 'shift', 'c']"
             :disabled="isUpdatingRecords"
-            class="vscode-button btn btn-primary"
+            class="vscode-button btn-primary"
             @click="onClickCancelAllChangesButton()"
             @shortkey="
               areThereChanges && !isUpdatingRecords
@@ -71,7 +71,7 @@
           v-if="showExportDataButton"
           v-shortkey="['ctrl', 'shift', 'd']"
           :disabled="isExportingData"
-          class="vscode-button btn btn-primary"
+          class="vscode-button btn-primary"
           @shortkey="
             showExportDataButton && !isExportingData
               ? onClickExportAsSourceTree()
@@ -146,7 +146,7 @@
       <template #modal-footer>
         <button
           type="button"
-          class="vscode-button btn btn-md danger"
+          class="vscode-button btn-md danger"
           @click="onCloseErrorsModal()"
         >
           Close
@@ -155,7 +155,7 @@
     </b-modal>
 
     <pagination
-      v-if="soqlResult && soqlResult.length"
+      v-if="areThereRecords"
       v-model="page"
       :records="soqlResult.length"
       :per-page="pageSize"
@@ -190,10 +190,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    showQueryResults: {
-      type: Boolean,
-      default: false,
-    },
     query: {
       type: String,
       default: '',
@@ -227,12 +223,6 @@ export default {
       isDataTableExpanded: false,
       picklistValuesMappedByField: {},
       fields: [],
-      curCol: null,
-      nxtCol: null,
-      pageX: null,
-      nxtColWidth: null,
-      curColWidth: null,
-      addedColumnDivs: false,
     }
   },
   watch: {
@@ -329,10 +319,17 @@ export default {
     }),
     onCancelRecordChanges(rowIndex) {
       const recordId = this.soqlResult[rowIndex].Id
-      this.soqlResult.splice(rowIndex, 1, this.editingRecords[recordId].record)
-      this.onPageSelected(this.page)
-      delete this.editingRecords[recordId]
-      this.editingRecords = { ...this.editingRecords }
+      const record = this.editingRecords[recordId]?.record
+      if (record) {
+        this.soqlResult.splice(
+          rowIndex,
+          1,
+          this.editingRecords[recordId].record
+        )
+        this.onPageSelected(this.page)
+        delete this.editingRecords[recordId]
+        this.editingRecords = { ...this.editingRecords }
+      }
     },
     onClickCancelAllChangesButton() {
       this.soqlResult.forEach((soqlResult) => {

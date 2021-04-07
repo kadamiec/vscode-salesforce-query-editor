@@ -1,7 +1,7 @@
 <template>
   <b-card v-if="filters" no-body class="mb-1">
     <b-card-header header-tag="header" class="p-1" role="tab">
-      <b-button v-b-toggle.filter-accordion block class="vscode-button btn"
+      <b-button v-b-toggle.filter-accordion block class="vscode-button"
         >Filter</b-button
       >
     </b-card-header>
@@ -23,10 +23,7 @@
             @change="onChangeFilter(filterIndex)"
             @deleteFilter="onDeleteFilter"
           />
-          <button
-            class="vscode-button btn mb-1 ml-auto"
-            @click="onClickAddFilter"
-          >
+          <button class="vscode-button mb-1 ml-auto" @click="onClickAddFilter">
             New Filter
           </button>
         </div>

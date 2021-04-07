@@ -20,7 +20,7 @@
         id="signup"
         type="reset"
         variant="primary"
-        class="vscode-button btn btn-block"
+        class="vscode-button btn-block"
         :disabled="isResetingPassword"
         @click.prevent="onClickResetPassword"
       >

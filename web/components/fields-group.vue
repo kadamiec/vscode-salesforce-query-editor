@@ -88,4 +88,8 @@ export default {
 .fields-group-container {
   padding: 5px 5px;
 }
+
+button {
+  padding: 0px 5px;
+}
 </style>

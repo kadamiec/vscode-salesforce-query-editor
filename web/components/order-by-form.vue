@@ -1,7 +1,7 @@
 <template>
   <b-card v-if="orderBy" no-body class="mb-1">
     <b-card-header header-tag="header" class="p-1" role="tab">
-      <b-button v-b-toggle.group-by-accordion block class="vscode-button btn"
+      <b-button v-b-toggle.group-by-accordion block class="vscode-button"
         >Sort</b-button
       >
     </b-card-header>

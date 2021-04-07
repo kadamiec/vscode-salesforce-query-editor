@@ -3,7 +3,6 @@
     <div class="my-auto">
       <logo class="mx-auto mb-3"></logo>
       <form class="mx-auto" style="width: 300px">
-        
         <div class="form-group control-label mt-2">
           <label for="email" class="form-label">E-mail</label>
           <input
@@ -53,21 +52,21 @@
           id="signin"
           type="reset"
           variant="primary"
-          class="vscode-button btn mt-3 btn-block"
+          class="vscode-button mt-3 btn-block"
           :disabled="isLoggingIn"
           @click="onClickSignIn"
         >
-          <transition v-if="isLoggingIn" name="fade">
-            <i class="fa fa-circle-o-notch fa-spin" />
-          </transition>
-          <p v-else>Sign In</p>
+          <div class="d-flex justify-content-center">
+            <i v-if="isLoggingIn" class="fa fa-circle-o-notch fa-spin" />
+            <p v-else>Sign In</p>
+          </div>
         </button>
 
         <button
           id="signup"
           type="reset"
           variant="primary"
-          class="vscode-button btn btn-block"
+          class="vscode-button btn-block"
           :disabled="isLoggingIn"
           @click.prevent="onClickSignUp"
         >
@@ -99,7 +98,7 @@ export default {
       },
       error: null,
       isLoggingIn: false,
-      keepLoggedIn: false,
+      keepLoggedIn: true,
     }
   },
   validations: {
@@ -120,10 +119,10 @@ export default {
     }),
     onClickSignIn() {
       this.error = null
-      this.isLoggingIn = true
+      this.$nextTick(() => (this.isLoggingIn = true))
       this.$v.$touch()
       if (this.$v.$invalid) {
-        this.isLoggingIn = false
+        this.$nextTick(() => (this.isLoggingIn = false))
       } else {
         const password = MD5(this.user.password)
         this.login({
@@ -150,16 +149,20 @@ export default {
                 )
                 .catch(() =>
                   this.showToastMessage(
-                    'Could not save user credentials on the storage'
+                    'Could not save your User credentials on the storage'
                   )
                 )
+                .finally(() => this.$nextTick(() => (this.isLoggingIn = false)))
             }
 
             this.fetchKeygenUser()
               .then(() => {
                 this.$router.push({ name: 'editor' })
               })
-              .catch(() => (this.error = 'Could not fetch User information'))
+              .catch(
+                () => (this.error = 'Could not fetch your User information')
+              )
+              .finally(() => this.$nextTick(() => (this.isLoggingIn = false)))
           })
           .catch(() => {
             this.error = 'Wrong password or e-mail'
@@ -178,5 +181,9 @@ export default {
 /deep/ a {
   color: var(--vscode-textLink-foreground) !important;
   cursor: pointer;
+}
+
+button {
+  height: 30px;
 }
 </style>

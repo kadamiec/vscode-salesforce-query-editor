@@ -2,7 +2,7 @@
   <div class="d-flex flex-column noselect">
     <button
       id="clearAll"
-      class="vscode-button btn mr-auto mb-1"
+      class="vscode-button mr-auto mb-1"
       @click="clearAllSelectedFields"
     >
       Clear All

@@ -49,7 +49,7 @@
               <button
                 v-if="editingRecords && editingRecords[record.Id]"
                 :disabled="isUpdatingRecords"
-                class="vscode-button btn btn-primary btn-sm table-button"
+                class="vscode-button btn-primary btn-sm table-button"
                 @click="onClickCancelChangesButton(record._index)"
               >
                 <span class="fa fa-times-circle fa-xs" />
@@ -57,7 +57,7 @@
               <button
                 v-else
                 :disabled="isUpdatingRecords"
-                class="vscode-button btn btn-primary btn-sm table-button"
+                class="vscode-button btn-primary btn-sm table-button"
                 @click="onClickDeleteButton(record._index)"
               >
                 <span class="fa fa-trash fa-xs" />
@@ -272,5 +272,9 @@ th i.fa.fa-sort-down {
 th i.fa.fa-sort-up.sorted,
 th i.fa.fa-sort-down.sorted {
   visibility: visible;
+}
+
+.soql-results-actions-column button {
+  padding: 5px;
 }
 </style>
