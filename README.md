@@ -22,7 +22,6 @@ This extension brings the same functionality available in the Query Editor in th
 - [x] Compact to not take away the space you have available while writing code.
 - [x] Works with Gitpod - https://www.gitpod.io/
 - [ ] Query Storage and History.
-- [ ] Reorder Fields alphabetically.
 - [ ] Aggregated functions.
 - [ ] Group By.
 - [ ] Having.

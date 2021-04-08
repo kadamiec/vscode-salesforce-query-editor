@@ -125,20 +125,37 @@ export default {
             partnerId: localStorage.getItem('partnerId') || null,
           },
         }
-        this.createKeygenUser(attributes)
-          .then(() => {
-            this.$router.push({ name: 'success-signup' })
+
+        this.$axios
+          .get(
+            `https://block-temporary-email.com/check/email/${this.user.email}`
+          )
+          .then((response) => {
+            if (response.data.temporary)
+              this.error =
+                'E-mail is temporary and can not be used. Please, use your real e-mail. If this is a mistake, send an e-mail to support@salesforcequeryeditor.com'
+            else {
+              this.createKeygenUser(attributes)
+                .then(() => {
+                  this.$router.push({ name: 'success-signup' })
+                })
+                .catch((error) => {
+                  error.response.data.errors.forEach((error) => {
+                    if (error.code === 'EMAIL_TAKEN') {
+                      this.error =
+                        'E-mail has already been taken. Choose a different e-mail and try again.'
+                    } else {
+                      this.error =
+                        "Sorry, your account couldn't be created at the moment. Try again later."
+                    }
+                  })
+                })
+                .finally(() => (this.submited = false))
+            }
           })
-          .catch((error) => {
-            error.response.data.errors.forEach((error) => {
-              if (error.code === 'EMAIL_TAKEN') {
-                this.error =
-                  'E-mail has already been taken. Choose a different E-mail and try again.'
-              } else {
-                this.error =
-                  "Sorry, your account couldn't be created at the moment. Try again later."
-              }
-            })
+          .catch(() => {
+            this.error =
+              'Sorry, something did not work while checking the e-mail entered. Please, try again and if it still does not work, send an e-mail to support@salesforcequeryeditor.com'
           })
           .finally(() => (this.submited = false))
       }
