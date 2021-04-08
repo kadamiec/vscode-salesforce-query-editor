@@ -89,6 +89,9 @@ import showToastMessage from '@/mixins/show-toast-message'
 import Logo from '@/components/logo'
 
 export default {
+  components: {
+    Logo,
+  },
   mixins: [showToastMessage],
   data: () => {
     return {

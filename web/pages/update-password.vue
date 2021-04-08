@@ -13,7 +13,7 @@
         />
         <div class="form-text" :class="{ error: $v.user.oldPassword.$error }">
           Password must have a minimum of eight characters, at least one letter,
-          one number and one special character.
+          one number and one special character (@ \ ' $ ! % * # ? & ).
         </div>
       </div>
 
@@ -29,7 +29,7 @@
         />
         <div class="form-text" :class="{ error: $v.user.newPassword.$error }">
           Password must have a minimum of eight characters, at least one letter,
-          one number and one special character.
+          one number and one special character (@ \ ' $ ! % * # ? & ).
         </div>
       </div>
 

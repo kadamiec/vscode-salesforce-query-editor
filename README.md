@@ -20,6 +20,7 @@ This extension brings the same functionality available in the Query Editor in th
 - [x] Works side by side with your Apex Class.
 - [x] Access to Field Details, such as Name, Label, Required, Updateable, Groupable and more.
 - [x] Compact to not take away the space you have available while writing code.
+- [x] Works with Gitpod - https://www.gitpod.io/
 - [ ] Query Storage and History.
 - [ ] Reorder Fields alphabetically.
 - [ ] Aggregated functions.
@@ -41,7 +42,7 @@ I'm also selling the source code. If you are interested, send an email to allano
 
 ## Requirements
 
-- sfdx-cli/7.92.0-88320113e7
+- sfdx-cli/7.93.1-762bca056d
 - VS Code 1.54.3 -> To update your vscode go to Help -> then click on Check for Updates / Restart to Update
 - MUST BE USED FROM A SFDX PROJECT
 - YOU MUST NOT HAVE ANYTHING RUNNING ON PORT 5000
@@ -73,7 +74,8 @@ You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 
 - Inside the app, one the account page you can manage all your subscriptions and licenses. You can choose to cancel your subscription, and activate/deactivate licenses.
 
-Obs: The payment is handled by Stripe and therefore it is secure. It was implemented using Stripe Elements and you can read more about it here https://stripe.com/en-ie/payments/elements
+Obs: The payment system is implemented using Stripe Elements. You can read more about it here https://stripe.com/en-ie/payments/elements
+
 
 # How to Use
 
@@ -192,7 +194,6 @@ You can configure the extension to show the field type in the query builder and 
 
 When users are editing data, it is good to know if the field is updateable and required before doing any changes. So, by default, these two options are already enabled. But you can choose to turn it off if you don't like it.
 
-
 <img src="https://drive.google.com/uc?id=14b3XQXY79ra2343niDbG5Is17YKqDyRf" width="800px"></img>
 
 ## How to Open Window Mode
@@ -228,6 +229,14 @@ Opera does not support PWA features yet.
 
 Mozilla has no plans for PWA features. But why are you using Firefox? You should change to any of the Chromium based browsers.
 
+
+## Settings
+
+The extension has some settings that you can use to have a personalized experience. To access those settings, go to File -> Preferences -> Settings, and search for "Soql".
+
+<img src="https://drive.google.com/uc?id=1oMMG_bywCs-EVHEHHoXUe7R6TtYIibwE" width="1000px"></img>
+
+
 ## Shortcuts
 
 - `ctrl + shift + o` to refresh the objects for the selected environment
@@ -246,6 +255,12 @@ Mozilla has no plans for PWA features. But why are you using Firefox? You should
 
 
 ## Release Notes
+
+### 1.1.0
+
+- Now you can use the extension with Gitpod - https://www.gitpod.io/
+
+- Fix "Display Query Builder" setting.
 
 ### 1.0.0
 

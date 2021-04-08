@@ -13,6 +13,13 @@
           Sign Up
           <i v-if="submited" class="fa fa-circle-o-notch fa-spin" />
         </button>
+        <button
+          variant="primary"
+          class="vscode-button mt-2 btn-block"
+          @click.prevent="onClickSignInButton"
+        >
+          Sign In
+        </button>
 
         <div v-if="error" class="error text-center">
           <div>{{ error }}</div>
@@ -159,6 +166,9 @@ export default {
         '__blank'
       )
       window.open('vscode:extension/allanoricil.salesforce-soql-editor')
+    },
+    onClickSignInButton() {
+      this.$router.push({ name: 'signin' })
     },
   },
 }

@@ -3,7 +3,7 @@
     <loading v-if="isLoadingData"></loading>
     <div v-show="!isLoadingData" :ref="name" class="editor px-2 pt-2">
       <div class="d-flex flex-column">
-        <banner v-if="!isLicenseValid()"/>
+        <banner v-if="!isLicenseValid()" />
         <!-- ENVIRONMENTS -->
         <div
           v-if="environments && environments.length"
@@ -46,7 +46,11 @@
         <!-- QUERY BUILDER -->
         <div
           :class="
-            showQueryBuilder && !isDataTableExpanded ? 'd-block' : 'd-none'
+            configuration.displayQueryBuilder &&
+            showQueryBuilder &&
+            !isDataTableExpanded
+              ? 'd-block'
+              : 'd-none'
           "
           style="height: 395px"
         >
@@ -387,7 +391,7 @@ export default {
     QueryResults,
     SoqlPlan,
     Loading,
-    Banner
+    Banner,
   },
   mixins: [showToastMessage],
   props: {
@@ -452,8 +456,7 @@ export default {
 
     window.addEventListener('keyup', (event) => {
       if (event.ctrlKey && event.shiftKey && event.key === 'H') {
-        this.showQueryBuilder =
-          this.configuration.displayQueryBuilder && !this.showQueryBuilder
+        this.showQueryBuilder = !this.showQueryBuilder
         event.preventDefault()
       }
     })
