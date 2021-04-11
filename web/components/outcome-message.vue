@@ -4,7 +4,7 @@
       <div style="font-size: 30px" class="text-center">
         {{ title }}
       </div>
-      <i class="fas fa-10x mx-auto fa-check-circle my-5"></i>
+      <i class="fas fa-10x mx-auto my-5" :class="computedIcon"></i>
       <div style="font-size: 30px" class="text-center">
         {{ message }}
       </div>
@@ -38,6 +38,15 @@ export default {
     pageName: {
       type: String,
       default: 'signin',
+    },
+    isError: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    computedIcon() {
+      return this.isError ? 'fa-times-circle' : 'fa-check-circle'
     },
   },
 }

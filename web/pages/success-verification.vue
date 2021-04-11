@@ -1,13 +1,13 @@
 <template>
-  <success-message :title="title" :message="message"></success-message>
+  <outcome-message :title="title" :message="message"></outcome-message>
 </template>
 
 <script>
-import SuccessMessage from '@/components/success-message'
+import OutcomeMessage from '@/components/outcome-message'
 
 export default {
   components: {
-    SuccessMessage,
+    OutcomeMessage,
   },
   data: () => {
     return {

@@ -2,6 +2,7 @@
   <outcome-message
     :title="title"
     :message="message"
+    :is-error="true"
     page-name="signin"
     page-label="Sign In"
   ></outcome-message>
@@ -16,9 +17,11 @@ export default {
   },
   data: () => {
     return {
-      title: 'Success',
-      message: `You will receive an e-mail to redefine your password.`,
+      title: 'Error!',
+      message: `Sorry, your e-mail could not be verified.`,
     }
   },
 }
 </script>
+
+<style></style>

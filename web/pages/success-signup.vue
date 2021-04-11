@@ -1,18 +1,18 @@
 <template>
-  <success-message
+  <outcome-message
     :title="title"
     :message="message"
     page-name="signin"
     page-label="Sign In"
-  ></success-message>
+  ></outcome-message>
 </template>
 
 <script>
-import SuccessMessage from '@/components/success-message'
+import OutcomeMessage from '@/components/outcome-message'
 
 export default {
   components: {
-    SuccessMessage,
+    OutcomeMessage,
   },
   data: () => {
     return {
