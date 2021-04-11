@@ -1,5 +1,6 @@
 <template>
   <div class="overflow-hidden">
+    <github-button v-if="isVSCode"></github-button>
     <side-bar :active="!isVSCode"></side-bar>
     <Nuxt
       keep-alive
@@ -17,23 +18,18 @@
 <script>
 import CookieBanner from '@/components/cookie-banner.vue'
 import SideBar from '@/components/side-bar'
-import { mapState } from 'vuex'
 import disableInspect from '~/mixins/disable-inspect'
 import colorChange from '~/mixins/color-change'
 import configurationChange from '~/mixins/configuration-change'
+import isVscode from '~/mixins/is-vscode'
 
 export default {
   components: {
     SideBar,
     CookieBanner,
   },
-  mixins: [colorChange, configurationChange, disableInspect],
+  mixins: [colorChange, configurationChange, disableInspect, isVscode],
   middleware: ['fetch-colors', 'is-local-server-running'],
-  computed: {
-    ...mapState({
-      isVSCode: (state) => state.user.isVSCode,
-    }),
-  },
 }
 </script>
 

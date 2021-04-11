@@ -34,8 +34,10 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import openPage from '~/mixins/open-page'
 
 export default {
+  mixins: [openPage],
   props: {
     active: {
       type: Boolean,
@@ -59,9 +61,8 @@ export default {
       this.$router.push({ name: 'editor' })
     },
     onClickHelpButton() {
-      window.open(
-        'https://github.com/AllanOricil/SOQL-Editor-Issues/issues/new',
-        '_blank'
+      this.openPage(
+        'https://github.com/AllanOricil/SOQL-Editor-Issues/issues/new'
       )
     },
     onClickLogout() {

@@ -14,48 +14,18 @@
 
 <script>
 import showToastMessage from '~/mixins/show-toast-message'
+import openPage from '~/mixins/open-page'
 
 export default {
-  mixins: [showToastMessage],
+  mixins: [showToastMessage, openPage],
   methods: {
     onClickBuyProButton() {
-      this.showToastMessage('Opening the Product Description Page.')
-      this.$axios
-        .post(
-          `${process.env.SALESFORCE_SERVER}/vscode/page/open`,
-          {
-            page: 'https://salesforcequeryeditor.com/#/product-description',
-          },
-          {
-            headers: {
-              'Content-Type': 'application/vnd.api+json',
-              Accept: 'application/vnd.api+json',
-            },
-          }
-        )
-        .catch(() => {
-          this.showToastMessage('Could not open the Product Description Page')
-        })
+      this.openPage('https://salesforcequeryeditor.com/#/product-description')
     },
     onClickFiveStars() {
-      this.showToastMessage('Opening VS Code Marketplace page.')
-      this.$axios
-        .post(
-          `${process.env.SALESFORCE_SERVER}/vscode/page/open`,
-          {
-            page:
-              'https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor&ssr=false#review-details',
-          },
-          {
-            headers: {
-              'Content-Type': 'application/vnd.api+json',
-              Accept: 'application/vnd.api+json',
-            },
-          }
-        )
-        .catch(() => {
-          this.showToastMessage('Could not open the VS Code Marketplace page.')
-        })
+      this.openPage(
+        'https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor&ssr=false#review-details'
+      )
     },
   },
 }
