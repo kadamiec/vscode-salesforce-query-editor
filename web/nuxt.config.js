@@ -27,6 +27,7 @@ export default {
     STRIPE_PRODUCT_KEY: process.env.STRIPE_PRODUCT_KEY || 'prod_IlXQl78y4QXvKS',
     SALESFORCE_API_VERSION: process.env.SALESFORCE_API_VERSION || 'v50.0',
     SALESFORCE_SERVER: process.env.SALESFORCE_SERVER || 'http://127.0.0.1:5000',
+    IS_VSCODE: process.env.IS_VSCODE || false
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
