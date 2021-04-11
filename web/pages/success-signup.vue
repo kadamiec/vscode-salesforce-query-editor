@@ -16,7 +16,7 @@ export default {
   },
   data: () => {
     return {
-      title: 'Thank you for your registering!',
+      title: 'Thank you for registering!',
       message: `Plese, click on the link sent to your e-mail to verify your account.`,
     }
   },
