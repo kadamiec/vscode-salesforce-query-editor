@@ -29,5 +29,6 @@ export default {
   right: 0;
   bottom: 20px;
   width: 50px;
+  z-index: 999;
 }
 </style>
