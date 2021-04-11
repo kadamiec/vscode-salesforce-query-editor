@@ -12,7 +12,6 @@ export default async function ({ store, redirect }) {
                 if (!process.env.IS_VSCODE && !response.data.meta.valid)
                   redirect('/subscription')
               })
-              .catch(() => redirect('/subscription'))
           } else if (!process.env.IS_VSCODE) redirect('/subscription')
         })
         .catch(() => {
