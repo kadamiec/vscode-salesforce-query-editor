@@ -152,7 +152,7 @@
         class="vscode-button mt-3 btn-block"
         @click.prevent="onClickCancel"
       >
-        Cancel
+        Go to Account
       </button>
 
       <div v-if="errors" class="error text-center">
