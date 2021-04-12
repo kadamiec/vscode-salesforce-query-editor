@@ -14,7 +14,6 @@ export default {
   methods: {
     ...mapActions({
       fetchMachineFingerprint: 'user/fetchMachineFingerprint',
-      fetchThemeColors: 'user/fetchThemeColors',
     }),
   },
 }
