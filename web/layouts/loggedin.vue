@@ -29,7 +29,7 @@ export default {
     CookieBanner,
   },
   mixins: [colorChange, configurationChange, disableInspect, isVscode],
-  middleware: ['fetch-colors', 'is-local-server-running'],
+  middleware: ['is-local-server-running', 'fetch-colors'],
 }
 </script>
 

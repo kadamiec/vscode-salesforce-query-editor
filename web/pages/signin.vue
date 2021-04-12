@@ -83,7 +83,7 @@
 
 <script>
 import { required, email } from 'vuelidate/lib/validators'
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { MD5 } from 'object-hash'
 import showToastMessage from '@/mixins/show-toast-message'
 import Logo from '@/components/logo'
@@ -115,6 +115,11 @@ export default {
       },
     },
   },
+  computed: {
+    ...mapState({
+      isLocalServerRunning: (state) => state.user.isLocalServerRunning,
+    }),
+  },
   methods: {
     ...mapActions({
       login: 'user/login',
@@ -133,7 +138,7 @@ export default {
           password,
         })
           .then(() => {
-            if (this.keepLoggedIn) {
+            if (this.isLocalServerRunning && this.keepLoggedIn) {
               this.$axios
                 .post(
                   `${process.env.SALESFORCE_SERVER}/vscode/login`,
@@ -155,7 +160,6 @@ export default {
                     'Could not save your User credentials on the storage'
                   )
                 )
-                .finally(() => this.$nextTick(() => (this.isLoggingIn = false)))
             }
 
             this.fetchKeygenUser()
@@ -167,8 +171,12 @@ export default {
               )
               .finally(() => this.$nextTick(() => (this.isLoggingIn = false)))
           })
-          .catch(() => {
-            this.error = 'Wrong password or e-mail'
+          .catch((error) => {
+            if (error.response.data.error) {
+              this.error = error.response.data.error
+            } else {
+              this.error = 'Could not Login'
+            }
             this.$nextTick(() => (this.isLoggingIn = false))
           })
       }

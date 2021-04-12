@@ -13,15 +13,5 @@ export default () => ({
   fingerprint: null,
   configuration: {},
   activeMenu: null,
-  isVSCode: isVScode(),
   isLocalServerRunning: false
 })
-
-function isVScode() {
-  try {
-    acquireVsCodeApi()
-    return true
-  } catch (_) {
-    return false
-  }
-}

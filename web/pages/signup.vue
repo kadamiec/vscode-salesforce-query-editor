@@ -70,16 +70,18 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import SignUpForm from '@/components/signup-form'
 import { MD5 } from 'object-hash'
 import Logo from '@/components/logo'
+import isVscode from '~/mixins/is-vscode'
 
 export default {
   components: {
     SignUpForm,
     Logo,
   },
+  mixins: [isVscode],
   data: () => {
     return {
       user: {
@@ -94,11 +96,6 @@ export default {
       mountCard: false,
       error: null,
     }
-  },
-  computed: {
-    ...mapState({
-      isVSCode: (state) => state.user.isVSCode,
-    }),
   },
   mounted() {
     localStorage.setItem('partnerId', this.$route.query.partnerId)

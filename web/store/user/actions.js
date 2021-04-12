@@ -2,18 +2,20 @@ export default {
   login({ commit }, { email, password }) {
     return this.$axios
       .post(
-        `https://api.keygen.sh/v1/accounts/${process.env.KEYGEN_ACCOUNT_ID}/tokens`,
-        null,
+        `${process.env.WEBHOOKS_SERVER}/login`,
+        {
+          email,
+          password,
+        },
         {
           headers: {
             'Content-Type': 'application/vnd.api+json',
             Accept: 'application/vnd.api+json',
-            Authorization: `Basic ${window.btoa(`${email}:${password}`)}`,
           },
         }
       )
       .then((authResponse) => {
-        commit('setAuth', { ...authResponse.data, email })
+        commit('setAuth', authResponse.data)
       })
   },
   fetchKeygenUser({ commit, state }) {
@@ -314,14 +316,13 @@ export default {
     return createLicensesResponse
   },
   fetchThemeColors({ commit }) {
-    return this.$axios.get(
-      `${process.env.SALESFORCE_SERVER}/vscode/colors`
-    )
-    .then((response) => {
-      commit('setThemeColors', response.data.colors);
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-  }
+    return this.$axios
+      .get(`${process.env.SALESFORCE_SERVER}/vscode/colors`)
+      .then((response) => {
+        commit('setThemeColors', response.data.colors)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  },
 }

@@ -9,23 +9,18 @@
 <script>
 import CookieBanner from '@/components/cookie-banner.vue'
 import GithubButton from '@/components/github-button.vue'
-import { mapState } from 'vuex'
 import disableInspect from '~/mixins/disable-inspect'
 import configurationChange from '~/mixins/configuration-change'
 import colorChange from '~/mixins/color-change'
+import isVscode from '~/mixins/is-vscode'
 
 export default {
   components: {
     CookieBanner,
     GithubButton,
   },
-  mixins: [colorChange, configurationChange, disableInspect],
-  middleware: ['fetch-colors', 'is-local-server-running'],
-  computed: {
-    ...mapState({
-      isVSCode: (state) => state.user.isVSCode,
-    }),
-  },
+  mixins: [colorChange, configurationChange, disableInspect, isVscode],
+  middleware: ['is-local-server-running', 'fetch-colors'],
 }
 </script>
 

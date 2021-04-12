@@ -49,6 +49,7 @@ import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 import Editor from '@/components/editor.vue'
 import Tabs from '@/components/tabs'
 import Tab from '@/components/tab'
+import isVscode from '~/mixins/is-vscode'
 
 export default {
   components: {
@@ -56,6 +57,7 @@ export default {
     Tabs,
     Tab,
   },
+  mixins: [isVscode],
   layout: 'loggedin',
   middleware: ['auth', 'validate-keygen-license', 'menu'],
   data: () => {
@@ -75,7 +77,6 @@ export default {
   computed: {
     ...mapState({
       configuration: (state) => state.user.configuration,
-      isVSCode: (state) => state.user.isVSCode,
       isLocalServerRunning: (state) => state.user.isLocalServerRunning,
     }),
     ...mapGetters({
@@ -99,12 +100,14 @@ export default {
     },
   },
   mounted() {
-    this.fetchConfiguration()
-    this.fetchSFDXData().then((defaultusername) => {
-      this.isAddTabEnabled = true
-      this.isLoadingEnvironments = false
-      this.defaultusername = defaultusername
-    })
+    if (this.isLocalServerRunning) {
+      this.fetchConfiguration()
+      this.fetchSFDXData().then((defaultusername) => {
+        this.isAddTabEnabled = true
+        this.isLoadingEnvironments = false
+        this.defaultusername = defaultusername
+      })
+    }
   },
   methods: {
     ...mapActions({

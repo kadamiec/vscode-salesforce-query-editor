@@ -7,13 +7,13 @@ import editorColors from '~/assets/json/editor-colors.json'
 export default {
   setAuth(state, auth) {
     state.auth = {
-      email: auth.data.attributes.email,
-      token: auth.data.attributes.token,
-      expiry: auth.data.attributes.expiry,
-      created: auth.data.attributes.created,
-      updated: auth.data.attributes.updated,
-      kind: auth.data.attributes.kind,
-      userId: auth.data.relationships.bearer.data.id,
+      email: auth.email,
+      token: auth.token,
+      expiry: auth.expiry,
+      created: auth.created,
+      updated: auth.updated,
+      kind: auth.kind,
+      userId: auth.userId,
     }
   },
   setLicense(state, license) {
@@ -99,6 +99,6 @@ export default {
     state.theme = { ...state.theme }
   },
   setIsLocalServerRunning: (state, isLocalServerRunning) => {
-    state.isLocalServerRunning = isLocalServerRunning;
-  }
+    state.isLocalServerRunning = isLocalServerRunning
+  },
 }

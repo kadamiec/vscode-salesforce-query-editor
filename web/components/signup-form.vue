@@ -51,7 +51,7 @@
       />
       <div class="form-text" :class="{ error: $v.user.password.$error }">
         Password must have a minimum of eight characters, at least one letter,
-        one number and one special character (@ \ ' $ ! % * # ? & )
+        one number and one special character (@ \ ' $ ! % * # ? & ).
       </div>
     </div>
 

@@ -1,3 +1,4 @@
 export default async function ({ store }) {
-    await store.dispatch('user/fetchThemeColors');
+  if (store.state.user.isLocalServerRunning)
+    await store.dispatch('user/fetchThemeColors')
 }
