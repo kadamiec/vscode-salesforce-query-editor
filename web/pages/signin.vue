@@ -164,7 +164,7 @@ export default {
 
             this.fetchKeygenUser()
               .then(() => {
-                this.$router.push({ name: 'editor' })
+                this.$router.push({ name: 'help' })
               })
               .catch(
                 () => (this.error = 'Could not fetch your User information')
