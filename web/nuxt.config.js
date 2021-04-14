@@ -1,6 +1,11 @@
 import webpack from 'webpack';
 import WebpackObfuscator from 'webpack-obfuscator';
 import MonacoEditorPlugin from 'monaco-editor-webpack-plugin';
+import fs from 'fs';
+import path from 'path';
+
+const packageFile = fs.readFileSync(path.resolve(__dirname, 'package.json'), { encoding: 'utf-8' });
+const packageVersion = JSON.parse(packageFile).version;
 
 const buildPlugins = [
   new MonacoEditorPlugin({
@@ -130,12 +135,14 @@ export default {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map';
       }
-
+      
       if (ctx.isClient && process.env.IS_VSCODE) {
         config.output.filename = 'app.js',
         config.output.chunkFilename = '[id].js';
         config.optimization.splitChunks.cacheGroups.default = false;
         config.optimization.runtimeChunk = false;
+      }else{
+        config.output.chunkFilename = `[chunkhash].js?v=${packageVersion}`;
       }
 
       if (!ctx.isDev && ctx.isClient && config.plugins) {
