@@ -14,8 +14,8 @@ web/dist/_nuxt/app.js
 src
 .images
 !.images/icon.png
-!.images/icon_dark.png
-!.images/icon_light.png
+!.images/database_dark.svg
+!.images/database_light.svg
 node_modules
 webpack.config.js
 webpack.config.dev.js
