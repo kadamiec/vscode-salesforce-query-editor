@@ -78,7 +78,7 @@ Obs: The payment system is implemented using Stripe Elements. You can read more 
 
 # How to Use
 
-Obs: set a "defaultusername" before opening the extension.
+<b>IMPORTANT</b> Set a "defaultusername" before opening the extension. <b>IMPORTANT</b>
 
 ## How to open the Salesforce Query Editor
 
@@ -86,21 +86,21 @@ There are three ways to open the editor.
 
 ### File Explorer Context
 
-In the file explorer, click with the right button on any Apex class to see the option `SFDX: SOQL Editor` in the Menu.
+In the file explorer, click with the right button on any Apex class to see the option `SFDX: Salesforce Query Editor` in the Menu.
 
-<img src="https://drive.google.com/uc?id=1hPfBf8Rzap7K9dQf8I92Kf_43yHIeU9A"></img>
+<img src="https://drive.google.com/uc?id=1NBojOlso0-dV3bVkMNjXYD9mQIu2Jcrd"></img>
 
 ### Editor Context
 
-Open an Apex class and click with the right button anywhere in the editor context to see the option `SFDX: SOQL Editor` in the Menu.
+Open an Apex class and click with the right button anywhere in the editor context to see the option `SFDX: Salesforce Query Editor` in the Menu.
 
-<img src="https://drive.google.com/uc?id=16WGijV7hT6dcz99xIDtYe3NsJnxP4nR9"></img>
+<img src="https://drive.google.com/uc?id=1p5ZsFUWKHPjVFR4O1647FCWxnnFYo4S2"></img>
 
 ### Editor Navigation Context
 
 Open an Apex class and click on the button shown in the image below. This button only appears when editing Apex classes.
 
-<img src="https://drive.google.com/uc?id=1ufLB1_TdaZDku6sSU-OdKHehX-CeHSi3"></img>
+<img src="https://drive.google.com/uc?id=1oVTJ7KUdljVN_qZ-NaOUVRqolE74PJQS"></img>
 
 
 ## How to add a query, or updated it, in the Apex Class without copy and paste
@@ -198,7 +198,7 @@ When users are editing data, it is good to know if the field is updateable and r
 ## How to Open Window Mode
 
  - File -> Preferences -> Settings
- - Type SOQL in the search bar
+ - Type "Salesforce Query Editor" in the search bar
  - Look for Window Mode and click on the checkbox
 
  Now every time you open the extension, using any of the three methods listed above, it will be opened in a separate window. This way users that have multiple monitors can  have a better experience while developing as the extension will not take any space of their editor.
@@ -231,7 +231,7 @@ Mozilla has no plans for PWA features. But why are you using Firefox? You should
 
 ## Settings
 
-The extension has some settings that you can use to have a personalized experience. To access those settings, go to File -> Preferences -> Settings, and search for "Soql".
+The extension has some settings that you can use to have a personalized experience. To access those settings, go to File -> Preferences -> Settings, and search for "Salesforce Query Editor".
 
 <img src="https://drive.google.com/uc?id=1oMMG_bywCs-EVHEHHoXUe7R6TtYIibwE" width="1000px"></img>
 
@@ -254,6 +254,16 @@ The extension has some settings that you can use to have a personalized experien
 
 
 ## Release Notes
+
+### 1.1.0
+
+- Workspace Config properties names were changed from "SOQL Editor" to "Salesforce Query Editor"
+
+- Webview Panel name was changed from "SOQL Editor" to "Salesforce Query Editor"
+
+- Webview Panel Icon is now using VS Code database codicon icon
+
+- The command name was changed from "SFDX: SOQL Editor" to "SFDX: Salesforce Query Editor"
 
 ### 1.1.0
 

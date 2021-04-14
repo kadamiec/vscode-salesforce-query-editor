@@ -17,7 +17,7 @@ class FileSystemWatcher {
 
         this._watcher.onDidChange(() => {
             axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/defaultusername`, response.data)
-                .catch((_) => this._outputChannel.appendLine('Could not delivery the defaultusername to SOQL editor.'));
+                .catch((_) => this._outputChannel.appendLine('Could not delivery the defaultusername.'));
         });
     }
 

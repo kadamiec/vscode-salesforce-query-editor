@@ -25,7 +25,7 @@ class Configuration {
         vscode.workspace.onDidChangeConfiguration(() => {
             this.loadProperties();
             axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/configuration`, this.properties)
-                .catch((_) => this._outputChannel.appendLine('Could not delivery the Workspace Configuration'));
+                .catch((_) => this._outputChannel.appendLine('Could not delivery the Workspace Configuration.'));
         })
     }
 
@@ -36,7 +36,7 @@ class Configuration {
 
     loadProperties(){
         Object.keys(this._properties).forEach((property) => {
-            this._properties[property] = vscode.workspace.getConfiguration('soqlEditor').get(property)
+            this._properties[property] = vscode.workspace.getConfiguration('salesforceQueryEditor').get(property)
         });
     }
 }

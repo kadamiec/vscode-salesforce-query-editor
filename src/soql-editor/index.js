@@ -9,7 +9,7 @@ const QueryEditorWebview = require('./query-editor-webview');
 const FetchColorsWebview = require('./fetch-colors-webview');
 const SfdxCommands =  require('../utilities/sfdx-commands')
 
-const name = 'SOQL Editor';
+const name = 'Salesforce Query Editor';
 const outputChannel = new Outputchannel(name);
 const logsStorage = new Storage('logs');
 const licenseStorage = new Storage('license');
@@ -17,7 +17,7 @@ const queryHistoryStorage = new Storage('query-history');
 const loginStorage = new Storage('login');
 const editor = new Editor();
 const fetchColorsWebview = new FetchColorsWebview();
-const queryEditorWebview = new QueryEditorWebview(name, editor, 'SFDX.soqlEditor');
+const queryEditorWebview = new QueryEditorWebview(name, editor, 'SFDX.salesforceQueryEditor');
 const fsWatcher = new FileSystemWatcher('**/.sfdx/sfdx-config.json', outputChannel);
 const configuration = new Configuration(outputChannel);
 const keygen = new Keygen(licenseStorage);

@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "1.2.3",
+  "version": "1.3.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -33,105 +33,105 @@
   ],
   "activationEvents": [
     "workspaceContains:sfdx-project.json",
-    "onCommand:SFDX.soqlEditor"
+    "onCommand:SFDX.salesforceQueryEditor"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "SFDX.soqlEditor",
-        "title": "SFDX: SOQL Editor",
+        "command": "SFDX.salesforceQueryEditor",
+        "title": "SFDX: Salesforce Query Editor",
         "icon": {
-          "light": "/.images/icon_light.png",
-          "dark": "/.images/icon_dark.png"
+          "light": "/.images/database_light.svg",
+          "dark": "/.images/database_dark.svg"
         }
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "SFDX.soqlEditor",
+          "command": "SFDX.salesforceQueryEditor",
           "group": "navigation",
           "when": "resourceFilename =~ /.cls/"
         }
       ],
       "explorer/context": [
         {
-          "command": "SFDX.soqlEditor",
+          "command": "SFDX.salesforceQueryEditor",
           "when": "resourceFilename =~ /.cls/"
         }
       ],
       "editor/context": [
         {
-          "command": "SFDX.soqlEditor",
+          "command": "SFDX.salesforceQueryEditor",
           "when": "resourceFilename =~ /.cls/"
         }
       ]
     },
     "configuration": {
-      "title": "Salesforce SOQL Editor",
+      "title": "Salesforce Query Editor",
       "properties": {
-        "soqlEditor.displayQueryBuilder": {
+        "salesforceQueryEditor.displayQueryBuilder": {
           "type": "boolean",
           "default": true,
           "description": "If checked, the Query Builder is displayed."
         },
-        "soqlEditor.format.automatically": {
+        "salesforceQueryEditor.format.automatically": {
           "type": "boolean",
           "default": false,
           "description": "If checked, the query is formatted automatically when created using the query builder."
         },
-        "soqlEditor.fieldType.form": {
+        "salesforceQueryEditor.fieldType.form": {
           "type": "boolean",
           "default": false,
           "description": "If checked, the field type is displayed in the field selector."
         },
-        "soqlEditor.fieldType.table": {
+        "salesforceQueryEditor.fieldType.table": {
           "type": "boolean",
           "default": false,
           "description": "If checked, the field type is displayed in the table's header."
         },
-        "soqlEditor.field.required": {
+        "salesforceQueryEditor.field.required": {
           "type": "boolean",
           "default": true,
           "description": "If checked, an icon appears to the right of the field label in the list of available felds to indicate that it is Required."
         },
-        "soqlEditor.field.updateable": {
+        "salesforceQueryEditor.field.updateable": {
           "type": "boolean",
           "default": true,
           "description": "If checked, an icon appears to the right of the field label in the list of available felds to indicate that it is Updateable."
         },
-        "soqlEditor.nestedResults.style": {
+        "salesforceQueryEditor.nestedResults.style": {
           "type": "boolean",
           "default": false,
           "description": "If checked, it applies styles to nested results. This feature makes everything slow when quering a lot of records and columns, so use it with care. Also, be aware that the Theme Colors you are using will not be applied because the VSCode API does not provide a way to programatically access it."
         },
-        "soqlEditor.nestedResults.expanded": {
+        "salesforceQueryEditor.nestedResults.expanded": {
           "type": "boolean",
           "default": true,
           "description": "If checked, nested results are expanded."
         },
-        "soqlEditor.nestedResults.depth": {
+        "salesforceQueryEditor.nestedResults.depth": {
           "type": "number",
           "default": 1,
           "description": "It determines how many levels nested results shown as JSON will be expanded."
         },
-        "soqlEditor.windowMode": {
+        "salesforceQueryEditor.windowMode": {
           "type": "boolean",
           "default": true,
           "description": "If checked, the Query Editor will open in a separate window. [ONLY AVAILABLE FOR PAID USERS]"
         },
-        "soqlEditor.setQueryOnClick":{
+        "salesforceQueryEditor.setQueryOnClick":{
           "type": "boolean",
           "default": false,
           "description": "If checked, the query is copied automatically to the editor. [ONLY AVAILABLE FOR PAID USERS]"
         },
-        "soqlEditor.queryOnClick":{
+        "salesforceQueryEditor.queryOnClick":{
           "type": "boolean",
           "default": false,
           "description": "If checked, the query is executed automatically when you click on it. It is necessary to set 'setQueryOnClick' to true.[ONLY AVAILABLE FOR PAID USERS]"
         },
-        "soqlEditor.displayTabs": {
+        "salesforceQueryEditor.displayTabs": {
           "type": "boolean",
           "default": false,
           "description": "If checked, tabs are displayed when 'windowMode' is false. [ONLY AVAILABLE FOR PAID USERS]"
