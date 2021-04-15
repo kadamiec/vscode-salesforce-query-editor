@@ -1,12 +1,13 @@
 <template>
   <div>
-    <github-button></github-button>
+    <github-button v-if="configuration.displayHelpButton"></github-button>
     <Nuxt style="overflow-y: hidden" />
     <cookie-banner v-if="!isVSCode"></cookie-banner>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import CookieBanner from '@/components/cookie-banner.vue'
 import GithubButton from '@/components/github-button.vue'
 import disableInspect from '~/mixins/disable-inspect'
@@ -21,6 +22,11 @@ export default {
   },
   mixins: [colorChange, configurationChange, disableInspect, isVscode],
   middleware: ['is-local-server-running', 'fetch-colors'],
+  computed: {
+    ...mapState({
+      configuration: (state) => state.user.configuration,
+    }),
+  },
 }
 </script>
 
@@ -44,4 +50,3 @@ html {
   margin: 0;
 }
 </style>
-CookieBanner

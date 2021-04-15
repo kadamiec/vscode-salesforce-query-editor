@@ -255,7 +255,11 @@ The extension has some settings that you can use to have a personalized experien
 
 ## Release Notes
 
-### 1.1.0
+### 1.4.0
+
+- The floating Help Button can now be disabled in the Workspace Settings. The default value is "true"
+
+### 1.3.0
 
 - Workspace Config properties names were changed from "SOQL Editor" to "Salesforce Query Editor"
 
@@ -264,6 +268,10 @@ The extension has some settings that you can use to have a personalized experien
 - Webview Panel Icon is now using VS Code database codicon icon
 
 - The command name was changed from "SFDX: SOQL Editor" to "SFDX: Salesforce Query Editor"
+
+### 1.2.0
+
+- Add floating Help button in the editor and login pages.
 
 ### 1.1.0
 

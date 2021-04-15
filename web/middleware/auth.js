@@ -20,7 +20,7 @@ export default async function ({ store, redirect, route }) {
             password: response.data.login.password,
           })
           await store.dispatch('user/fetchKeygenUser')
-          if (route.name !== 'help') redirect('/help')
+          if (route.name !== 'editor') redirect('/editor')
         } catch {
           if (route.name !== 'signin') redirect('/signin')
         }

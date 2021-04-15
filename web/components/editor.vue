@@ -3,7 +3,7 @@
     <loading v-if="isLoadingData"></loading>
     <div v-show="!isLoadingData" :ref="name" class="editor px-2 pt-2">
       <div class="d-flex flex-column">
-        <banner v-if="!isLicenseValid()" />
+        <editor-header v-if="!isLicenseValid()" />
         <!-- ENVIRONMENTS -->
         <div
           v-if="environments && environments.length"
@@ -372,11 +372,11 @@ import QueryTextEditor from '@/components/query-text-editor.vue'
 import QueryResults from '@/components/query-results.vue'
 import SoqlPlan from '@/components/soql-plan.vue'
 import Loading from '@/components/loading.vue'
-import Banner from '@/components/banner.vue'
 
 import { decode } from 'html-entities'
 import sqlFormatter from '@allanoricil/sql-formatter'
 import { parseQuery } from 'soql-parser-js'
+import EditorHeader from '~/components/editor-header.vue'
 import showToastMessage from '~/mixins/show-toast-message'
 import { formatDateTime } from '~/utilities/soql-formatter-fix-methods'
 
@@ -391,7 +391,7 @@ export default {
     QueryResults,
     SoqlPlan,
     Loading,
-    Banner,
+    EditorHeader,
   },
   mixins: [showToastMessage],
   props: {

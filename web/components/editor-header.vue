@@ -1,22 +1,32 @@
 <template>
-  <div class="d-flex">
-    <img
-      v-b-tooltip.hover
-      src="~/assets/images/five_stars.png"
-      title="Leave a nice review"
-      @click="onClickFiveStars"
-    />
-    <button class="golden-btn ml-auto mb-2" @click="onClickBuyProButton">
+  <div class="d-flex mb-2">
+    <div style="cursor: pointer" @click="onClickFiveStars">
+      <star-rating
+        v-b-tooltip.hover
+        class="my-auto"
+        :rating="5"
+        :read-only="true"
+        :show-rating="false"
+        :star-size="30"
+        title="Leave a nice review"
+      ></star-rating>
+    </div>
+
+    <button class="golden-btn ml-auto my-auto" @click="onClickBuyProButton">
       BUY PRO
     </button>
   </div>
 </template>
 
 <script>
+import StarRating from 'vue-star-rating'
 import showToastMessage from '~/mixins/show-toast-message'
 import openPage from '~/mixins/open-page'
 
 export default {
+  components: {
+    StarRating,
+  },
   mixins: [showToastMessage, openPage],
   methods: {
     onClickBuyProButton() {
@@ -32,11 +42,6 @@ export default {
 </script>
 
 <style scoped>
-img {
-  height: 30px;
-  cursor: pointer;
-}
-
 .golden-btn + .golden-btn {
   margin-top: 1em;
 }

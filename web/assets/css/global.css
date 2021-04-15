@@ -71,7 +71,8 @@ pre {
 }
 
 input,
-select {
+select,
+textarea {
     border: 1px solid var(--vscode-inputOption-activeBackground) !important;
     border-radius: 0 !important;
     background-color: var(--vscode-editor-background) !important;
@@ -82,7 +83,8 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: none;
     border: 1px solid var(--vscode-focusBorder) !important;
     background-color: var(--vscode-input-background) !important;

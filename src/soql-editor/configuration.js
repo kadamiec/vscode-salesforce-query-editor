@@ -8,6 +8,7 @@ class Configuration {
         this._outputChannel = outputChannel;
         this._properties = {
             displayQueryBuilder: null,
+            displayHelpButton: null,
             fieldType: null,
             field: null,
             format: null, 

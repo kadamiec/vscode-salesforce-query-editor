@@ -1,6 +1,6 @@
 {
   "name": "salesforce-query-editor-app",
-  "version": "0.0.52",
+  "version": "0.0.53",
   "private": false,
   "scripts": {
     "dev": "cross-env SALESFORCE_SERVER=http://localhost:5000 nuxt",
@@ -51,6 +51,7 @@
     "vue-pagination-2": "^3.0.8",
     "vue-shortkey": "^3.1.7",
     "vue-socket.io-extended": "^4.0.6",
+    "vue-star-rating": "^1.7.0",
     "vue-stripe-checkout": "^3.5.14-beta.0",
     "vue-stripe-elements-plus": "^0.3.2",
     "vuelidate": "^0.7.5",

@@ -164,7 +164,7 @@ export default {
 
             this.fetchKeygenUser()
               .then(() => {
-                this.$router.push({ name: 'help' })
+                this.$router.push({ name: 'editor' })
               })
               .catch(
                 () => (this.error = 'Could not fetch your User information')
@@ -172,7 +172,7 @@ export default {
               .finally(() => this.$nextTick(() => (this.isLoggingIn = false)))
           })
           .catch((error) => {
-            if (error.response.data.error) {
+            if (error.response?.data?.error) {
               this.error = error.response.data.error
             } else {
               this.error = 'Could not Login'

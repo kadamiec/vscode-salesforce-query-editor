@@ -10955,6 +10955,13 @@ vue-socket.io-extended@^4.0.6:
   dependencies:
     "@types/socket.io-client" "1.4.36"
 
+vue-star-rating@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/vue-star-rating/-/vue-star-rating-1.7.0.tgz#07576aa1a83d54d4e9ea80eebccf058ff3c868b6"
+  integrity sha512-2qdONqnIlvFzJoallfr7VuFRB6hBzYgBVEbXC3yYZz2TfMhx36WtYQ5p7JRjW+pzZx2PGQYZ75UFoBE0jwIANw==
+  dependencies:
+    vue "^2.3.3"
+
 vue-stripe-checkout@^3.5.14-beta.0:
   version "3.5.15"
   resolved "https://registry.yarnpkg.com/vue-stripe-checkout/-/vue-stripe-checkout-3.5.15.tgz#ba0e4a81f582a6e9fce537c7627e54347e1b502b"
