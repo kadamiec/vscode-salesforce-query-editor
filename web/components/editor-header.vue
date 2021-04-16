@@ -1,17 +1,5 @@
 <template>
   <div class="d-flex mb-2">
-    <div style="cursor: pointer" @click="onClickFiveStars">
-      <star-rating
-        v-b-tooltip.hover
-        class="my-auto"
-        :rating="5"
-        :read-only="true"
-        :show-rating="false"
-        :star-size="30"
-        title="Leave a nice review"
-      ></star-rating>
-    </div>
-
     <button class="golden-btn ml-auto my-auto" @click="onClickBuyProButton">
       BUY PRO
     </button>
@@ -19,23 +7,14 @@
 </template>
 
 <script>
-import StarRating from 'vue-star-rating'
 import showToastMessage from '~/mixins/show-toast-message'
 import openPage from '~/mixins/open-page'
 
 export default {
-  components: {
-    StarRating,
-  },
   mixins: [showToastMessage, openPage],
   methods: {
     onClickBuyProButton() {
       this.openPage('https://salesforcequeryeditor.com/#/product-description')
-    },
-    onClickFiveStars() {
-      this.openPage(
-        'https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor&ssr=false#review-details'
-      )
     },
   },
 }

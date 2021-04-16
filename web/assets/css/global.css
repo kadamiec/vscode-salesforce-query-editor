@@ -631,6 +631,11 @@ i:focus{
     margin-left: -10px;
 }
 
+.required-symbol{
+    color: red;
+    padding-right: 5px;
+}
+
 .error {
     color: red;
 }
