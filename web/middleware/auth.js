@@ -4,7 +4,7 @@ export default async function ({ store, redirect, route }) {
   if (!store.state.user?.auth?.token) {
     try {
       const response = await axios.get(
-        `${process.env.SALESFORCE_SERVER}/vscode/login`,
+        `${process.env.LOCALHOST_API}/vscode/login`,
         {
           headers: {
             'Content-Type': 'application/vnd.api+json',

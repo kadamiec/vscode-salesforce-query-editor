@@ -16,9 +16,9 @@ export default {
   },
   data: () => {
     return {
-      title: 'Thank you for your Purchase!',
+      title: 'Thank you!',
       message: `You will receive an e-mail with your License Key and instructions on how
-        to activate it. If you did not receive your licenses, send an email to
+        to activate it. If you did not receive your licenses, send an e-mail to
         support@salesforcequeryeditor.com.`,
     }
   },

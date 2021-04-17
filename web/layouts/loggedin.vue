@@ -39,7 +39,7 @@ export default {
   middleware: ['is-local-server-running', 'fetch-colors'],
   mounted() {
     this.$axios
-      .get(`${process.env.WEBHOOKS_SERVER}/feedback/${this.auth.userId}`, {
+      .get(`${process.env.AWS_GATEWAY_API}/feedback/${this.auth.userId}`, {
         headers: {
           'Content-Type': 'application/vnd.api+json',
           Accept: 'application/vnd.api+json',

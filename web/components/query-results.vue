@@ -460,7 +460,7 @@ export default {
       this.isExportingData = true
       this.$axios
         .post(
-          `${process.env.SALESFORCE_SERVER}/sfdx/export/sourcetree/${this.apiVersion}`,
+          `${process.env.LOCALHOST_API}/sfdx/export/sourcetree/${this.apiVersion}`,
           {
             soql: this.query,
             username: this.username,
@@ -498,7 +498,7 @@ export default {
       if (sobjectKeyPrefix) {
         this.showToastMessage('Opening New Record Page')
         this.$axios
-          .post(`${process.env.SALESFORCE_SERVER}/sfdx/record/new`, {
+          .post(`${process.env.LOCALHOST_API}/sfdx/record/new`, {
             sobjectKeyPrefix,
             username: this.username,
           })

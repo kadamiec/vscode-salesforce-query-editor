@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "1.4.1",
+  "version": "1.5.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -124,22 +124,22 @@
         "salesforceQueryEditor.windowMode": {
           "type": "boolean",
           "default": true,
-          "description": "If checked, the Query Editor will open in a separate window. [ONLY AVAILABLE FOR PAID USERS]"
+          "description": "If checked, the Query Editor will open in a separate window. (paid)"
         },
-        "salesforceQueryEditor.setQueryOnClick":{
+        "salesforceQueryEditor.setQueryOnClick": {
           "type": "boolean",
           "default": false,
-          "description": "If checked, the query is copied automatically to the editor. [ONLY AVAILABLE FOR PAID USERS]"
+          "description": "If checked, the query is copied automatically to the editor. (paid)"
         },
-        "salesforceQueryEditor.queryOnClick":{
+        "salesforceQueryEditor.queryOnClick": {
           "type": "boolean",
           "default": false,
-          "description": "If checked, the query is executed automatically when you click on it. It is necessary to set 'setQueryOnClick' to true.[ONLY AVAILABLE FOR PAID USERS]"
+          "description": "If checked, the query is executed automatically when you click on it. It is necessary to set 'setQueryOnClick' to true. (paid)"
         },
         "salesforceQueryEditor.displayTabs": {
           "type": "boolean",
           "default": false,
-          "description": "If checked, tabs are displayed when 'windowMode' is false. [ONLY AVAILABLE FOR PAID USERS]"
+          "description": "If checked, tabs are displayed when 'windowMode' is false. (paid)"
         }
       }
     }

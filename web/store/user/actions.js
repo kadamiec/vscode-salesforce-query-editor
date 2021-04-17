@@ -2,7 +2,7 @@ export default {
   login({ commit }, { email, password }) {
     return this.$axios
       .post(
-        `${process.env.WEBHOOKS_SERVER}/login`,
+        `${process.env.AWS_GATEWAY_API}/login`,
         {
           email,
           password,
@@ -80,7 +80,7 @@ export default {
     )
 
     const subscriptionsRequest = this.$axios.get(
-      `${process.env.WEBHOOKS_SERVER}/subscriptions/${state.user.metadata.stripeCustomerId}`,
+      `${process.env.AWS_GATEWAY_API}/subscriptions/${state.user.metadata.stripeCustomerId}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export default {
   },
   async activateMachineUsingKey({ state, dispatch }, { key }) {
     const response = await this.$axios.post(
-      `${process.env.WEBHOOKS_SERVER}/activate-machine`,
+      `${process.env.AWS_GATEWAY_API}/activate-machine`,
       {
         fingerprint: state.fingerprint,
         key,
@@ -175,7 +175,7 @@ export default {
   },
   fetchConfiguration({ commit }) {
     return this.$axios
-      .get(`${process.env.SALESFORCE_SERVER}/vscode/configuration`)
+      .get(`${process.env.LOCALHOST_API}/vscode/configuration`)
       .then((result) => {
         commit('setConfiguration', result.data)
       })
@@ -185,7 +185,7 @@ export default {
   },
   fetchMachineFingerprint({ commit }) {
     return this.$axios
-      .get(`${process.env.SALESFORCE_SERVER}/vscode/fingerprint`)
+      .get(`${process.env.LOCALHOST_API}/vscode/fingerprint`)
       .then((response) => {
         commit('setFingerprint', response.data)
       })
@@ -203,7 +203,7 @@ export default {
   },
   async saveLicense(context, { key }) {
     return await this.$axios.post(
-      `${process.env.SALESFORCE_SERVER}/vscode/license`,
+      `${process.env.LOCALHOST_API}/vscode/license`,
       {
         key,
       }
@@ -212,7 +212,7 @@ export default {
   async fetchActivatedLicense({ commit }) {
     try {
       const response = await this.$axios.get(
-        `${process.env.SALESFORCE_SERVER}/vscode/license`
+        `${process.env.LOCALHOST_API}/vscode/license`
       )
       commit('setLicensekey', { key: response.data.key })
       return response
@@ -266,7 +266,7 @@ export default {
   async deleteLicenseFromComputer({ commit }) {
     try {
       await this.$axios.delete(
-        `${process.env.SALESFORCE_SERVER}/vscode/license`
+        `${process.env.LOCALHOST_API}/vscode/license`
       )
       commit('deleteLicense')
     } catch (error) {
@@ -276,7 +276,7 @@ export default {
   async cancelSubscription(context, { userId, subscriptionId }) {
     try {
       const response = await this.$axios.post(
-        `${process.env.WEBHOOKS_SERVER}/cancel-subscription`,
+        `${process.env.AWS_GATEWAY_API}/cancel-subscription`,
         {
           keygenUserId: userId,
           stripeSubscriptionId: subscriptionId,
@@ -299,7 +299,7 @@ export default {
     { quantity, stripePlanId, stripeToken }
   ) {
     const createLicensesResponse = await this.$axios.post(
-      `${process.env.WEBHOOKS_SERVER}/create-licenses`,
+      `${process.env.AWS_GATEWAY_API}/create-licenses`,
       {
         quantity,
         stripePlanId,
@@ -317,7 +317,7 @@ export default {
   },
   fetchThemeColors({ commit }) {
     return this.$axios
-      .get(`${process.env.SALESFORCE_SERVER}/vscode/colors`)
+      .get(`${process.env.LOCALHOST_API}/vscode/colors`)
       .then((response) => {
         commit('setThemeColors', response.data.colors)
       })

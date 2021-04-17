@@ -70,7 +70,7 @@ export default {
         this.$store.dispatch('reset')
 
         this.$axios.post(
-          `${process.env.SALESFORCE_SERVER}/vscode/login`,
+          `${process.env.LOCALHOST_API}/vscode/login`,
           {
             login: {},
           },

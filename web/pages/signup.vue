@@ -124,7 +124,7 @@ export default {
         }
 
         this.$axios
-          .get(`${process.env.WEBHOOKS_SERVER}/email/${this.user.email}`)
+          .get(`${process.env.AWS_GATEWAY_API}/email/${this.user.email}`)
           .then((response) => {
             if (response.data.temporary)
               this.error =

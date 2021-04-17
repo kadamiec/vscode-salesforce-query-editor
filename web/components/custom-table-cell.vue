@@ -161,7 +161,7 @@ export default {
     onClickRecordId(recordId) {
       this.showToastMessage(`Opening Record Id ${recordId}`)
       this.$axios
-        .post(`${process.env.SALESFORCE_SERVER}/sfdx/record/view`, {
+        .post(`${process.env.LOCALHOST_API}/sfdx/record/view`, {
           recordId,
           username: this.username,
         })

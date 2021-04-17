@@ -7,7 +7,7 @@ const Configuration = require('./configuration');
 const Keygen = require('../utilities/keygen');
 const QueryEditorWebview = require('./query-editor-webview');
 const FetchColorsWebview = require('./fetch-colors-webview');
-const SfdxCommands =  require('../utilities/sfdx-commands')
+const SfdxCommands =  require('../utilities/sfdx-commands');
 
 const name = 'Salesforce Query Editor';
 const outputChannel = new Outputchannel(name);

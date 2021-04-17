@@ -2,7 +2,7 @@ export default {
   fetchSObjects({ commit, state }, { apiVersion, username }) {
     return this.$axios
       .get(
-        `${process.env.SALESFORCE_SERVER}/salesforce/${
+        `${process.env.LOCALHOST_API}/salesforce/${
           apiVersion || process.env.SALESFORCE_API_VERSION
         }/sobjects`,
         {
@@ -27,7 +27,7 @@ export default {
         .status !== 'success'
     ) {
       const response = this.$axios.get(
-        `${process.env.SALESFORCE_SERVER}/salesforce/${
+        `${process.env.LOCALHOST_API}/salesforce/${
           apiVersion || process.env.SALESFORCE_API_VERSION
         }/sobjects/${sobjectNameLowerCase}`,
         {
@@ -100,7 +100,7 @@ export default {
 
     if (batchRequests.length) {
       const responses = this.$axios.post(
-        `${process.env.SALESFORCE_SERVER}/salesforce/${
+        `${process.env.LOCALHOST_API}/salesforce/${
           apiVersion || process.env.SALESFORCE_API_VERSION
         }/composite/batch`,
         {
@@ -163,7 +163,7 @@ export default {
     ]
 
     const responses = this.$axios.post(
-      `${process.env.SALESFORCE_SERVER}/salesforce/${
+      `${process.env.LOCALHOST_API}/salesforce/${
         apiVersion || process.env.SALESFORCE_API_VERSION
       }/composite/batch`,
       {
@@ -195,7 +195,7 @@ export default {
   },
   fetchSOQLPlan({ state }, { soql, apiVersion, username }) {
     return this.$axios.post(
-      `${process.env.SALESFORCE_SERVER}/salesforce/${
+      `${process.env.LOCALHOST_API}/salesforce/${
         apiVersion || process.env.SALESFORCE_API_VERSION
       }/query?explain=true`,
       {
@@ -211,7 +211,7 @@ export default {
   },
   updateRecords({ state }, { changes, apiVersion, username }) {
     return this.$axios.patch(
-      `${process.env.SALESFORCE_SERVER}/salesforce/${
+      `${process.env.LOCALHOST_API}/salesforce/${
         apiVersion || process.env.SALESFORCE_API_VERSION
       }/composite/sobjects`,
       {
@@ -227,7 +227,7 @@ export default {
   },
   deleteRecord({ state }, { recordId, sobjectName, apiVersion, username }) {
     return this.$axios.delete(
-      `${process.env.SALESFORCE_SERVER}/salesforce/${
+      `${process.env.LOCALHOST_API}/salesforce/${
         apiVersion || process.env.SALESFORCE_API_VERSION
       }/sobjects/${sobjectName}/${recordId}`,
       {
@@ -239,7 +239,7 @@ export default {
     )
   },
   fetchEnvironments({ state, commit }){
-    return this.$axios.get(`${process.env.SALESFORCE_SERVER}/sfdx/orgs`)
+    return this.$axios.get(`${process.env.LOCALHOST_API}/sfdx/orgs`)
     .then((response) => {
       commit('setEnvironments', response.data.result)
     })
@@ -247,10 +247,10 @@ export default {
   fetchSFDXData({ state, commit, dispatch }) {
     return Promise.all([
       this.$axios.get(
-        `${process.env.SALESFORCE_SERVER}/sfdx/config/apiVersion`
+        `${process.env.LOCALHOST_API}/sfdx/config/apiVersion`
       ),
-      this.$axios.get(`${process.env.SALESFORCE_SERVER}/sfdx/orgs`),
-      this.$axios.get(`${process.env.SALESFORCE_SERVER}/sfdx/defaultusername`),
+      this.$axios.get(`${process.env.LOCALHOST_API}/sfdx/orgs`),
+      this.$axios.get(`${process.env.LOCALHOST_API}/sfdx/defaultusername`),
     ]).then((responses) => {
       const apiVersionResponse = responses[0]
       const environmentsResponse = responses[1]
@@ -276,7 +276,7 @@ export default {
   },
   fetchEnvironmentDetails({ state, dispatch, commit }, { username }) {
     return this.$axios
-      .get(`${process.env.SALESFORCE_SERVER}/sfdx/orgs/${username}`)
+      .get(`${process.env.LOCALHOST_API}/sfdx/orgs/${username}`)
       .then((response) => {
         commit('setEnvironmentDetails', response.data.result)
       })
@@ -290,7 +290,7 @@ export default {
   async cancelRequest({ state }) {
     try {
       const response = await this.$axios.get(
-        `${process.env.SALESFORCE_SERVER}/salesforce/cancel`,
+        `${process.env.LOCALHOST_API}/salesforce/cancel`,
         {
           headers: {
             Authorization: `Bearer ${state.defaultusername.accessToken}`,
@@ -304,12 +304,12 @@ export default {
     }
   },
   sendActiveEditor({ state }) {
-    this.$axios.post(`${process.env.SALESFORCE_SERVER}/vscode/activeEditor`, {
+    this.$axios.post(`${process.env.LOCALHOST_API}/vscode/activeEditor`, {
       editorName: Object.values(state.editors).find((editor) => editor.active)
         .name,
     })
   },
   fetchEditingSoql() {
-    return this.$axios.get(`${process.env.SALESFORCE_SERVER}/vscode/editor`)
+    return this.$axios.get(`${process.env.LOCALHOST_API}/vscode/editor`)
   },
 }

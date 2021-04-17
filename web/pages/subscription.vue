@@ -289,7 +289,7 @@ export default {
   async beforeMount() {
     try {
       const plansResponse = await this.$axios.get(
-        `${process.env.WEBHOOKS_SERVER}/plans`
+        `${process.env.AWS_GATEWAY_API}/plans`
       )
       this.stripe.price.subscriptionPlans = plansResponse.data
     } catch {

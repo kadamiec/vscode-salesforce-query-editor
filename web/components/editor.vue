@@ -901,7 +901,7 @@ export default {
     },
     setApexClassWithQuery() {
       this.$axios
-        .post(`${process.env.SALESFORCE_SERVER}/vscode/editor`, {
+        .post(`${process.env.LOCALHOST_API}/vscode/editor`, {
           editingSOQL: Object.keys(this.soql.sobjects)?.length
             ? this._makeSOQL(true)
             : this.soqlText,

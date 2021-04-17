@@ -141,7 +141,7 @@ export default {
             if (this.isLocalServerRunning && this.keepLoggedIn) {
               this.$axios
                 .post(
-                  `${process.env.SALESFORCE_SERVER}/vscode/login`,
+                  `${process.env.LOCALHOST_API}/vscode/login`,
                   {
                     login: {
                       email: this.user.email,

@@ -11,8 +11,8 @@ export default {
   },
   data: () => {
     return {
-      title: 'E-mail Verification',
-      message: `Your e-mail was verified with success. Thank you.`,
+      title: 'Thank You!',
+      message: `Your e-mail has been successfully verified.`,
     }
   },
 }

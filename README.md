@@ -37,7 +37,7 @@ This extension brings the same functionality available in the Query Editor in th
 - [x] Quickly update or add a new Query to apex using `Add to Apex` and `Update Apex` buttons.
 - [x] Run multiple queries in different tabs.
 
-I'm also selling the source code. If you are interested, send an email to allanoricilcos@outlook.com
+<b>I'm also selling the source code. If you are interested, send an email to allanoricilcos@outlook.com</b>
 
 ## Requirements
 
@@ -75,6 +75,34 @@ You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 
 Obs: The payment system is implemented using Stripe Elements. You can read more about it here https://stripe.com/en-ie/payments/elements
 
+<!-- COMMANDS_START -->
+## Commands (1)
+
+|Command|Description|
+|-|-|
+|SFDX.salesforceQueryEditor|SFDX: Salesforce Query Editor|
+<!-- COMMANDS_END -->
+
+<!-- SETTINGS_START -->
+## Settings (14)
+
+|Setting|Type|Default|Description|
+|-|-|-|-|
+|salesforceQueryEditor.displayQueryBuilder|boolean|**true**|If checked, the Query Builder is displayed.|
+|salesforceQueryEditor.displayHelpButton|boolean|**true**|If checked, the floating Help Button is displayed.|
+|salesforceQueryEditor.format.automatically|boolean|**false**|If checked, the query is formatted automatically when created using the query builder.|
+|salesforceQueryEditor.fieldType.form|boolean|**false**|If checked, the field type is displayed in the field selector.|
+|salesforceQueryEditor.fieldType.table|boolean|**false**|If checked, the field type is displayed in the table's header.|
+|salesforceQueryEditor.field.required|boolean|**true**|If checked, an icon appears to the right of the field label in the list of available felds to indicate that it is Required.|
+|salesforceQueryEditor.field.updateable|boolean|**true**|If checked, an icon appears to the right of the field label in the list of available felds to indicate that it is Updateable.|
+|salesforceQueryEditor.nestedResults.style|boolean|**false**|If checked, it applies styles to nested results. This feature makes everything slow when quering a lot of records and columns, so use it with care. Also, be aware that the Theme Colors you are using will not be applied because the VSCode API does not provide a way to programatically access it.|
+|salesforceQueryEditor.nestedResults.expanded|boolean|**true**|If checked, nested results are expanded.|
+|salesforceQueryEditor.nestedResults.depth|number|**1**|It determines how many levels nested results shown as JSON will be expanded.|
+|💲 salesforceQueryEditor.windowMode|boolean|**true**|If checked, the Query Editor will open in a separate window. (paid)|
+|💲 salesforceQueryEditor.setQueryOnClick|boolean|**false**|If checked, the query is copied automatically to the editor. (paid)|
+|💲 salesforceQueryEditor.queryOnClick|boolean|**false**|If checked, the query is executed automatically when you click on it. It is necessary to set 'setQueryOnClick' to true. (paid)|
+|💲 salesforceQueryEditor.displayTabs|boolean|**false**|If checked, tabs are displayed when 'windowMode' is false. (paid)|
+<!-- SETTINGS_END -->
 
 # How to Use
 
@@ -84,19 +112,19 @@ Obs: The payment system is implemented using Stripe Elements. You can read more 
 
 There are three ways to open the editor.
 
-### File Explorer Context
+### Using the File Explorer Context
 
 In the file explorer, click with the right button on any Apex class to see the option `SFDX: Salesforce Query Editor` in the Menu.
 
 <img src="https://drive.google.com/uc?id=1NBojOlso0-dV3bVkMNjXYD9mQIu2Jcrd"></img>
 
-### Editor Context
+### Using the Editor Context
 
 Open an Apex class and click with the right button anywhere in the editor context to see the option `SFDX: Salesforce Query Editor` in the Menu.
 
 <img src="https://drive.google.com/uc?id=1p5ZsFUWKHPjVFR4O1647FCWxnnFYo4S2"></img>
 
-### Editor Navigation Context
+### Using the Editor Navigation Context
 
 Open an Apex class and click on the button shown in the image below. This button only appears when editing Apex classes.
 
@@ -254,6 +282,12 @@ The extension has some settings that you can use to have a personalized experien
 
 
 ## Release Notes
+
+### 1.5.0
+
+- The web app is now accessed through https://www.salesforcequeryeditor.com and https://app.salesforcequeryeditor.com
+
+- The api has a proper domain https://api.salesforcequeryeditor.com now
 
 ### 1.4.0
 
@@ -443,5 +477,3 @@ The exported files are saved inside a folder called `data/sourcetree` in the roo
 - Ids can now be clicked to open the Record Detail Page.
 
 <img src="https://drive.google.com/uc?id=1KBRDhPY093MdRw0JcAp-19IifD_BjS96" width="600px"></img>
-
-

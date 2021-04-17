@@ -4,7 +4,7 @@ export default {
       if (process.env.IS_VSCODE) {
         this.$axios
           .post(
-            `${process.env.SALESFORCE_SERVER}/vscode/page/open`,
+            `${process.env.LOCALHOST_API}/vscode/page/open`,
             {
               page,
             },

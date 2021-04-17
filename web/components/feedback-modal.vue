@@ -308,7 +308,7 @@ export default {
         this.isSubmiting = true
         this.$axios
           .post(
-            `${process.env.WEBHOOKS_SERVER}/feedback`,
+            `${process.env.AWS_GATEWAY_API}/feedback`,
             {
               userId: this.auth.userId,
               feedback: this.feedback,
