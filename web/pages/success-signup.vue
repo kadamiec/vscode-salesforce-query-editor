@@ -9,7 +9,6 @@
 
 <script>
 import OutcomeMessage from '@/components/outcome-message'
-
 export default {
   components: {
     OutcomeMessage,
@@ -17,7 +16,7 @@ export default {
   data: () => {
     return {
       title: 'Thank you!',
-      message: `Plese, click on the link sent to your e-mail to verify your account.`,
+      message: `Click on the link sent to your e-mail to verify your account.`,
     }
   },
 }

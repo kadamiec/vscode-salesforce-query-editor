@@ -1,7 +1,9 @@
 <template>
   <div class="d-flex flex-column">
-    <div class="form-group required control-label">
-      <label for="firstame" class="form-label">First Name</label>
+    <div class="form-group control-label">
+      <label for="firstame" class="form-label"
+        ><span class="required-symbol">*</span>First Name</label
+      >
       <input
         id="firstname"
         v-model="$v.user.firstname.$model"
@@ -13,8 +15,10 @@
       </template>
     </div>
 
-    <div class="form-group required control-label mt-2">
-      <label for="lastname" class="form-label">Last Name</label>
+    <div class="form-group control-label mt-2">
+      <label for="lastname" class="form-label"
+        ><span class="required-symbol">*</span>Last Name</label
+      >
       <input
         id="lastname"
         v-model="$v.user.lastname.$model"
@@ -26,8 +30,10 @@
       </template>
     </div>
 
-    <div class="form-group required control-label mt-2">
-      <label for="email" class="form-label">E-mail</label>
+    <div class="form-group control-label mt-2">
+      <label for="email" class="form-label"
+        ><span class="required-symbol">*</span>E-mail</label
+      >
       <input
         id="email"
         v-model="$v.user.email.$model"
@@ -40,8 +46,10 @@
       </template>
     </div>
 
-    <div class="form-group required control-label mt-2">
-      <label for="password" class="form-label">Password</label>
+    <div class="form-group control-label mt-2">
+      <label for="password" class="form-label"
+        ><span class="required-symbol">*</span>Password</label
+      >
       <input
         id="password"
         v-model="$v.user.password.$model"
@@ -55,9 +63,9 @@
       </div>
     </div>
 
-    <div class="form-group required control-label mt-2">
+    <div class="form-group control-label mt-2">
       <label for="passwordConfirmation" class="form-label"
-        >Confirm Password</label
+        ><span class="required-symbol">*</span>Confirm Password</label
       >
       <input
         id="passwordConfirmation"
