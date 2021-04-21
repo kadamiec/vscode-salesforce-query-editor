@@ -89,6 +89,9 @@ Obs: The payment system is implemented using Stripe Elements. You can read more 
 
 <img src="https://drive.google.com/uc?id=1Sx2XD2GU3W8jZ1E6x-J1x5M5mZuxbnDt" width="800px"></img>
 
+# Is it secure?
+
+This app does not send any information to an external server. Every request is performed by your machine and the data is flushed when VS Code is closed. You can also check every request that is issued by the app in the output tab if you select the `Salesforce Query Editor` option.
 
 <!-- COMMANDS_START -->
 ## Commands (1)

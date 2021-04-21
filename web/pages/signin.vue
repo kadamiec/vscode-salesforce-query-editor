@@ -75,6 +75,11 @@
 
         <div v-if="error" class="error text-center">
           <div>{{ error }}</div>
+          <p>
+            Please, click on the account verification e-mail we sent to your
+            mail box. If you did not receive it, send an e-mail to
+            support@salesforcequeryeditor.com
+          </p>
         </div>
       </form>
     </div>
@@ -102,6 +107,7 @@ export default {
       error: null,
       isLoggingIn: false,
       keepLoggedIn: true,
+      showVerificationEmailResentMessage: false,
     }
   },
   validations: {
@@ -157,7 +163,7 @@ export default {
                 )
                 .catch(() =>
                   this.showToastMessage(
-                    'Could not save your User credentials on the storage'
+                    'Could not save your credentials on the storage'
                   )
                 )
             }
@@ -166,13 +172,30 @@ export default {
               .then(() => {
                 this.$router.push({ name: 'editor' })
               })
-              .catch(
-                () => (this.error = 'Could not fetch your User information')
-              )
+              .catch(() => (this.error = 'Could not fetch User information'))
               .finally(() => this.$nextTick(() => (this.isLoggingIn = false)))
           })
           .catch((error) => {
             if (error.response?.data?.error) {
+              if (error.response.data.userId && error.response.data.email) {
+                this.showVerificationEmailResentMessage = true
+                this.$axios
+                  .post(
+                    `${process.env.AWS_GATEWAY_API}/auth/email-verification`,
+                    {
+                      userId: error.response.data.userId,
+                      customerEmail: error.response.data.email,
+                    }
+                  )
+                  .then(() => {
+                    this.showToastMessage('Account verification e-mail sent')
+                  })
+                  .catch(() => {
+                    this.showToastMessage(
+                      'Could not send the account verification e-mail. Please, contact support@salesforcequeryeditor.com'
+                    )
+                  })
+              }
               this.error = error.response.data.error
             } else {
               this.error = 'Could not Login'
