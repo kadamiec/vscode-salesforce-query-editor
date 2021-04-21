@@ -75,6 +75,21 @@ You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 
 Obs: The payment system is implemented using Stripe Elements. You can read more about it here https://stripe.com/en-ie/payments/elements
 
+# How to Add a License
+
+- Open VS Code and wait the extension's activation message
+
+- Go to https://salesforcequeryeditor.com, log into the app, then click on the Go To Account button
+
+- Click on the Add License button
+
+- Fill the form with your license and click on the Activate button
+
+- You will be redirected back to the account page and now the editor button will be available in the sidebar menu
+
+<img src="https://drive.google.com/uc?id=1Sx2XD2GU3W8jZ1E6x-J1x5M5mZuxbnDt" width="800px"></img>
+
+
 <!-- COMMANDS_START -->
 ## Commands (1)
 
