@@ -53,6 +53,9 @@ export default {
       required,
     },
   },
+  mounted(){
+    this.fetchMachineFingerprint()
+  },
   computed: {
     ...mapState({
       auth: (state) => state.user.auth,
@@ -61,6 +64,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      fetchMachineFingerprint: 'user/fetchMachineFingerprint',
       validateLicense: 'user/validateLicense',
       activateMachineUsingKey: 'user/activateMachineUsingKey',
       saveLicense: 'user/saveLicense',
