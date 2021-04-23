@@ -4,15 +4,11 @@ const fs = require('fs');
 
 class Storage {
 
-    constructor(folderName){
+    constructor(folderName, outputChannel){
         this._folderName = folderName;
         this._context;
         this._extensionDirectoryUri;
-    }
-
-    set context(context){
-        this._context = context;
-        this._extensionDirectoryUri = vscode.Uri.joinPath(this._context.globalStorageUri, this._folderName);
+        this._outputChannel = outputChannel;
     }
 
     get path(){
@@ -20,7 +16,9 @@ class Storage {
     }
 
     activate(context){
-        this.context = context;
+        this._context = context;
+        this._extensionDirectoryUri = vscode.Uri.joinPath(this._context.globalStorageUri, this._folderName);
+        this._outputChannel.appendLine('GSP: ' + this.path);
         return vscode.workspace.fs.createDirectory(this._extensionDirectoryUri);
     }
 
