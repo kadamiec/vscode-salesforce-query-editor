@@ -75,7 +75,7 @@
 
         <div v-if="error" class="error text-center">
           <div>{{ error }}</div>
-          <p>
+          <p v-if="showVerificationEmailResentMessage">
             Please, click on the account verification e-mail we sent to your
             mail box. If you did not receive it, send an e-mail to
             support@salesforcequeryeditor.com
