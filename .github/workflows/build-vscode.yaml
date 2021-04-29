@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - next
-    paths:
-      - "src/**"
 
 jobs:
   build-webview:
