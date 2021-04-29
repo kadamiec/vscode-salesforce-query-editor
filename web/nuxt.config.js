@@ -45,11 +45,11 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { 'http-equiv': 'cache-control', content: 'max-age=0'},
+      ...(!process.env.IS_VSCODE ? [{ 'http-equiv': 'cache-control', content: 'max-age=0'},
       { 'http-equiv': 'cache-control', content: 'no-cache'},
       { 'http-equiv': 'cache-control', content: '0'},
       { 'http-equiv': 'cache-control', content: 'Tue, 01 Jan 1980 1:00:00 GMT'},
-      { 'http-equiv': 'cache-control', content: 'no-cache'}
+      { 'http-equiv': 'cache-control', content: 'no-cache'}] : [])
     ],
     link: [],
     script: [
@@ -80,6 +80,7 @@ export default {
     { src: '~plugins/vue-socket.io.js', ssr: false },
     { src: '~plugins/vue-infinite-loading.js', ssr: false },
     { src: '~plugins/vue-columns-resizable.js', ssr: false},
+    { src: '~plugins/pwa-update.js', ssr: false },
     ...(!process.env.IS_VSCODE ? [{ src: '~plugins/vue-gtag.js', ssr: false}] : [])
   ],
 
