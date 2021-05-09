@@ -15,7 +15,7 @@ function run(){
     console.log(hash);
     const appPackage = JSON.parse(fs.readFileSync(path.resolve('web', 'package.json'), {encoding : 'utf-8'}));
     console.log(appPackage.version);
-    const envFile = `SALESFORCE_API_VERSION=v50.0\nNODE_ENV=development\nSERVER_ENDPOINT=http://localhost:5000\nKEY_ACCOUNT_ID=78edb4be-f034-4809-9ea9-b29b0dff113e\nPACKAGE_NAME=salesforce-query-editor-app@${appPackage.version}\nCHECKSUM=${hash}`
+    const envFile = `SALESFORCE_API_VERSION=v50.0\nNODE_ENV=production\nSERVER_ENDPOINT=http://localhost:5000\nKEY_ACCOUNT_ID=78edb4be-f034-4809-9ea9-b29b0dff113e\nPACKAGE_NAME=salesforce-query-editor-app@${appPackage.version}\nCHECKSUM=${hash}`
     fs.writeFileSync(path.resolve('.', '.env'), envFile, { encoding: 'utf-8'});
 }
 
