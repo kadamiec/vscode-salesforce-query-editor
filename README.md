@@ -8,7 +8,6 @@ This extension brings the same functionality available in the Query Editor in th
 
 <img src="https://drive.google.com/uc?id=1-MwpPdK3bLJ6DocTHsfkY_x2x6fGb-hQ" width="1200px"></img>
 
-
 ## Features
 
 - [x] SOQL Builder.

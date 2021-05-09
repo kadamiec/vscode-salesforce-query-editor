@@ -6,6 +6,8 @@ on:
       - next
     paths:
       - "src/**"
+      - "README.md"
+      - "package.json"
 
 jobs:
   build-webview:
