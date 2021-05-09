@@ -11,6 +11,7 @@
 			"runtimeExecutable": "${execPath}",
 			"sourceMaps": true,
 			"args": [
+				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extension"
 			]

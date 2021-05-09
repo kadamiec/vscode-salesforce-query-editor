@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "1.5.7",
+  "version": "1.5.8",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -145,7 +145,7 @@
     }
   },
   "scripts": {
-    "dev": "webpack --config webpack.config.dev.js",
+    "dev": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
     "server": "cross-env NODE_ENV=development nodemon ./src/server/index.js localhost 5000",
     "test": "node ./node_modules/vscode/bin/test",
     "create:env": "node ./scripts/create-env.js",
@@ -169,7 +169,7 @@
     "webpack-obfuscator": "^2.6.0"
   },
   "dependencies": {
-    "@types/vscode": "^1.53.0",
+    "@types/vscode": "^1.56.0",
     "applicationinsights": "^1.8.2",
     "axios": "^0.21.1",
     "cors": "^2.8.5",

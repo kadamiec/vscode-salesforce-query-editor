@@ -21,13 +21,6 @@ This extension brings the same functionality available in the Query Editor in th
 - [x] Access to Field Details, such as Name, Label, Required, Updateable, Groupable and more.
 - [x] Compact to not take away the space you have available while writing code.
 - [x] Works with Gitpod - https://www.gitpod.io/
-- [ ] Query Storage and History.
-- [ ] Aggregated functions.
-- [ ] Group By.
-- [ ] Having.
-- [ ] Portuguese (PT-BR).
-- [ ] Tooling API.
-- [ ] SOSL.
 
 ## Paid Features
 
@@ -42,7 +35,7 @@ This extension brings the same functionality available in the Query Editor in th
 ## Requirements
 
 - sfdx-cli/7.93.1-762bca056d
-- VS Code 1.54.3 -> To update your vscode go to Help -> then click on Check for Updates / Restart to Update
+- VS Code >= 1.48.0 <= 1.55.2 <b>IT DOES NOT WORK ON 1.56.0</b>
 - MUST BE USED FROM A SFDX PROJECT
 - YOU MUST NOT HAVE ANYTHING RUNNING ON PORT 5000
 
@@ -74,6 +67,7 @@ You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
 - Inside the app, one the account page you can manage all your subscriptions and licenses. You can choose to cancel your subscription, and activate/deactivate licenses.
 
 Obs: The payment system is implemented using Stripe Elements. You can read more about it here https://stripe.com/en-ie/payments/elements
+
 
 # How to Add a License
 
@@ -264,7 +258,7 @@ When users are editing data, it is good to know if the field is updateable and r
 
 ### Safari
 
-Safari also has PWA features available. I just don't have a machine to show how to install it. If anybody could do it and then send an e-mail to me, that would be much appreciated.
+Safari for desktops does not offer PWA features yet. It is only available for mobile.
 
 ### Opera
 
@@ -272,8 +266,7 @@ Opera does not support PWA features yet.
 
 ### Firefox
 
-Mozilla has no plans for PWA features. But why are you using Firefox? You should change to any of the Chromium based browsers.
-
+Mozilla has no plans for supporting PWA features.
 
 ## Settings
 

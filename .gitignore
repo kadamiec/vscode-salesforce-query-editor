@@ -8,3 +8,4 @@ web/chromedriver.log
 web/selenium-server.log
 *.env
 dist
+*.log
