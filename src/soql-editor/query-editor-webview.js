@@ -66,7 +66,7 @@ class QueryEditorWebview {
         {
           enableScripts: true,
           retainContextWhenHidden: true,
-          enableFindWidget: false,
+          enableFindWidget: true,
           localResourceRoots: [vscode.Uri.file(distFolderPath)],
         }
       );

@@ -31,7 +31,7 @@ export default {
     STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_51HJP5dGES2qDPBojjEaDhVwhbPgJ1W3lN5H24uMvlUqPgA9KxEJGdTyA2DIzi8lywEjsSLOW4rOLINW4oHwXfquo00Syg6gw0d',
     STRIPE_PRODUCT_KEY: process.env.STRIPE_PRODUCT_KEY || 'prod_IlXQl78y4QXvKS',
     SALESFORCE_API_VERSION: process.env.SALESFORCE_API_VERSION || 'v50.0',
-    LOCALHOST_API: process.env.LOCALHOST_API || 'http://127.0.0.1:5000',
+    LOCALHOST_API: process.env.LOCALHOST_API || 'http://localhost:5000',
     IS_VSCODE: process.env.IS_VSCODE || false
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
