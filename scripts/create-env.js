@@ -17,7 +17,7 @@ function run(){
     console.log(appPackage.version);
     const envPros = [
         'SALESFORCE_API_VERSION=v50.0',
-        `NODE_ENV=${process.env.NODE_ENV}`,
+        `NODE_ENV=production`,
         'SERVER_ENDPOINT=http://localhost:5000',
         'KEY_ACCOUNT_ID=78edb4be-f034-4809-9ea9-b29b0dff113e',
         `PACKAGE_NAME=salesforce-query-editor-app@${appPackage.version}\nCHECKSUM=${hash}`

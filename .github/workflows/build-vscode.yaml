@@ -20,7 +20,6 @@ jobs:
          yarn install
          yarn build:vscode
          yarn generate:vscode
-         npm publish
         working-directory: ./views/query-editor
         env:
           PAT: ${{secrets.PAT}}
@@ -36,8 +35,6 @@ jobs:
          yarn install
          yarn create:env
          yarn build:prod
-        env:
-          NODE_ENV: production
       - name: Publish Extension on VS Code Marketplace
         uses: lannonbr/vsce-action@master
         with:
