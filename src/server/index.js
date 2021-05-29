@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const axios = require('axios');
 const express = require("express");
 const morganBody = require("morgan-body");
+const cors = require("cors");
 const rfs = require('rotating-file-stream');
 const sfdxRoutes = require('./sfdx');
 const vscodeRoutes = require('./vscode');
@@ -39,6 +40,7 @@ axios.interceptors.request.use(
 
 const startServer = async() => {
     const app = express();
+    app.use(cors());
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
 
@@ -57,7 +59,12 @@ const startServer = async() => {
 
     const http = require('http').Server(app);
 
-    const io = require('socket.io')(http, { serveClient: false });
+    const io = require('socket.io')(http, { 
+        serveClient: false, 
+        cors: {
+            origins: 'vscode-webview://*'
+        } 
+    });
     io.on('connect', () => {
         console.log('connected');
     });
