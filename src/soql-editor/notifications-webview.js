@@ -16,7 +16,7 @@ class NotificationsWebview extends Webview {
             <meta data-n-head="1" charset="utf-8">
             <meta data-n-head="1" name="viewport" content="width=device-width,initial-scale=1">
             <meta data-n-head="1" data-hid="description" name="description" content="">
-            </script><script src="/_nuxt/app.js" crossorigin="anonymous"></script>
+            <script src="/_nuxt/app.js" crossorigin="anonymous"></script>
          </head>
          <body>
             <div id="__nuxt">

@@ -11,11 +11,11 @@ class QueryEditorWebview extends Webview {
       `<!doctype html>
             <html lang="en" data-n-head="%7B%22lang%22:%7B%221%22:%22en%22%7D%7D">
             <head>
-                <title>Salesforce Query Editor</title>
+                <title>${ name }</title>
                 <meta data-n-head="1" charset="utf-8">
                 <meta data-n-head="1" name="viewport" content="width=device-width,initial-scale=1">
                 <meta data-n-head="1" data-hid="description" name="description" content="">
-                <script src="${ process.env.NODE_ENV === 'production' ? 'https://cdn.jsdelivr.net/npm/' + process.env.PACKAGE_NAME + '/dist/_nuxt/app.js' : '/_nuxt/app.js' }" ${process.env.NODE_ENV === 'production' ? 'integrity=\"'+ process.env.CHECKSUM + '\"': ''} crossorigin="anonymous"></script>
+                <script src="/_nuxt/app.js" crossorigin="anonymous"></script>
             </head>
             <body>
                 <div id="__nuxt">
