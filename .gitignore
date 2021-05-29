@@ -2,10 +2,6 @@
 node_modules
 .vscode-test/
 # *.vsix
-web/test/e2e/selenium-server.log
-web/selenium-server.log
-web/chromedriver.log
-web/selenium-server.log
 *.env
 dist
 *.log

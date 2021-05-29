@@ -123,13 +123,13 @@ export default {
           },
         }
 
-        //this.$axios
-          //.get(`${process.env.AWS_GATEWAY_API}/email/${this.user.email}`)
-          //.then((response) => {
-            //if (response.data.temporary)
-              //this.error =
-                //'E-mail is temporary and can not be used. Please, use your real e-mail. If this is a mistake, send an e-mail to support@salesforcequeryeditor.com'
-            //else {
+        this.$axios
+          .get(`${process.env.AWS_GATEWAY_API}/email/${this.user.email}`)
+          .then((response) => {
+            if (response.data.temporary){
+              this.error =
+                'Temporary e-mails can not be used. Please, use your real e-mail. If this is a mistake, send an e-mail to support@salesforcequeryeditor.com'
+            }else {
               this.createKeygenUser(attributes)
                 .then(() => {
                   this.$router.push({ name: 'success-signup' })
@@ -146,13 +146,13 @@ export default {
                   })
                 })
                 .finally(() => (this.submited = false))
-            //}
-          //})
-          //.catch(() => {
-            //this.error =
-              //'Sorry, something did not work while checking the e-mail entered. Please, try again and if it still does not work, send an e-mail to support@salesforcequeryeditor.com'
-          //})
-          //.finally(() => (this.submited = false))
+            }
+          })
+          .catch(() => {
+            this.error =
+              'Sorry, something did not work while checking the e-mail. Please, try again and if it still does not work, send an e-mail to support@salesforcequeryeditor.com'
+          })
+          .finally(() => (this.submited = false))
       }
     },
     createKeygenUser(attributes) {

@@ -1,6 +1,6 @@
 {
   "name": "salesforce-query-editor-app",
-  "version": "0.0.66",
+  "version": "0.0.67",
   "private": false,
   "scripts": {
     "dev": "cross-env LOCALHOST_API=http://localhost:5000 nuxt",
@@ -14,8 +14,8 @@
     "create:npmrc": "node ./scripts/create-npmrc.js",
     "build:site": "cross-env AWS_GATEWAY_API=https://api.salesforcequeryeditor.com STRIPE_PUBLISHABLE_KEY=pk_live_51HJP5dGES2qDPBojc9PbHNZSyKQo4w84YlXiGgyakzQFcBC7OvSgOknyDsOUjFhsoh87w6FmaRSgZnkPkJcYkrFZ00zbRWU6iW STRIPE_PRODUCT_KEY=prod_Im7kT03gEhtbgT nuxt build",
     "generate:site": "cross-env AWS_GATEWAY_API=https://api.salesforcequeryeditor.com STRIPE_PUBLISHABLE_KEY=pk_live_51HJP5dGES2qDPBojc9PbHNZSyKQo4w84YlXiGgyakzQFcBC7OvSgOknyDsOUjFhsoh87w6FmaRSgZnkPkJcYkrFZ00zbRWU6iW STRIPE_PRODUCT_KEY=prod_Im7kT03gEhtbgT nuxt generate",
-    "build:vscode": "cross-env IS_VSCODE=true AWS_GATEWAY_API=https://api.salesforcequeryeditor.com STRIPE_PUBLISHABLE_KEY=pk_live_51HJP5dGES2qDPBojc9PbHNZSyKQo4w84YlXiGgyakzQFcBC7OvSgOknyDsOUjFhsoh87w6FmaRSgZnkPkJcYkrFZ00zbRWU6iW STRIPE_PRODUCT_KEY=prod_Im7kT03gEhtbgT IS_BUILD=true node ./scripts/build.js",
-    "generate:vscode": "cross-env IS_VSCODE=true AWS_GATEWAY_API=https://api.salesforcequeryeditor.com STRIPE_PUBLISHABLE_KEY=pk_live_51HJP5dGES2qDPBojc9PbHNZSyKQo4w84YlXiGgyakzQFcBC7OvSgOknyDsOUjFhsoh87w6FmaRSgZnkPkJcYkrFZ00zbRWU6iW STRIPE_PRODUCT_KEY=prod_Im7kT03gEhtbgT node ./scripts/build.js"
+    "build:vscode": "node ./scripts/create-nuxtignore.js && cross-env IS_VSCODE=true AWS_GATEWAY_API=https://api.salesforcequeryeditor.com STRIPE_PUBLISHABLE_KEY=pk_live_51HJP5dGES2qDPBojc9PbHNZSyKQo4w84YlXiGgyakzQFcBC7OvSgOknyDsOUjFhsoh87w6FmaRSgZnkPkJcYkrFZ00zbRWU6iW STRIPE_PRODUCT_KEY=prod_Im7kT03gEhtbgT nuxt build",
+    "generate:vscode": "node ./scripts/create-nuxtignore.js && cross-env IS_VSCODE=true AWS_GATEWAY_API=https://api.salesforcequeryeditor.com STRIPE_PUBLISHABLE_KEY=pk_live_51HJP5dGES2qDPBojc9PbHNZSyKQo4w84YlXiGgyakzQFcBC7OvSgOknyDsOUjFhsoh87w6FmaRSgZnkPkJcYkrFZ00zbRWU6iW STRIPE_PRODUCT_KEY=prod_Im7kT03gEhtbgT nuxt generate"
   },
   "dependencies": {
     "@allanoricil/sql-formatter": "^0.4.0",

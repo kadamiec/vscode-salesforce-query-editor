@@ -4,11 +4,7 @@ on:
   push:
     branches:
       - next
-    paths:
-      - "src/**"
-      - "README.md"
-      - "package.json"
-
+      
 jobs:
   build-webview:
     name: Build
@@ -18,23 +14,30 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 12
-      - name: Build App
+      - name: Build Query Editor View
         run: |
          yarn create:npmrc
          yarn install
          yarn build:vscode
          yarn generate:vscode
          npm publish
-        working-directory: ./web
+        working-directory: ./views/query-editor
         env:
           PAT: ${{secrets.PAT}}
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Build Notifications View
+        run: |
+         yarn install
+         yarn build
+         yarn generate
+        working-directory: ./views/notifications
       - name: Build Extension
         run: |
-         npm install
-         npm run create:env
-         npm run build:prod
-         rm -r ./web
+         yarn install
+         yarn create:env
+         yarn build:prod
+        env:
+          NODE_ENV: production
       - name: Publish Extension on VS Code Marketplace
         uses: lannonbr/vsce-action@master
         with:

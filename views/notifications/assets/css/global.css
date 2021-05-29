@@ -1,0 +1,32 @@
+html,
+body,
+#app {
+    padding: 0;
+    margin: 0;
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    font-family: var(--vscode-font-family);
+    font-weight: var(--vscode-font-weight);
+    font-size: var(--vscode-font-size);
+    position: relative;
+    float: left;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6{
+    font-family: var(--vscode-font-family);
+    font-weight: var(--vscode-font-weight);
+}
+
+li, p {
+    font-size: 12px;
+    margin: 0;
+}
+
+.title { 
+    font-size: 18px;
+}
+
+.subtitle {
+    font-size: 14px;
+}

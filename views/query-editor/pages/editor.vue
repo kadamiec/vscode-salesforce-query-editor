@@ -112,7 +112,6 @@ export default {
   methods: {
     ...mapActions({
       fetchSFDXData: 'salesforce/fetchSFDXData',
-      sendActiveEditor: 'salesforce/sendActiveEditor',
       fetchEnvironments: 'salesforce/fetchEnvironments',
       fetchConfiguration: 'user/fetchConfiguration',
       fetchSObjects: 'salesforce/fetchSObjects',
@@ -126,7 +125,6 @@ export default {
         label,
       })
       this.activeEditor = name
-      this.sendActiveEditor()
     },
     onClickTab(editorName) {
       this.activeEditor = editorName

@@ -1,6 +1,6 @@
 // @ts-nocheck
 const routes = require('express').Router();
-const { queryEditorWebview, fetchColorsWebview , editor, configuration, licenseStorage, loginStorage } = require('../soql-editor');
+const { fetchColorsWebview , editor, configuration, licenseStorage, loginStorage } = require('../soql-editor');
 const { fingerprint } = require('../utilities/fingerprint');
 const vscode = require('vscode');
 
@@ -19,17 +19,6 @@ routes.get("/fingerprint", (req, res) => {
 
 routes.get("/configuration", (req, res) => {
     res.status(200).send(configuration.properties);
-});
-
-routes.post("/activeEditor", (req, res) => {
-    if(queryEditorWebview && req.body.editorName){
-        queryEditorWebview.activeEditorName = req.body.editorName;
-        res.sendStatus(200);
-    }else{
-        res.status(400).send({
-            message: 'Could not set the Active Editor.'
-        })
-    }
 });
 
 routes.get("/editor", (req, res) => {

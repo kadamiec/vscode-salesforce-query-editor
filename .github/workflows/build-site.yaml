@@ -5,7 +5,7 @@ on:
     branches:
       - next
     paths:
-      - "web/**"
+      - "views/query-editor/**"
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./web
+        working-directory: ./views/query-editor
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -34,4 +34,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
-          build-dir: './web/dist'
+          build-dir: './views/query-editor/dist'

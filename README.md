@@ -88,11 +88,12 @@ Obs: The payment system is implemented using Stripe Elements. You can read more 
 This app does not send any information to an external server. Every request is performed by your machine and the data is flushed when VS Code is closed. You can also check every request that is issued by the app in the output tab if you select the `Salesforce Query Editor` option.
 
 <!-- COMMANDS_START -->
-## Commands (1)
+## Commands (2)
 
 |Command|Description|
 |-|-|
-|SFDX.salesforceQueryEditor|SFDX: Salesforce Query Editor|
+|SFDX.openSalesforceQueryEditor|SFDX: Open Salesforce Query Editor|
+|SFDX.openSalesforceQueryEditorNotificationsView|SFDX: Open Salesforce Query Editor Notifications View|
 <!-- COMMANDS_END -->
 
 <!-- SETTINGS_START -->
@@ -294,7 +295,10 @@ The extension has some settings that you can use to have a personalized experien
 
 ## Release Notes
 
+### 1.6.0
 
+- Add "Notifications View" to alert users about new features or bugs.
+- Change contribution command to "SFDX: Open Salesforce Query Editor"
 
 ### 1.5.0
 

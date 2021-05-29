@@ -1,40 +1,15 @@
-// @ts-nocheck
 const vscode = require('vscode');
 const axios = require('axios');
+const Webview = require('../utilities/webview');
+const path = require('path');
 
-class FetchColorsWebview {
+class FetchColorsWebview extends Webview{
 
-    constructor() {
-        this._name = 'fetch-colors-webview';
-        this._panel;
-        this._colors;
-    }
-
-    activate() {
-        vscode.window.onDidChangeActiveColorTheme(() => this.showPanel());
-        this.showPanel();
-    }
-
-    deactivate(){}
-
-    sendColors(){
-        return axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/activecolortheme`, this._colors);
-    }
-
-    showPanel() {
-        if (this._panel) {
-            this._panel.reveal(vscode.ViewColumn.Three);
-        } else {
-            this._panel = vscode.window.createWebviewPanel(
-                this._name,
-                this._name,
-                vscode.ViewColumn.Three,
-                {
-                    enableScripts: true,
-                }
-            );
-
-            this._panel.webview.html = `<!doctype html>
+    constructor(name) {
+        super(
+            name, 
+            null,
+            `<!doctype html>
             <html>
             <body>
                 <script>
@@ -50,17 +25,29 @@ class FetchColorsWebview {
                 vscode.postMessage(colors);
                 </script>
             </body>
-            </html>`;
-
-            this._panel.webview.onDidReceiveMessage((colors)=>{
-                this._colors = colors;
-                this._panel.dispose();
-                this._panel = null;
-                this.sendColors()
-            })
-        }
+            </html>`,
+            vscode.ViewColumn.Two,
+            true, 
+            true, 
+            false,
+            path.join('views', 'fetch-colors'), 
+            'info',
+            true
+        );
+        this._colors;
+        vscode.window.onDidChangeActiveColorTheme(() => this.activate(context));
     }
 
+    sendColors(){
+        return axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/activecolortheme`, this._colors);
+    }
+
+    didReceiveMessage(colors){
+        this._colors = colors;
+        this._panel.dispose();
+        this._panel = null;
+        this.sendColors();
+    }
 }
 
 module.exports = FetchColorsWebview;

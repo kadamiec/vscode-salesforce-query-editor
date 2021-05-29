@@ -303,12 +303,6 @@ export default {
       console.error(error)
     }
   },
-  sendActiveEditor({ state }) {
-    this.$axios.post(`${process.env.LOCALHOST_API}/vscode/activeEditor`, {
-      editorName: Object.values(state.editors).find((editor) => editor.active)
-        .name,
-    })
-  },
   fetchEditingSoql() {
     return this.$axios.get(`${process.env.LOCALHOST_API}/vscode/editor`)
   },

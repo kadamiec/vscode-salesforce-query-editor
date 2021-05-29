@@ -1,14 +1,13 @@
-// @ts-nocheck
 const Outputchannel = require('./output-channel');
 const Storage = require('./storage');
 const FileSystemWatcher = require('./file-system-watcher');
 const Editor = require('./editor');
 const Configuration = require('./configuration');
 const Keygen = require('../utilities/keygen');
-const QueryEditorWebview = require('./query-editor-webview');
+const QueryEditorWebivew = require('./query-editor-webview');
 const FetchColorsWebview = require('./fetch-colors-webview');
+const NotificationsWebview = require('./notifications-webview');
 const SfdxCommands =  require('../utilities/sfdx-commands');
-const Context = require('applicationinsights/out/Library/Context');
 
 const name = 'Salesforce Query Editor';
 const outputChannel = new Outputchannel(name);
@@ -17,8 +16,9 @@ const licenseStorage = new Storage('license', outputChannel);
 const queryHistoryStorage = new Storage('query-history', outputChannel);
 const loginStorage = new Storage('login', outputChannel);
 const editor = new Editor();
-const fetchColorsWebview = new FetchColorsWebview();
-const queryEditorWebview = new QueryEditorWebview(name, editor, 'SFDX.salesforceQueryEditor');
+const queryEditorWebview = new QueryEditorWebivew('Salesforce Query Editor', 'SFDX.openSalesforceQueryEditor');
+const notificationsWebview = new NotificationsWebview('Salesforce Query Editor Notifications', 'SFDX.openSalesforceQueryEditorNotifications');
+const fetchColorsWebview = new FetchColorsWebview('Fetch Colors');
 const fsWatcher = new FileSystemWatcher('**/.sfdx/sfdx-config.json', outputChannel);
 const configuration = new Configuration(outputChannel);
 const keygen = new Keygen(licenseStorage);
@@ -38,14 +38,21 @@ const activate = async (context) => {
   configuration.activate(context);
   fsWatcher.activate(context);
   editor.activate(keygen);
-  fetchColorsWebview.activate();
-  queryEditorWebview.activate(context, configuration, keygen, fetchColorsWebview);
+  
+  notificationsWebview.activate(context);
+  fetchColorsWebview.activate(context);
+
+  queryEditorWebview.editor = editor;
+  queryEditorWebview.keygen = keygen;
+  queryEditorWebview.configuration = configuration;
+  queryEditorWebview.activate(context);
 
   outputChannel.appendLine('Salesforce Query Editor is Activated');
 };
 
 const deactivate = () => {
   queryEditorWebview.deactivate();
+  notificationsWebview.deactivate();
   fetchColorsWebview.deactivate();
   outputChannel.deactivate();
   fsWatcher.deactivate();
@@ -57,8 +64,6 @@ module.exports = {
   deactivate,
   keygen,
   sfdx,
-  queryEditorWebview,
-  fetchColorsWebview,
   logsStorage,
   licenseStorage,
   queryHistoryStorage,

@@ -1,11 +1,8 @@
-// @ts-nocheck
 const dotenv = require('dotenv');
 const axios = require('axios');
 const express = require("express");
 const morganBody = require("morgan-body");
-const bodyParser = require("body-parser");
 const rfs = require('rotating-file-stream');
-const cors = require('cors');
 const sfdxRoutes = require('./sfdx');
 const vscodeRoutes = require('./vscode');
 const salesforceRoutes = require('./salesforce');
@@ -40,12 +37,10 @@ axios.interceptors.request.use(
   }
 );
 
-
 const startServer = async() => {
     const app = express();
-    app.use(cors());
-    app.use(bodyParser.json({ type: "application/vnd.api+json" }));
-    app.use(bodyParser.json({ type: "application/json" }));
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
 
     var logsStream = rfs.createStream('server.log', {
         interval: '1d',
@@ -62,12 +57,7 @@ const startServer = async() => {
 
     const http = require('http').Server(app);
 
-    const io = require('socket.io')(http, {
-        serveClient: false,
-        cors: {
-            origins: 'vscode-webview://*'
-        }
-    });
+    const io = require('socket.io')(http, { serveClient: false });
     io.on('connect', () => {
         console.log('connected');
     });

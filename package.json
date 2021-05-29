@@ -18,7 +18,7 @@
     "color": "#232323",
     "theme": "dark"
   },
-  "version": "1.5.12",
+  "version": "1.6.0",
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -33,37 +33,45 @@
   ],
   "activationEvents": [
     "workspaceContains:sfdx-project.json",
-    "onCommand:SFDX.salesforceQueryEditor"
+    "onCommand:SFDX.openSalesforceQueryEditor"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "SFDX.salesforceQueryEditor",
-        "title": "SFDX: Salesforce Query Editor",
+        "command": "SFDX.openSalesforceQueryEditor",
+        "title": "SFDX: Open Salesforce Query Editor",
         "icon": {
           "light": "/.images/database_light.svg",
           "dark": "/.images/database_dark.svg"
+        }
+      },
+      {
+        "command": "SFDX.openSalesforceQueryEditorNotifications",
+        "title": "SFDX: Open Salesforce Query Editor Notifications",
+        "icon": {
+          "light": "/.images/info_light.svg",
+          "dark": "/.images/info_dark.svg"
         }
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "SFDX.salesforceQueryEditor",
+          "command": "SFDX.openSalesforceQueryEditor",
           "group": "navigation",
           "when": "resourceFilename =~ /.cls/"
         }
       ],
       "explorer/context": [
         {
-          "command": "SFDX.salesforceQueryEditor",
+          "command": "SFDX.openSalesforceQueryEditor",
           "when": "resourceFilename =~ /.cls/"
         }
       ],
       "editor/context": [
         {
-          "command": "SFDX.salesforceQueryEditor",
+          "command": "SFDX.openSalesforceQueryEditor",
           "when": "resourceFilename =~ /.cls/"
         }
       ]
@@ -145,7 +153,7 @@
     }
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
+    "dev": "cross-env NODE_ENV=development yarn create:env && webpack --config webpack.config.dev.js",
     "server": "cross-env NODE_ENV=development nodemon ./src/server/index.js localhost 5000",
     "test": "node ./node_modules/vscode/bin/test",
     "create:env": "node ./scripts/create-env.js",
