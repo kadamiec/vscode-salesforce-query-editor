@@ -33,8 +33,7 @@ jobs:
       - name: Build Extension
         run: |
          yarn install
-         yarn create:env
-         yarn build:prod
+         yarn build
       - name: Publish Extension on VS Code Marketplace
         uses: lannonbr/vsce-action@master
         with:
