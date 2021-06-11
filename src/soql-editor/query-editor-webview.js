@@ -6,16 +6,15 @@ class QueryEditorWebview extends Webview {
 
   constructor(name, contributeCommand) {
     super(
-      name, 
+      name,
       contributeCommand,
       `<!doctype html>
             <html lang="en" data-n-head="%7B%22lang%22:%7B%221%22:%22en%22%7D%7D">
             <head>
-                <title>${ name }</title>
+                <title>${name}</title>
                 <meta data-n-head="1" charset="utf-8">
                 <meta data-n-head="1" name="viewport" content="width=device-width,initial-scale=1">
                 <meta data-n-head="1" data-hid="description" name="description" content="">
-                <script src="/_nuxt/app.js" crossorigin="anonymous"></script>
             </head>
             <body>
                 <div id="__nuxt">
@@ -25,51 +24,43 @@ class QueryEditorWebview extends Webview {
                         <div>Loading...</div>
                     </div>
                 </div>
-                <script>window.__NUXT__={config:{app:{basePath:"/",assetsPath:"/_nuxt/",cdnURL:null}}}</script> 
+                <script>window.__NUXT__={config:{app:{basePath:"/",assetsPath:"/_nuxt/",cdnURL:null}}}</script>
+                <script src="/_nuxt/app.js" crossorigin="anonymous"></script>
             </body>
         </html>
       `,
       vscode.ViewColumn.Three,
-      true, 
-      true, 
+      true,
+      true,
       false,
-      path.join('views', 'query-editor', 'dist', '_nuxt'), 
+      path.join('views', 'query-editor', 'dist', '_nuxt'),
       'database',
       false
     );
-    
+
     this._editor;
     this._configuration;
-    this._keygen;
   }
 
-  set editor(editor){
-      this._editor = editor;
+  set editor(editor) {
+    this._editor = editor;
   }
 
-  set configuration(configuration){
-      this._configuration = configuration;
+  set configuration(configuration) {
+    this._configuration = configuration;
   }
 
-  set keygen(keygen){
-      this._keygen = keygen;
+  async onCommand(context) {
+    this.showPanel(context)
   }
 
-  async onCommand(context){
-    if(this._keygen.isValid && this._configuration.properties['windowMode']){
-      await vscode.env.openExternal(vscode.Uri.parse('https://www.salesforcequeryeditor.com/#'))
-    } else {
-      this.showPanel(context)
-    }
-  }
-
-  didChangeViewState(){
+  didChangeViewState() {
     this._editor.setEditor();
   }
 
-  didPose(){
-    if(this._keygen.isValid && this._configuration.properties['queryOnClick']){
-        this._editor.sendEditingSOQL();
+  didPose() {
+    if (this._configuration.properties['queryOnClick']) {
+      this._editor.sendEditingSOQL();
     }
   }
 }

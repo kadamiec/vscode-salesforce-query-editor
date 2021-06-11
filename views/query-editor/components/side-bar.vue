@@ -7,14 +7,6 @@
     <div v-if="active" class="d-flex flex-column">
       <div
         class="menu-button d-flex"
-        :class="{ active: activeMenu === 'account' }"
-        @click="onClickAccountButton"
-      >
-        <i class="codicon codicon-account m-auto"></i>
-      </div>
-      <div
-        v-if="isLicenseValid()"
-        class="menu-button d-flex"
         :class="{ active: activeMenu === 'editor' }"
         @click="onClickEditorButton"
       >
@@ -22,9 +14,6 @@
       </div>
     </div>
     <div v-if="active" class="d-flex flex-column">
-      <div class="menu-button d-flex" @click="onClickLogout">
-        <i class="codicon codicon-sign-out m-auto"></i>
-      </div>
       <div class="menu-button d-flex" @click="onClickHelpButton">
         <i class="codicon codicon-question m-auto"></i>
       </div>
@@ -33,7 +22,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import openPage from '~/mixins/open-page'
 
 export default {
@@ -49,44 +38,15 @@ export default {
     ...mapState({
       activeMenu: (state) => state.user.activeMenu,
     }),
-    ...mapGetters({
-      isLicenseValid: 'user/isLicenseValid',
-    }),
   },
   methods: {
-    onClickAccountButton() {
-      this.$router.push({ name: 'account' })
-    },
     onClickEditorButton() {
-      this.$router.push({ name: 'editor' })
+      this.$router.push({ name: 'index' })
     },
     onClickHelpButton() {
       this.openPage(
-        'https://github.com/AllanOricil/SOQL-Editor-Issues/issues/new'
+        'https://github.com/AllanOricil/salesforce-query-editor/issues/new'
       )
-    },
-    onClickLogout() {
-      this.asyncPush({ name: 'signin' }).then(() => {
-        this.$store.dispatch('reset')
-
-        this.$axios.post(
-          `${process.env.LOCALHOST_API}/vscode/login`,
-          {
-            login: {},
-          },
-          {
-            headers: {
-              'Content-Type': 'application/vnd.api+json',
-              Accept: 'application/vnd.api+json',
-            },
-          }
-        )
-      })
-    },
-    asyncPush(route) {
-      return new Promise((resolve, reject) => {
-        this.$router.push(route, resolve, reject)
-      })
     },
   },
 }

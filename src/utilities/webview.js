@@ -17,75 +17,75 @@ class Webview {
   }
 
   activate(context) {
-    if(this._contributeCommand){
-      vscode.commands.registerCommand(this._contributeCommand, () =>  this.onCommand(context))
+    if (this._contributeCommand) {
+      vscode.commands.registerCommand(this._contributeCommand, () => this.onCommand(context))
     }
 
-    if(this._showPanelOnActivate) this._createPanel(context);
+    if (this._showPanelOnActivate) this._createPanel(context);
   }
 
-  onCommand(context){
+  onCommand(context) {
     this.showPanel(context);
   }
 
-  deactivate(){
+  deactivate() {
     this._panel.dispose();
   }
 
-  didPose(){}
+  didPose() { }
 
-  didDispose(){
+  didDispose() {
     this._panel = null;
   }
 
-  didChangeViewState(state){}
+  didChangeViewState(state) { }
 
-  onDidReceiveMessage(message){}
+  onDidReceiveMessage(message) { }
 
-  showPanel(context){
-    if(!this._panel) this._createPanel(context);
+  showPanel(context) {
+    if (!this._panel) this._createPanel(context);
     this._panel.reveal(this._column);
     this.didPose();
   }
 
-  _createPanel(context){
+  _createPanel(context) {
     const appDir = path.join(context.extensionPath, this._resourcesPath);
     const resourcesDir = path.dirname(appDir);
 
     this._panel = vscode.window.createWebviewPanel(
-        this._name,
-        this._name,
-        this._column,
-        {
-            enableScripts: this._enableScripts,
-            retainContextWhenHidden: this._retainContextWhenHidden,
-            enableFindWidget: this._enableFindWidget,
-            localResourceRoots: [vscode.Uri.file(resourcesDir)],
-        }
+      this._name,
+      this._name,
+      this._column,
+      {
+        enableScripts: this._enableScripts,
+        retainContextWhenHidden: this._retainContextWhenHidden,
+        enableFindWidget: this._enableFindWidget,
+        localResourceRoots: [vscode.Uri.file(resourcesDir)],
+      }
     );
 
     this._panel.webview.html = this._setLinksAndSrcs(this._html, appDir);
 
-    if(this._iconName){
+    if (this._iconName) {
       this._panel.iconPath = {
-        light: vscode.Uri.file(path.join(context.extensionPath, '.images', `${this._iconName}_light.svg`)),
-        dark: vscode.Uri.file(path.join(context.extensionPath, '.images', `${this._iconName}_dark.svg`))
+        light: vscode.Uri.file(path.join(context.extensionPath, 'images', `${this._iconName}_light.svg`)),
+        dark: vscode.Uri.file(path.join(context.extensionPath, 'images', `${this._iconName}_dark.svg`))
       };
     }
 
     this._panel.onDidDispose(
-        () => {
-          this._panel = null; 
-          this.didDispose()
-        },
-        undefined,
-        context.subscriptions
+      () => {
+        this._panel = null;
+        this.didDispose()
+      },
+      undefined,
+      context.subscriptions
     );
 
     this._panel.onDidChangeViewState(
-        (state) => this.didChangeViewState(state),
-        undefined,
-        context.subscriptions
+      (state) => this.didChangeViewState(state),
+      undefined,
+      context.subscriptions
     );
 
     this._panel.webview.onDidReceiveMessage((message) => this.didReceiveMessage(message));

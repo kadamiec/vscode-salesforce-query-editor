@@ -1,4 +1,3 @@
-const WebpackObfuscator = require('webpack-obfuscator');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -20,18 +19,9 @@ const config = {
   resolve: {
     extensions: ['.js'],
   },
-  plugins:[
+  plugins: [
     new CleanWebpackPlugin(),
-    new Dotenv(),
-    new WebpackObfuscator({
-      compact: true,
-      identifierNamesGenerator: 'mangled',
-      selfDefending: true,
-      stringArray: true,
-      rotateStringArray: true,
-      shuffleStringArray: true,
-      stringArrayThreshold: 0.8
-    }, [])
+    new Dotenv()
   ],
   optimization: {
     minimize: true,

@@ -5,61 +5,14 @@ import lightTheme from '~/assets/json/light-theme.json'
 import editorColors from '~/assets/json/editor-colors.json'
 
 export default {
-  setAuth(state, auth) {
-    state.auth = {
-      email: auth.email,
-      token: auth.token,
-      expiry: auth.expiry,
-      created: auth.created,
-      updated: auth.updated,
-      kind: auth.kind,
-      userId: auth.userId,
-    }
-  },
-  setLicense(state, license) {
-    state.license = license
-  },
   setConfiguration(state, configuration) {
     state.configuration = configuration
-  },
-  setFingerprint(state, { fingerprint }) {
-    state.fingerprint = fingerprint
-  },
-  setLicensekey(state, { key }) {
-    state.license.key = key
-  },
-  setLicenses(state, licenses) {
-    state.licenses = licenses
-  },
-  deleteLicense(state) {
-    state.license = {
-      meta: {
-        valid: false,
-      },
-    }
-  },
-  setUser(state, user) {
-    state.user = user
-  },
-  setStripeUser(state, stripeCustomerId) {
-    state.user.metadata.stripeCustomerId = stripeCustomerId
-  },
-  setSubscriptions(state, subscriptions) {
-    state.subscriptions = subscriptions
   },
   setActiveMenu(state, activeMenu) {
     state.activeMenu = activeMenu
   },
   reset: (state) => {
-    state.auth = {}
-    state.license = {
-      meta: {
-        valid: false,
-      },
-    }
-    state.user = {}
-    state.subscriptions = []
-    state.fingerprint = null
+    state.theme = darkTheme
     state.configuration = {
       displayEditor: true,
       format: {

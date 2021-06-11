@@ -5,7 +5,7 @@ const { startServer } = require('./server');
 
 const activate = async (context) => {
     await soqlEditor.activate(context);
-    await startServer();
+    await startServer(soqlEditor);
     vscode.window.showInformationMessage('Salesforce Query Editor is Activated');
 }
 

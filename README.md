@@ -4,6 +4,8 @@
 <a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/downloads/allanoricil.salesforce-soql-editor.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=DOWNLOADS" alt="Downloads"></a>
 <a href="https://marketplace.visualstudio.com/items?itemName=allanoricil.salesforce-soql-editor" target="_blank" rel="noreferrer noopener"><img src="https://vsmarketplacebadge.apphb.com/rating-star/allanoricil.salesforce-soql-editor.svg?style=for-the-badge&colorA=252526&colorB=43A047&label=RATING" alt="Ratings"></a></p>
 
+<a href="https://www.buymeacoffee.com/allanoricil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+
 This extension brings the same functionality available in the Query Editor in the Salesforce Developer Console to VS Code.
 
 <img src="https://drive.google.com/uc?id=1-MwpPdK3bLJ6DocTHsfkY_x2x6fGb-hQ" width="1200px"></img>
@@ -22,16 +24,6 @@ This extension brings the same functionality available in the Query Editor in th
 - [x] Compact to not take away the space you have available while writing code.
 - [x] Works with Gitpod - https://www.gitpod.io/
 
-## Paid Features
-
-- [x] Remove BUY PRO golden button.
-- [x] Window Mode.
-- [x] Desktop App (PWA).
-- [x] Quickly update or add a new Query to apex using `Add to Apex` and `Update Apex` buttons.
-- [x] Run multiple queries in different tabs.
-
-<b>I'm also selling the source code. If you are interested, send an email to allanoricilcos@outlook.com</b>
-
 ## Requirements
 
 - sfdx-cli/7.93.1-762bca056d
@@ -41,47 +33,7 @@ This extension brings the same functionality available in the Query Editor in th
 
 ## Issues
 
-You can open issues here https://github.com/AllanOricil/SOQL-Editor-Issues
-
-
-# How To Buy a License
-
-- Open the extension
-
-- Click on the Buy Pro golden button
-
-- It will open a page where you can see the available premium features
-
-- Scroll down to the bottom of the page and click on the Buy Licenses button
-
-- You will be redirected to the Subscription page. If it does not pick up your login credentials, it will ask you to login again. This is necessary because the Subscription and the Licenses are connected to an Account.
-
-- Choose your Subscription Plan and the number of licenses you want to acquire. Each license can only be activated in one machine.
-
-- Add your Debit or Credit Card Details.
-
-- Click on the Pay button and wait for the Success message.
-
-- After that you should receive an email with the license keys and instructions on how to activate a license.
-
-- Inside the app, one the account page you can manage all your subscriptions and licenses. You can choose to cancel your subscription, and activate/deactivate licenses.
-
-Obs: The payment system is implemented using Stripe Elements. You can read more about it here https://stripe.com/en-ie/payments/elements
-
-
-# How to Add a License
-
-- Open VS Code and wait the extension's activation message
-
-- Go to https://salesforcequeryeditor.com, log into the app, then click on the Go To Account button
-
-- Click on the Add License button
-
-- Fill the form with your license and click on the Activate button
-
-- You will be redirected back to the account page and now the editor button will be available in the sidebar menu
-
-<img src="https://drive.google.com/uc?id=1Sx2XD2GU3W8jZ1E6x-J1x5M5mZuxbnDt" width="800px"></img>
+You can open issues here https://github.com/AllanOricil/salesforce-query-editor
 
 # Is it secure?
 
@@ -93,11 +45,11 @@ This app does not send any information to an external server. Every request is p
 |Command|Description|
 |-|-|
 |SFDX.openSalesforceQueryEditor|SFDX: Open Salesforce Query Editor|
-|SFDX.openSalesforceQueryEditorNotificationsView|SFDX: Open Salesforce Query Editor Notifications View|
+|SFDX.openSalesforceQueryEditorNotifications|SFDX: Open Salesforce Query Editor Notifications|
 <!-- COMMANDS_END -->
 
 <!-- SETTINGS_START -->
-## Settings (14)
+## Settings (13)
 
 |Setting|Type|Default|Description|
 |-|-|-|-|
@@ -111,10 +63,9 @@ This app does not send any information to an external server. Every request is p
 |salesforceQueryEditor.nestedResults.style|boolean|**false**|If checked, it applies styles to nested results. This feature makes everything slow when quering a lot of records and columns, so use it with care. Also, be aware that the Theme Colors you are using will not be applied because the VSCode API does not provide a way to programatically access it.|
 |salesforceQueryEditor.nestedResults.expanded|boolean|**true**|If checked, nested results are expanded.|
 |salesforceQueryEditor.nestedResults.depth|number|**1**|It determines how many levels nested results shown as JSON will be expanded.|
-|💲 salesforceQueryEditor.windowMode|boolean|**true**|If checked, the Query Editor will open in a separate window. (paid)|
-|💲 salesforceQueryEditor.setQueryOnClick|boolean|**false**|If checked, the query is copied automatically to the editor. (paid)|
-|💲 salesforceQueryEditor.queryOnClick|boolean|**false**|If checked, the query is executed automatically when you click on it. It is necessary to set 'setQueryOnClick' to true. (paid)|
-|💲 salesforceQueryEditor.displayTabs|boolean|**false**|If checked, tabs are displayed when 'windowMode' is false. (paid)|
+|salesforceQueryEditor.setQueryOnClick|boolean|**false**|If checked, the query is copied automatically to the editor.|
+|salesforceQueryEditor.queryOnClick|boolean|**false**|If checked, the query is executed automatically when you click on it. It is necessary to set 'setQueryOnClick' to true.|
+|salesforceQueryEditor.displayTabs|boolean|**false**|If checked, tabs are displayed when 'windowMode' is false.|
 <!-- SETTINGS_END -->
 
 # How to Use
@@ -171,7 +122,6 @@ Open an Apex class and click on the button shown in the image below. This button
 - To create a new record click on the `New Record` button that is on the top right corner of the table.
 
 - If all the changes you did for that record are saved without any errors, the record changes back to read mode and the `cancel` button vanishes. If the changes are not accepted by Salesforce, a modal appears with detailed informatiion about what went wrong, and the record stays on edit state. You can choose to fix the errors or cancel the changes.
-
 
 ## How to add fields
 
@@ -236,38 +186,6 @@ When users are editing data, it is good to know if the field is updateable and r
 
 <img src="https://drive.google.com/uc?id=14b3XQXY79ra2343niDbG5Is17YKqDyRf" width="800px"></img>
 
-## How to Open Window Mode
-
- - File -> Preferences -> Settings
- - Type "Salesforce Query Editor" in the search bar
- - Look for Window Mode and click on the checkbox
-
- Now every time you open the extension, using any of the three methods listed above, it will be opened in a separate window. This way users that have multiple monitors can  have a better experience while developing as the extension will not take any space of their editor.
-
-<img src="https://drive.google.com/uc?id=1eIEREuMLkpb6hXx223vypc--RyVbAddR" width="800px"></img>
-
-## How to Install the App
-
-### Google Chrome
-
-<img src="https://drive.google.com/uc?id=1jPBrBzny6dXNe_r3QjvFt5Mg7kfuNFEq" width="1000px"></img>
-
-
-### Microsoft Edge (Chromium Version)
-
-<img src="https://drive.google.com/uc?id=19lDJqMu2fSVK22VtMd5ZjM_6iQlFTzT6" width="1000px"></img>
-
-### Safari
-
-Safari for desktops does not offer PWA features yet. It is only available for mobile.
-
-### Opera
-
-Opera does not support PWA features yet.
-
-### Firefox
-
-Mozilla has no plans for supporting PWA features.
 
 ## Settings
 
@@ -291,206 +209,3 @@ The extension has some settings that you can use to have a personalized experien
 - `ctrl + shift + c` to cancel all the table changes
 
 - `ctrl + shift + d` to export data as source tree
-
-
-## Release Notes
-
-### 1.6.0
-
-- Add "Notifications View" to alert users about new features or bugs.
-- Change contribution command to "SFDX: Open Salesforce Query Editor"
-
-### 1.5.0
-
-- The web app is now accessed through https://www.salesforcequeryeditor.com and https://app.salesforcequeryeditor.com
-
-- The api has a proper domain https://api.salesforcequeryeditor.com now
-
-### 1.4.0
-
-- The floating Help Button can now be disabled in the Workspace Settings. The default value is "true"
-
-### 1.3.0
-
-- Workspace Config properties names were changed from "SOQL Editor" to "Salesforce Query Editor"
-
-- Webview Panel name was changed from "SOQL Editor" to "Salesforce Query Editor"
-
-- Webview Panel Icon is now using VS Code database codicon icon
-
-- The command name was changed from "SFDX: SOQL Editor" to "SFDX: Salesforce Query Editor"
-
-### 1.2.0
-
-- Add floating Help button in the editor and login pages.
-
-### 1.1.0
-
-- Now you can use the extension with Gitpod - https://www.gitpod.io/
-
-- Fix "Display Query Builder" setting.
-
-### 1.0.0
-
-- The extension is now called Salesforce Query Editor as it brings the same functionality available in the Query Editor tab in the developer console.
-
-- Fully refactored using Nuxt JS.
-
-- Enables Window Mode and PWA App.
-
-- Enables Window Mode.
-
-- Improves Records Table.
-
-- Add Update Apex Button.
-
-- Enables Child Relationship queries.
-
-- Adds Date Time Literals for DateTime fields when configuring filters.
-
-- Adds `FOR UPDATE`, `FOR VIEW`, `FOR REFERENCE`, `ALL ROWS`. Only available when using `Add to Apex` or `Update Apex` buttons.
-
-- Adds `Copy` button to copy the query to clipboard.
-
-- It now uses the Monaco Editor for the Query Editor.
-
-- Improves the looking and feel by adding support to many vscode themes. Now the Query Editor text also changes between a Light and Dark color when changing themes.
-
-- Now it shows Field Details.
-
-- Now the user can quickly change between the orgs connected to `SFDX`.
-
-- Now it uses the Composition API to bundle together 20 requests to the Database.
-
-- The App also changes its colors when the user chooses a new theme in VS Code.
-
-### 0.10.0
-
-- It introduces the "Add All" and "Clear All" buttons on the relationship fields modal. This enables users to quickly pick up all the fields of a certain relationship instead of adding one by one. If the user clicks on "Add All" it will add all the fields shown in the last displayed picklist.
-
-<img src="https://drive.google.com/uc?id=1GSqK2J7cSD8kpLf1My2VhO8jjN5i0GO5" width="800px"></img>
-
-- It adds the Offset input.
-
-<img src="https://drive.google.com/uc?id=1DnWQJbr0nQvJucrlLRsbcGTA6Uou2nUx" width="400px"></img>
-
-- It changes the name of the commit changes button to "save".
-- It adds new input types on the soql results table when the user is edditing a record. Now when the user queries a picklist field, the table displays a picklist selector with only the <b>"active"</b> picklist <b>"labels"</b>. And when the user queries a boolean field, the table displays a checkbox input.
-
-<img src="https://drive.google.com/uc?id=1BNXHBD4qbOtKGTIzkxwU4ptuP_y7VF5M" width="800px"></img>
- 
-- It enables the Delete Record button.
-- It adds the number of results retrieved in the top left corner of the results table.
-
-<img src="https://drive.google.com/uc?id=1jTCwLat_ZbA0NlB2eJvfF1TCeW4clm1f" width="800px"></img>
-
-- It turns the Auto Format SOQL checkbox into a VSCode workspace/user property.
-
-<img src="https://drive.google.com/uc?id=12TY_uO1_qMYmQQf4Y0BoMe16-zEoo7m_" width="800px"></img>
-
-- It automatically translates the relationship fields picklists container to the left for every new level the user selects.
-
-- It improves output messages. 
-
-- It adds shortcut keys for the refresh objects and hide/show form buttons. To use these shortcuts it is necessary to focus on the SOQL Editor.
-  
-  <b>CTRL + R</b>: Refresh the SObjects list
-
-  <b>CTRL + H</b>: Hide/Show the form
-
-### 0.9.0
-
-- Now users can choose to display the field type in the form and in the query table header. These properties are off by default because they don't look that good yet. I will properly format it later.
-
-<img src="https://drive.google.com/uc?id=1jrRG6ni0GopLY90mP4XlyQNV11pzrhin" width="400px"></img>
-
-Result:
-
-<img src="https://drive.google.com/uc?id=1jm6UiBiBD-9cy9gdhaV1EhRPQOnx0kAo" width="700px"></img>
-
-### 0.8.0
-
-- Now users can Export data as Source Plan.
-
-<img src="https://drive.google.com/uc?id=1FjxvaqyBZ-JecXFdxIGgTYzKvEb2aHoj" width="700px"></img>
-
-The exported files are saved inside a folder called `data/sourcetree` in the root of your sfdx project.
-
-<img src="https://drive.google.com/uc?id=1FEl-qHa-yMKc2kVJYLLvcTI9rBAULjvI" width="200px"></img>
-
-- Now users can Add Multiple relationship fields at once. Previously it was necessary to open and close the modal to add multiple fields.
-
-<img src="https://drive.google.com/uc?id=12I0Z1EntVxIZ4ojDxc4JSOunjeUOezXc" width="700px"></img>
-
-- The Limit field was moved to a better place. And the API field was properly labeled.
-
-<img src="https://drive.google.com/uc?id=1lAwza1Rmxy5LYp31-S1XuzHh5i_BpApE" width="400px"></img>
-
-- The `Add to Apex` button was separating each Query Token by two white spaces, but now it is only one when added to an editor.
-- Now there is only one Output Channel for the Webview. Previously, the extension was creating one for every time the editor was opened.
-
-
-### 0.7.0
-
-- Fields are now added using a checkbox input.
-
-<img src="https://drive.google.com/uc?id=1X4Ne2dcHbhbG_eAmNcho0uM7b16cJH6F" width="400px"></img>
-
-- Relationship fields can now be added.
-
-<img src="https://drive.google.com/uc?id=1xOuSnKwpaahq6r-4MXoQIjhoSUpQowSf" width="800px"></img>
-
-- The number of relationship fields added is displayed between parenthesis.
-
-<img src="https://drive.google.com/uc?id=1GRTRLoz7Oj1RH-CKuwbjhD05qKZwrTW_" width="400px"></img>
-
-### 0.6.0
-
-- Hide the form using the `soqlEditor.displayEditor` setting. This setting defaults to true, so if you want to hide the editor just change it to false.
-
-<img src="https://drive.google.com/uc?id=1VR8BmzJ1-NISLV_8k7RQoWUuBRmh15Wr" width="1200px"></img>
-
-<img src="https://drive.google.com/uc?id=14VcoE7YLW8zX4ru5CrAhl21LuKsOz84w" width="1200px"></img>
-
-- Select the API version.
-
-<img src="https://drive.google.com/uc?id=1mL0N9PydICn9MBHvZVBLA66btukvpNrh" width="1200px"></img>
-
-- The loading animation was changed to one that it is not flickering.
-
-
-### 0.5.0
- 
-- Removes "attributes" from nested results.
-
-<img src="https://drive.google.com/uc?id=1rIhkl2VVEYiXHgphjtt4wutohBvOppjL" width="1200px"></img>
-
-- Now users can Edit and Commit changes. The Edit button only appears if you Query the Id field and at least one editable field.
-
-<img src="https://drive.google.com/uc?id=1E2qlUZZND8ujRio_UTjKXMWlWtP1td0o" width="1200px"></img>
-
-
-### 0.4.0
-
-- Reduce the size of the extension.
-
-- Now you can get SOQL Query Plans. If you are not used to it, check this Article about the [SOQL Query Plan Tool](https://help.salesforce.com/articleView?id=000199003&r=https:%2F%2Fwww.google.com%2F&type=1)
-
-<img src="https://drive.google.com/uc?id=1mjkhcaRnAO7TWfkeTBdy5lpx_yKY7rU4" width="600px"></img>
-
-- Now whenever you switch orgs, the Schema builder will Reload the Sobjects List automatically:
-
-<img src="https://drive.google.com/uc?id=1wb-ohAeB1MyjXZ7EJyd7qCJPI9VFyCmW" width="1200px"></img>
-
-- Now you can refresh the SObject List clicking on the Refresh Button:
-
-<img src="https://drive.google.com/uc?id=1zy21sEXPnGaCysPQ6ddOaWGC7AZ_3_Ov" width="300px"></img>
-
-- Fix the activation event related to this [issue](https://github.com/AllanOricil/SOQL-Editor-Issues/issues/2)
-
-
-### 0.3.0
-
-- Ids can now be clicked to open the Record Detail Page.
-
-<img src="https://drive.google.com/uc?id=1KBRDhPY093MdRw0JcAp-19IifD_BjS96" width="600px"></img>

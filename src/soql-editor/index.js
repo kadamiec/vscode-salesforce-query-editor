@@ -3,47 +3,37 @@ const Storage = require('./storage');
 const FileSystemWatcher = require('./file-system-watcher');
 const Editor = require('./editor');
 const Configuration = require('./configuration');
-const Keygen = require('../utilities/keygen');
 const QueryEditorWebivew = require('./query-editor-webview');
 const FetchColorsWebview = require('./fetch-colors-webview');
 const NotificationsWebview = require('./notifications-webview');
-const SfdxCommands =  require('../utilities/sfdx-commands');
+const SfdxCommands = require('../utilities/sfdx-commands');
 
 const name = 'Salesforce Query Editor';
 const outputChannel = new Outputchannel(name);
 const logsStorage = new Storage('logs', outputChannel);
-const licenseStorage = new Storage('license', outputChannel);
-const queryHistoryStorage = new Storage('query-history', outputChannel);
-const loginStorage = new Storage('login', outputChannel);
 const editor = new Editor();
 const queryEditorWebview = new QueryEditorWebivew('Salesforce Query Editor', 'SFDX.openSalesforceQueryEditor');
 const notificationsWebview = new NotificationsWebview('Salesforce Query Editor Notifications', 'SFDX.openSalesforceQueryEditorNotifications');
 const fetchColorsWebview = new FetchColorsWebview('Fetch Colors');
 const fsWatcher = new FileSystemWatcher('**/.sfdx/sfdx-config.json', outputChannel);
 const configuration = new Configuration(outputChannel);
-const keygen = new Keygen(licenseStorage);
 const sfdx = new SfdxCommands(outputChannel);
 
 const activate = async (context) => {
   outputChannel.activate(context);
   await Promise.all([
-    logsStorage.activate(context),
-    licenseStorage.activate(context), 
-    queryHistoryStorage.activate(context),
-    loginStorage.activate(context)
+    logsStorage.activate(context)
   ])
-  await keygen.validate();
 
   sfdx.activate(context);
   configuration.activate(context);
   fsWatcher.activate(context);
-  editor.activate(keygen);
-  
+  editor.activate();
+
   notificationsWebview.activate(context);
   fetchColorsWebview.activate(context);
 
   queryEditorWebview.editor = editor;
-  queryEditorWebview.keygen = keygen;
   queryEditorWebview.configuration = configuration;
   queryEditorWebview.activate(context);
 
@@ -62,12 +52,8 @@ module.exports = {
   name,
   activate,
   deactivate,
-  keygen,
   sfdx,
   logsStorage,
-  licenseStorage,
-  queryHistoryStorage,
-  loginStorage,
   outputChannel,
   editor,
   configuration

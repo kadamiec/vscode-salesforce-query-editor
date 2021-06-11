@@ -33,7 +33,7 @@ class NotificationsWebview extends Webview {
       vscode.ViewColumn.Two,
       true, 
       true, 
-      true, 
+      false, 
       path.join('views', 'notifications', 'dist', '_nuxt'), 
       'info',
       true

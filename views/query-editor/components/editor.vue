@@ -3,7 +3,6 @@
     <loading v-if="isLoadingData"></loading>
     <div v-show="!isLoadingData" :ref="name" class="editor px-2 pt-2">
       <div class="d-flex flex-column">
-        <editor-header v-if="!isLicenseValid()" />
         <!-- ENVIRONMENTS -->
         <div
           v-if="environments && environments.length"
@@ -276,7 +275,6 @@
                 />
               </button>
               <button
-                v-if="isLicenseValid()"
                 :disabled="disableTextAreaActionButtons"
                 class="vscode-button btn-primary"
                 @click="setApexClassWithQuery()"
@@ -376,7 +374,6 @@ import Loading from '@/components/loading.vue'
 import { decode } from 'html-entities'
 import sqlFormatter from '@allanoricil/sql-formatter'
 import { parseQuery } from 'soql-parser-js'
-import EditorHeader from '~/components/editor-header.vue'
 import showToastMessage from '~/mixins/show-toast-message'
 import { formatDateTime } from '~/utilities/soql-formatter-fix-methods'
 
@@ -391,7 +388,6 @@ export default {
     QueryResults,
     SoqlPlan,
     Loading,
-    EditorHeader,
   },
   mixins: [showToastMessage],
   props: {
@@ -466,7 +462,6 @@ export default {
       getQueryableSObjects: 'salesforce/getQueryableSObjects',
       getSObjectFields: 'salesforce/getSObjectFields',
       getSObjectChildRelationships: 'salesforce/getSObjectChildRelationships',
-      isLicenseValid: 'user/isLicenseValid',
       getConnectedEnvironments: 'salesforce/getConnectedEnvironments',
     }),
     ...mapState({
@@ -529,7 +524,7 @@ export default {
   },
   sockets: {
     editingsoql(data) {
-      if (this.isActive && this.isLicenseValid()) {
+      if (this.isActive) {
         this.editingSOQL = data
         if (data?.soql && this.configuration.setQueryOnClick) {
           this.soqlText = data.soql
@@ -830,12 +825,11 @@ export default {
                 }),
               ]
 
-              this.sobjectChildRelationships = this.getSObjectChildRelationships(
-                {
+              this.sobjectChildRelationships =
+                this.getSObjectChildRelationships({
                   sobjectName: this.sobjectName,
                   username: this.selectedEnvironment.username,
-                }
-              )
+                })
 
               this.isExecutingQuery = false
               if (this.soqlResult && this.soqlResult.length) {
