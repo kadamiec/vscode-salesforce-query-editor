@@ -8,8 +8,8 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 *.vsix
 views
-!views/query-editor/dist/**
-!views/notifications/dist/**
+!views/query-editor/dist
+!views/notifications/dist
 src
 .images
 !.images/icon.png
