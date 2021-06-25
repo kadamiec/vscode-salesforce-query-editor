@@ -27,8 +27,8 @@ This extension brings the same functionality available in the Query Editor in th
 ## Requirements
 
 - sfdx-cli/7.93.1-762bca056d
-- VS Code >= 1.48.0 <= 1.55.2 <b>IT DOES NOT WORK ON 1.56.0</b>
-- MUST BE USED FROM A SFDX PROJECT
+- VS Code >= 1.57.0 <b>IT DOES NOT WORK ON 1.56.0</b>
+- MUST BE USED WITH A SFDX PROJECT
 - YOU MUST NOT HAVE ANYTHING RUNNING ON PORT 5000
 
 ## Issues

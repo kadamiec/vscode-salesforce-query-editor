@@ -10,11 +10,10 @@
     "cypress:open": "cypress open",
     "cypress": "npx cypress run --record --key fd8b2569-4b42-411e-8b5e-36f700dbdf71",
     "create:npmrc": "node ./scripts/create-npmrc.js",
-    "create:nuxtignore": "node ./scripts/create-nuxtignore.js",
     "build:site": "nuxt build",
     "generate:site": "nuxt generate",
-    "build:vscode": "yarn create:nuxtignore && cross-env IS_VSCODE=true nuxt build",
-    "generate:vscode": "yarn create:nuxtignore && cross-env IS_VSCODE=true nuxt generate"
+    "build:vscode": "cross-env IS_VSCODE=true nuxt build",
+    "generate:vscode": "cross-env IS_VSCODE=true nuxt generate"
   },
   "dependencies": {
     "@allanoricil/sql-formatter": "^0.4.0",

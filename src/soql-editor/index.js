@@ -30,9 +30,17 @@ const activate = async (context) => {
   fsWatcher.activate(context);
   editor.activate();
 
+  //webview to display release notes
+  if (!context.globalState.get(`DISPLAY_NOTIFICATIONS_WEBVIEW_ONCE_PER_RELEASE_ON_ACTIVATION_${context.extension.packageJSON.version}`)) {
+    notificationsWebview.showPanelOnActivate = true;
+    context.globalState.update(`DISPLAY_NOTIFICATIONS_WEBVIEW_ONCE_PER_RELEASE_ON_ACTIVATION_${context.extension.packageJSON.version}`, true);
+  }
   notificationsWebview.activate(context);
+
+  //webview to retrieve vs code colors
   fetchColorsWebview.activate(context);
 
+  //webview to execute queries
   queryEditorWebview.editor = editor;
   queryEditorWebview.configuration = configuration;
   queryEditorWebview.activate(context);
@@ -56,5 +64,6 @@ module.exports = {
   logsStorage,
   outputChannel,
   editor,
-  configuration
+  configuration,
+  fetchColorsWebview
 };

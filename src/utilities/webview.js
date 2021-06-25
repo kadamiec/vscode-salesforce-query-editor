@@ -17,15 +17,16 @@ class Webview {
   }
 
   activate(context) {
+    this._context = context;
     if (this._contributeCommand) {
-      vscode.commands.registerCommand(this._contributeCommand, () => this.onCommand(context))
+      vscode.commands.registerCommand(this._contributeCommand, () => this.onCommand())
     }
 
-    if (this._showPanelOnActivate) this._createPanel(context);
+    if (this._showPanelOnActivate) this._createPanel();
   }
 
-  onCommand(context) {
-    this.showPanel(context);
+  onCommand() {
+    this.showPanel();
   }
 
   deactivate() {
@@ -42,14 +43,18 @@ class Webview {
 
   onDidReceiveMessage(message) { }
 
-  showPanel(context) {
-    if (!this._panel) this._createPanel(context);
+  showPanel() {
+    if (!this._panel) this._createPanel();
     this._panel.reveal(this._column);
     this.didPose();
   }
 
-  _createPanel(context) {
-    const appDir = path.join(context.extensionPath, this._resourcesPath);
+  set showPanelOnActivate(showPanelOnActivate) {
+    this._showPanelOnActivate = showPanelOnActivate;
+  }
+
+  _createPanel() {
+    const appDir = path.join(this._context.extensionPath, this._resourcesPath);
     const resourcesDir = path.dirname(appDir);
 
     this._panel = vscode.window.createWebviewPanel(
@@ -68,24 +73,23 @@ class Webview {
 
     if (this._iconName) {
       this._panel.iconPath = {
-        light: vscode.Uri.file(path.join(context.extensionPath, 'images', `${this._iconName}_light.svg`)),
-        dark: vscode.Uri.file(path.join(context.extensionPath, 'images', `${this._iconName}_dark.svg`))
+        light: vscode.Uri.file(path.join(this._context.extensionPath, 'images', `${this._iconName}_light.svg`)),
+        dark: vscode.Uri.file(path.join(this._context.extensionPath, 'images', `${this._iconName}_dark.svg`))
       };
     }
 
     this._panel.onDidDispose(
       () => {
-        this._panel = null;
         this.didDispose()
       },
       undefined,
-      context.subscriptions
+      this._context.subscriptions
     );
 
     this._panel.onDidChangeViewState(
       (state) => this.didChangeViewState(state),
       undefined,
-      context.subscriptions
+      this._context.subscriptions
     );
 
     this._panel.webview.onDidReceiveMessage((message) => this.didReceiveMessage(message));

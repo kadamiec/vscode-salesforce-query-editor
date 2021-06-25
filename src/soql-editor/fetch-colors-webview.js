@@ -3,11 +3,11 @@ const axios = require('axios');
 const Webview = require('../utilities/webview');
 const path = require('path');
 
-class FetchColorsWebview extends Webview{
+class FetchColorsWebview extends Webview {
 
     constructor(name) {
         super(
-            name, 
+            name,
             null,
             `<!doctype html>
             <html>
@@ -27,22 +27,27 @@ class FetchColorsWebview extends Webview{
             </body>
             </html>`,
             vscode.ViewColumn.Two,
-            true, 
-            true, 
+            true,
+            true,
             false,
-            path.join('views', 'fetch-colors'), 
+            path.join('views', 'fetch-colors'),
             'info',
             true
         );
         this._colors;
-        vscode.window.onDidChangeActiveColorTheme(() => this.activate(context));
     }
 
-    sendColors(){
+    activate(context) {
+        this._context = context;
+        vscode.window.onDidChangeActiveColorTheme(() => this._createPanel());
+        if (this._showPanelOnActivate) this._createPanel();
+    }
+
+    sendColors() {
         return axios.post(`${process.env.SERVER_ENDPOINT}/vscode/notification/activecolortheme`, this._colors);
     }
 
-    didReceiveMessage(colors){
+    didReceiveMessage(colors) {
         this._colors = colors;
         this._panel.dispose();
         this._panel = null;

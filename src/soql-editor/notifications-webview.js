@@ -5,14 +5,14 @@ const Webview = require('../utilities/webview');
 
 class NotificationsWebview extends Webview {
 
-  constructor(name, contributeCommand) {
-    super(
-      name, 
-      contributeCommand,
-      `<!doctype html>
+   constructor(name, contributeCommand) {
+      super(
+         name,
+         contributeCommand,
+         `<!doctype html>
       <html lang="en" data-n-head="%7B%22lang%22:%7B%221%22:%22en%22%7D%7D">
          <head>
-            <title>${ name }</title>
+            <title>${name}</title>
             <meta data-n-head="1" charset="utf-8">
             <meta data-n-head="1" name="viewport" content="width=device-width,initial-scale=1">
             <meta data-n-head="1" data-hid="description" name="description" content="">
@@ -26,19 +26,23 @@ class NotificationsWebview extends Webview {
                   <div>Loading...</div>
                </div>
             </div>
-            <script>window.__NUXT__={config:{app:{basePath:"/",assetsPath:"/_nuxt/",cdnURL:null}}}</script> 
+            <script>window.__NUXT__={config:{app:{basePath:"/",assetsPath:"/_nuxt/",cdnURL:null}}}</script>
+            <script>
+               const vscode = acquireVsCodeApi();
+               vscode.postMessage();
+            </script>
          </body>
       </html>
       `,
-      vscode.ViewColumn.Two,
-      true, 
-      true, 
-      false, 
-      path.join('views', 'notifications', 'dist', '_nuxt'), 
-      'info',
-      true
-    );
-  }
+         vscode.ViewColumn.Two,
+         true,
+         true,
+         false,
+         path.join('views', 'notifications', 'dist', '_nuxt'),
+         'info',
+         false
+      );
+   }
 }
 
 module.exports = NotificationsWebview;

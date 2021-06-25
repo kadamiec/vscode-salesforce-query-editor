@@ -50,10 +50,6 @@ class QueryEditorWebview extends Webview {
     this._configuration = configuration;
   }
 
-  async onCommand(context) {
-    this.showPanel(context)
-  }
-
   didChangeViewState() {
     this._editor.setEditor();
   }

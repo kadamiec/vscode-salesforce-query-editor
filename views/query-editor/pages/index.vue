@@ -58,7 +58,7 @@ export default {
     Tab,
   },
   mixins: [isVscode],
-  middleware: ['menu'],
+  middleware: ['is-local-server-running', 'fetch-colors', 'menu'],
   data: () => {
     return {
       defaultusername: {},
