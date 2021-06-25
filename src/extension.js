@@ -1,18 +1,15 @@
-const soqlEditor = require('./soqlEditor');
+// @ts-nocheck
+const vscode = require('vscode');
+const soqlEditor = require('./soql-editor');
+const { startServer } = require('./server');
 
-/**
- * Called when the extension is activated
- * @param {import('vscode').ExtensionContext} context
- */
-function activate(context) {
-    soqlEditor.activate(context);
+const activate = async (context) => {
+    await soqlEditor.activate(context);
+    await startServer(soqlEditor);
+    vscode.window.showInformationMessage('Salesforce Query Editor is Activated');
 }
-exports.activate = activate;
 
-/**
- * Called when the extension is deactivated
- */
-function deactivate() {
+const deactivate = () => {
     soqlEditor.deactivate();
 }
 

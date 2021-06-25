@@ -1,11 +1,8 @@
-'use strict';
-
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
-/**@type {import('webpack').Configuration}*/
 const config = {
   target: 'node',
   entry: './src/extension.js',
@@ -22,7 +19,7 @@ const config = {
   resolve: {
     extensions: ['.js'],
   },
-  plugins:[
+  plugins: [
     new CleanWebpackPlugin(),
     new Dotenv()
   ],
@@ -30,9 +27,12 @@ const config = {
     minimize: true,
     minimizer: [new TerserPlugin({
       terserOptions: {
-        mangle: true
+        mangle: true,
+        output: {
+          comments: false
+        }
       }
     })]
-  }
+  },
 };
 module.exports = config;
