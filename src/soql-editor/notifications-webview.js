@@ -43,6 +43,12 @@ class NotificationsWebview extends Webview {
          false
       );
    }
+
+   didPose() {
+      if (this._context.globalState.get(`DISPLAY_NOTIFICATIONS_WEBVIEW_ONCE_PER_RELEASE_ON_ACTIVATION_${context.extension.packageJSON.version}`)) {
+         this.dispose();
+      }
+   }
 }
 
 module.exports = NotificationsWebview;

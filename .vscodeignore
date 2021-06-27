@@ -7,7 +7,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/.eslintrc.json
 *.vsix
-views
+views/**
 !views/query-editor/dist/**
 !views/notifications/dist/**
 src
@@ -25,3 +25,5 @@ data/*
 *.env
 .github
 scripts
+test/**
+!test/query-editor-spec.ts

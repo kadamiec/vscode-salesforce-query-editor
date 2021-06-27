@@ -30,13 +30,17 @@ class Webview {
   }
 
   deactivate() {
-    this._panel.dispose();
+    this.dispose();
   }
 
   didPose() { }
 
   didDispose() {
     this._panel = null;
+  }
+
+  dispose() {
+    this._panel.dispose();
   }
 
   didChangeViewState(state) { }

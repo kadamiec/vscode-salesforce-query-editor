@@ -45,14 +45,6 @@
           "light": "/images/database_light.svg",
           "dark": "/images/database_dark.svg"
         }
-      },
-      {
-        "command": "SFDX.openSalesforceQueryEditorNotifications",
-        "title": "SFDX: Open Salesforce Query Editor Notifications",
-        "icon": {
-          "light": "/images/info_light.svg",
-          "dark": "/images/info_dark.svg"
-        }
       }
     ],
     "menus": {
@@ -150,26 +142,32 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack --config webpack.config.dev.js",
     "server": "cross-env NODE_ENV=development nodemon ./src/server/index.js localhost 5000",
-    "test": "node ./node_modules/vscode/bin/test",
+    "test:setup": "extest setup-tests -s ./test -e ./test/extensions -c 1.57.0 -t stable -y",
+    "transpile": "tsc -p ./",
+    "test": "yarn transpile && extest setup-and-run ./out/test/*.js -o settings.json -y",
     "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.42",
-    "@types/node": "^10.12.21",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^12.20.15",
+    "@types/vscode": "^1.56.0",
     "babel-loader": "^8.2.2",
+    "chai": "^4.2.0",
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^7.0.3",
     "dotenv-webpack": "^4.0.0",
     "eslint": "^5.13.0",
     "javascript-obfuscator": "^2.10.3",
+    "mocha": "^6.2.0",
     "nodemon": "^2.0.7",
     "terser-webpack-plugin": "^4.2.3",
-    "typescript": "^3.3.1",
+    "typescript": "4.0.3",
+    "vscode-extension-tester": "^4.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@types/vscode": "^1.56.0",
     "applicationinsights": "^1.8.2",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
